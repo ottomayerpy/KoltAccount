@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block addons_head %}
+<script defer type="text/javascript" src="{% static 'js/email_change_form.js' %}?ver={{ static_version }}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <main>
+        <section>
+            <h2 align="center">{{ title }}</h2>
+            <p align="center">Введите новый адрес электронной почты, который вы хотите привязать.</p>
+            <div class="row flex nomargin">
+                {% load crispy_forms_tags %}
+                <div class="card email_change_form_card">
+                    <div class="card-body">
+                        {% load crispy_forms_tags %}
+                        <form method="post">{% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary btn-block bubbly-button default">Сохранить</button>
+                        </form>
+                    </div>
+                    <p class="terms_confirm-text">Нажимая на кнопку «Сохранить», вы даете согласие на обработку персональных данных и соглашаетесь c <a href="{% url 'privacy_url' %}" target="_blank">политикой конфиденциальности</a>.</p>
+                </div>
+            </div>
+        </section>
+        <div class="horizontal-bottom-line"></div>
+    </main>
+</div>
+{% endblock %}

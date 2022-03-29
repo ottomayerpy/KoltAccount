@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block addons_head %}
+<link rel="stylesheet" href="{% static 'css/support.css' %}?ver={{ static_version }}"/>
+<link rel="stylesheet" href="{% static 'css/lk.css' %}?ver={{ static_version }}"/>
+<script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/lk.js' %}?ver={{ static_version }}"></script>
+{% if request.user.is_staff %}
+<script defer type="text/javascript" src="{% static 'js/lk_admin.js' %}?ver={{ static_version }}"></script>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="container">
+    <main>
+        <section>
+            <h2 align="center">{{ title }}</h2>
+            <div class="support-content">
+                <aside>
+                    <div class="row">
+                        <div class="col-md-4 lk-block">
+                            <div align="center">
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="1">Профиль</button>
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История пожертвований
+                                </button>
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">История авторизаций
+                                </button>
+                                {% if request.user.is_staff %}
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Администрирование
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-8 lk-block lk-block_info">
+                            <div class="swiper-container">
+                                <div class="js-swiper-tabs" data-tabs="1" align="center">
+                                    <strong>Профиль</strong>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="card lk_card">
+                                            <div class="card-body">
+                                                <strong>Ваши данные</strong>
+                                                <p>Здравствуйте, <span>{{ request.user.username }}</span></p>
+                                                <p>Ваш почтовый адрес:
+                                                    <span>
+                                                        {% if request.user.email %}
+                                                        {{ request.user.email }}
+                                                        {% else %}
+                                                        Не указан
+                                                        {% endif %}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="card lk_card">
+                                            <div class="card-body">
+                                                <strong>Действия</strong>
+                                                <div class="mt-5">
+                                                    <a href="{% url 'email_change_url' %}">
+                                                        <button type="submit"
+                                                                class="btn btn-primary btn-block bubbly-button default">
+                                                            Изменить почту
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                                <div class="mt-5">
+                                                    <a href="{% url 'password_change' %}">
+                                                        <button type="submit"
+                                                                class="btn btn-primary btn-block bubbly-button default">
+                                                            Изменить пароль
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                                <div class="mt-5">
+                                                    <a href="{% url 'master_password_reset_url' %}">
+                                                        <button type="submit"
+                                                                class="btn btn-primary btn-block bubbly-button default">
+                                                            Сбросить мастер пароль
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                                <div class="mt-20">
+                                                    <a href="{% url 'logout' %}">
+                                                        <button type="submit"
+                                                                class="btn btn-primary btn-block bubbly-button default">
+                                                            ‹ Выход ›
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="js-swiper-tabs" data-tabs="2">
+                                    <strong>История пожертвований</strong>
+                                    {% for donate in donation %}
+                                    <div class="js-donate" data-number="{{ forloop.counter }}">
+                                        <input type="hidden" value="{{ donate.data }}">
+                                        <div class="auth-ip">
+                                            User: {{ donate.user }}
+                                        </div>
+                                        <div class="auth-top">
+                                            <div class="auth-display js-donate-notification_type"></div>
+                                            <span class="auth-display">|</span>
+                                            <div class="auth-display js-donate-withdraw_amount"></div>
+                                        </div>
+                                        <div class="auth-bottom">
+                                            <div class="auth-display js-auth-date">
+                                                {{ donate.timestamp|date:"Y-m-d_H:i" }}
+                                            </div>
+                                            <span class="auth-display">|</span>
+                                            <div class="auth-display js-donate-codepro"></div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="js-swiper-tabs" data-tabs="3">
+                                    <strong>История авторизаций</strong>
+                                    {% for history in login_history %}
+                                    <div class="auth">
+                                        <div class="auth-ip" data-number="{{ forloop.counter }}">
+                                            IP адрес: {{ history.ip }}
+                                        </div>
+                                        <div class="auth-top">
+                                            <div class="auth-display">
+                                                {{ history.system }}
+                                            </div>
+                                            <span class="auth-display">|</span>
+                                            <div class="js-auth-location auth-display"
+                                                 data-number="{{ forloop.counter }}">
+                                                {{ history.location }}
+                                            </div>
+                                        </div>
+                                        <div class="auth-bottom">
+                                            <div class="auth-display js-auth-date">
+                                                {{ history.date|date:"Y-m-d_H:i" }}
+                                            </div>
+                                            <span class="auth-display">|</span>
+                                            <div class="auth-display">
+                                                {{ history.browser }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if request.user.is_staff %}
+                                <div class="js-swiper-tabs" data-tabs="4" align="center">
+                                    <strong>Администрирование</strong>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <strong>Настройки сайта</strong>
+                                                <div>
+                                                    {% if site_in_service == 'true' %}
+                                                    <input type="checkbox" id="site_in_service_button" checked="checked"
+                                                           class="toggle-button toggle-button_active">
+                                                    {% else %}
+                                                    <input type="checkbox" id="site_in_service_button"
+                                                           class="toggle-button">
+                                                    {% endif %}
+                                                    <label for="toggle-button" class="toggle-button_text">Закрыть
+                                                        сайт</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div>
+                                                    <label>Система ip info</label>
+                                                    <select class="form-control ip_system_select">
+                                                        {% if get_ip_info_system == 'ipwhois.io' %}
+                                                        <option value="ipwhois.io" selected>ipwhois.io</option>
+                                                        <option value="ipinfo.io">ipinfo.io</option>
+                                                        {% elif get_ip_info_system == 'ipinfo.io' %}
+                                                        <option value="ipwhois.io">ipwhois.io</option>
+                                                        <option value="ipinfo.io" selected>ipinfo.io</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <strong>Прочее</strong>
+                                                <div class="lk_other_admin_card">
+                                                    <a href="{% url 'check_email_template_url' %}">
+                                                        <button class="btn btn-primary btn-block bubbly-button">Страница
+                                                            для
+                                                            проверки email шаблонов
+                                                        </button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+        <div class="horizontal-bottom-line"></div>
+    </main>
+</div>
+<input type="hidden" id="form_message" value="{{ form_message }}">
+{% endblock %}

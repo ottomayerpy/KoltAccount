@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block addons_head %}
+<script defer src="{% static 'js/donation.js' %}?ver={{ static_version }}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <main>
+        <section>
+            <h2 align="center">{{ title }}</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card donation_card">
+                        <div class="card-body">
+                            <form method="POST" action="https://money.yandex.ru/quickpay/confirm.xml">
+                                <input type="hidden" name="receiver" value="{{ wallet_number }}">
+                                <input type="hidden" name="formcomment" value="KoltAccount, пожертвование на развитие.">
+                                <input type="hidden" name="short-dest" value="KoltAccount, пожертвование на развитие.">
+                                <input type="hidden" name="label" value="{{ request.user.id }}">
+                                <input type="hidden" name="quickpay-form" value="donate">
+                                <input type="hidden" name="targets" value="KoltAccount, пожертвование на развитие.">
+                                <input type="hidden" name="successURL" value="https://koltaccount.ru/support/donation/">
+                                <input type="hidden" name="need-fio" value="false">
+                                <input type="hidden" name="need-email" value="false">
+                                <input type="hidden" name="need-phone" value="false">
+                                <input type="hidden" name="need-address" value="false">
+                                <div class="donation_form_title">
+                                    <p>Назначение перевода</p>
+                                    <h4>На развитие сайта</h4>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sum" class="requiredField donation_form_label_sum">
+                                        Сумма
+                                    </label>
+                                    <div>
+                                        <input class="form-control donation_form_input_sum" name="sum" value="{{ default_sum }}" data-type="number" id="sum" maxlength="12">
+                                        <span class="input_clear" unselectable="on">&nbsp;</span>
+                                        <div class="form_radio_group">
+                                            <div class="form_radio_group-item">
+                                                <input id="radio-1" type="radio" name="paymentType" value="PC">
+                                                <label for="radio-1"><i class="donate_icon" id="donation_form_radio_yandex_money"></i></label>
+                                            </div>
+                                            <div class="form_radio_group-item">
+                                                <input id="radio-2" type="radio" name="paymentType" value="AC" checked>
+                                                <label for="radio-2"><i class="donate_icon" id="donation_form_radio_visa_card"></i></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div align="center" class="donation_form_donate_button">
+                                    <button type="submit" class="btn btn-primary btn-block bubbly-button">Пожертвовать</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <p>С помощью формы ты можешь пожертвовать проекту немного средств для развития и оплаты услуг хостинг провайдера.</p>
+                    <p>Благодаря пожертвованиям сайт остается бесплатным и доступеным для всех! <span class="span_emoji">😃👍</span></p>
+                    <p>Важны даже самые маленькие пожертвования. <span class="span_emoji">🙏</span></p>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h2 align="center">Социальная поддержка</h2>
+            <div class="row">
+                <div class="col-sm-6">
+                    <p>Ты также можешь поддержать нас, рассказав об этом сайте своим друзьям или поделиться ссылкой в социальных сетях.</p>
+                </div>
+                <div class="col-sm-6 share-container" align="center">
+                    <a href="http://vk.com/share.php?url=https://koltaccount.ru/&image=https://koltaccount.ru{% static 'img/png/icon-512x512.png' %}&noparse=true" target="_blank" title="Вконтакте" onclick="window.open(this.href, this.target, 'width=500, height=500, scrollbars=1');return false;">
+                        <img class="share-button" src="{% static 'img/svg/social/vk.svg' %}" height="50" width="50" alt="vk" id="donation_vk">
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https://koltaccount.ru/&picture=https://koltaccount.ru{% static 'img/png/icon-512x512.png' %}" target="_blank" title="Фейсбук" onclick="window.open(this.href, this.target, 'width=500, height=500, scrollbars=1');return false;">
+                        <img class="share-button" src="{% static 'img/svg/social/fb.svg' %}" height="50" width="50" alt="facebook" id="donation_facebook">
+                    </a>
+                    <a href="https://connect.ok.ru/offer?url=https://koltaccount.ru/" target="_blank" title="Одноклассники" onclick="window.open(this.href, this.target, 'width=500, height=500, scrollbars=1');return false;">
+                        <img class="share-button" src="{% static 'img/svg/social/ok.svg' %}" height="50" width="50" alt="ok" id="donation_ok">
+                    </a>
+                    <a href="https://twitter.com/share?url=https://koltaccount.ru/&text=Веб приложение для храниения аккаунтов&hashtags=koltaccount" target="_blank" title="Твиттер" onclick="window.open(this.href, this.target, 'width=500, height=500, scrollbars=1');return false;">
+                        <img class="share-button" src="{% static 'img/svg/social/twitter.svg' %}" height="50" width="50" alt="twitter" id="donation_twitter">
+                    </a>
+                    <a href="http://connect.mail.ru/share?url=https://koltaccount.ru/&title=KoltAccount&description=Веб приложение для храниения аккаунтов&image_url=https://koltaccount.ru{% static 'img/png/icon-512x512.png' %}" target="_blank" title="Мой мир" onclick="window.open(this.href, this.target, 'width=500, height=500, scrollbars=1');return false;">
+                        <img class="share-button" src="{% static 'img/svg/social/mailru.svg' %}" height="50" width="50" alt="mailru" id="donation_mailru">
+                    </a>
+                </div>
+            </div>
+        </section>
+        <div class="horizontal-bottom-line"></div>
+    </main>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block noscript %}
+<script type="text/javascript" src="{% static 'js/mini/noscript.js' %}"></script>
+{% endblock %}
+{% block content %}
+{% block preload %}{% endblock %}
+<div class="container">
+    <h2>{{ title }} 😇</h2>
+    <p>Прошу прощения, но сайт не может нормально функционировать без javascript, пожалуйста, включите его в настройках вашего браузера. Спасибо. <span class="span_emoji">😘</span></p>
+    <div class="horizontal-bottom-line"></div>
+</div>
+{% endblock %}

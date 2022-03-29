@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container">
+    <main>
+        <section>
+            <h2 align="center">{{ title }}</h2>
+            <p align="center">Мы отправили вам по электронной почте инструкции по подтверждению почты, если существует учетная запись с указанным вами адресом электронной почты. Вы получите их в ближайшее время.</p>
+            <p align="center">Если вы не получили электронное письмо, убедитесь, что вы правильно ввели свой адрес электронной почты при регистрации, проверить это можно в <a href="{% url 'lk_url' %}">личном кабинете</a>, и проверьте папку со спамом.</p>
+        </section>
+        <div class="horizontal-bottom-line"></div>
+    </main>
+</div>
+{% endblock %}

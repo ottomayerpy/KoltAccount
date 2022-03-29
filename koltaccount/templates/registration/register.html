@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block addons_head %}
+<script defer type="text/javascript" src="{% static 'js/addons/PassGenJS.min.js' %}"></script>
+<script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/form_message_handler.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/register.js' %}?ver={{ static_version }}"></script>
+{% endblock %}
+{% block content %}
+<div class="container registration-container">
+    <div class="row flex nomargin">
+        {% load crispy_forms_tags %}
+        <div class="card register_card">
+            <div class="card-body">
+                <h4 class="card-title text-center">{{ title }}</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary btn-block bubbly-button btn-block">Зарегистрироваться</button>
+                    <button type="button" class="in-password_additional_button js-show_password position-show_password">
+                        <img title="Показать пароль" src="{% static 'img/svg/show-password.svg' %}" alt="show-password" height="30" width="30" />
+                    </button>
+                    <button type="button" class="in-password_additional_button js-generate_password position-generate_password">
+                        <img title="Сгенерировать пароль" src="{% static 'img/svg/lock.svg' %}" alt="show-password" height="30" width="30" />
+                    </button>
+                </form>
+                <div id="password_info">
+                    <h5>Критерии пароля:</h5>
+                    <ul>
+                        <li id="letter">Минимум <strong>одна маленькая буква</strong></li>
+                        <li id="capital">Минимум <strong>одна заглавная буква</strong></li>
+                        <li id="number">Минимум <strong>одна цифра</strong></li>
+                        <li id="length">Быть не менее <strong>8 символов</strong></li>
+                    </ul>
+                </div>
+            </div>
+            <p class="terms_confirm-text">Нажимая на кнопку «Зарегистрироваться», вы даете согласие на обработку персональных данных и соглашаетесь c <a href="{% url 'privacy_url' %}" target="_blank">политикой конфиденциальности</a>.</p>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="form_message" value="{{ form_message }}">
+<input type="hidden" id="in-hide-username" value="{{ username }}">
+<input type="hidden" id="in-hide-email" value="{{ email }}">
+{% endblock %}

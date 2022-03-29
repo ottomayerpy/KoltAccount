@@ -1,0 +1,106 @@
+.support-content {
+    padding: 25px;
+
+    color: #f4f7fb;
+    background: #010b23;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.simple-tabs__pagination {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+            flex-direction: column;
+
+    padding-bottom: 28px;
+
+    -ms-flex-direction: column;
+    -ms-flex-pack: start;
+    -webkit-box-pack: start;
+            justify-content: flex-start;
+    -ms-flex-align: start;
+    -webkit-box-align: start;
+            align-items: flex-start;
+}
+
+
+.simple-tabs {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.43;
+
+    position: relative;
+
+    width: 100%;
+    height: auto;
+    min-height: 40px;
+    margin: 0;
+    padding: 0;
+
+    cursor: pointer;
+    -webkit-transition: color .2s, -webkit-box-shadow .2s;
+    transition: color .2s, -webkit-box-shadow .2s;
+    -o-transition: color .2s, box-shadow .2s;
+    transition: color .2s, box-shadow .2s;
+    transition: color .2s, box-shadow .2s, -webkit-box-shadow .2s;
+    text-align: left;
+
+    opacity: 1;
+    color: #f4f7fb;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    outline: 0 !important;
+    background-color: rgba(244, 247, 251, 0);
+    -webkit-box-shadow: 0 1px 0 0 rgba(221, 225, 230, .3);
+            box-shadow: 0 1px 0 0 rgba(221, 225, 230, .3);
+}
+
+
+.simple-tabs:hover {
+    -webkit-box-shadow: 0 1px 0 0 rgba(221, 225, 230, .67);
+            box-shadow: 0 1px 0 0 rgba(221, 225, 230, .67);
+}
+
+.swiper-container {
+    font-size: 16px;
+    line-height: 20px;
+
+    position: relative;
+    z-index: 1;
+
+    overflow: hidden;
+
+    margin-right: auto;
+    margin-left: auto;
+
+    color: rgba(222, 222, 222, .95);
+}
+
+.swiper-container strong {
+    font-size: 18px;
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    cursor: default;
+}
+
+.swiper-container>div {
+    display: none;
+
+    cursor: default;
+}
+
+.swiper-container>div.active {
+    display: block;
+}
+
+.help_block {
+    border-radius: 2px;
+    background: #fff;
+}

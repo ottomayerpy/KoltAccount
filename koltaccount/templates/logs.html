@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+{% block addons_head %}
+<script defer type="text/javascript" src="{% static 'js/logs.js' %}?ver={{ static_version }}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>{{ title }} (Записей: {{ logs|length }})</h2>
+    <div class="row">
+        <div class="col-md-4 mt-5">
+            <input class="form-control" placeholder="Поиск по типу" type="text" id="in-search_type">
+        </div>
+        <div class="col-md-4 mt-5">
+            <input class="form-control" placeholder="Поиск по пользователю" type="text" id="in-search_user">
+        </div>
+        <div class="col-md-4 mt-5">
+            <input class="form-control" placeholder="Поиск по дате" type="text" id="in-search_date">
+        </div>
+    </div>
+    {% for key, loginfo in logs %}
+    <div class="js-log_item" data-id="{{ key }}" data-user="{{ loginfo.user }}">
+        <div class="horizontal-bottom-line"></div>
+        <p>
+            {% for key, item in loginfo.items %}
+            {% if key == 'traceback' %}
+            <pre>{{ item }}</pre>
+            {% else %}
+            <span class="logs_span_key">{{ key }}:</span>
+            <span class="js-{{ key }}">{{ item }}</span>
+            {% endif %}
+            {% endfor %}
+        </p>
+    </div>
+    {% endfor %}
+    <div class="horizontal-bottom-line"></div>
+</div>
+{% endblock %}

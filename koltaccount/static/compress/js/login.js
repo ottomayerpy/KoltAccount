@@ -1,0 +1,1 @@
+$(function(){$(".js-show_password").on("click",function(){password=$("#id_password"),password.attr("type","password"===password.attr("type")?"text":"password")});let o=browserInfo.os,s=browserInfo.browser+" "+browserInfo.browserMajorVersion;"Unknown"!=browserInfo.osVersion&&(o+=" "+browserInfo.osVersion),$("#id_system").val(o),$("#id_browser").val(s)});

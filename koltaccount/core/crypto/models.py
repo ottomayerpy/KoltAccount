@@ -33,7 +33,7 @@ class CryptoSetting(models.Model):
     def __str__(self):
         return self.user.username
 
-    def create(self, user):
+    def create(user):
         CryptoSetting.objects.create(
             user=user,
             key=CryptoParam.objects.get(id=CP_KEY_ID),
@@ -42,7 +42,7 @@ class CryptoSetting(models.Model):
             iterations=randint(57, 7999),
         )
 
-    def change(self, user):
+    def change(user):
         cs = CryptoSetting.objects.get(user=user)
         cs.key = CryptoParam.objects.get(id=CP_KEY_ID)
         cs.iv = CryptoParam.objects.get(id=CP_IV_ID)

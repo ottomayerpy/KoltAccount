@@ -1,4 +1,4 @@
-from core.models import SiteSetting
+from core.site_settings.models import SiteSetting
 from django.contrib.sites.models import Site
 from django.shortcuts import render
 from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,

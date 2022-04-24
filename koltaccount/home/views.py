@@ -1,10 +1,19 @@
-import json
 import locale
 
-from core import (accounts, kolt_email, kolt_logger, login_history,
-                  master_password, service, site_settings, yandex_donations)
-from core.models import (Account, Donation, LoginHistory, MasterPassword,
-                         SiteSetting)
+from core import service as core_service
+from core.accounts import service as accounts_service
+from core.accounts.models import Account
+from core.crypto import master_password
+from core.crypto import service as crypto_service
+from core.crypto.models import MasterPassword
+from core.donation import yandex_donations
+from core.donation.models import Donation
+from core.kolt_email import service as email_service
+from core.kolt_logger import service as logger_service
+from core.login_history import service as login_history_service
+from core.login_history.models import LoginHistory
+from core.site_settings import service as site_settings_service
+from core.site_settings.models import SiteSetting
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordResetView
@@ -36,7 +45,7 @@ def check_email_template(request):
         'domain': 'koltaccount.ru',
         'uid': 'MQ%5B0-9A-Za-z_%5',
         'token': '-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%',
-        'email': kolt_email.hiding_email(request.user.email)
+        'email': email_service.hiding_email(request.user.email)
     }
 
     # Шаблоны
@@ -78,7 +87,7 @@ def logs(request):
 
     context = {
         'title': 'Логи',
-        'logs': kolt_logger.get_logs(),
+        'logs': logger_service.get_logs(),
         'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
         'static_version': STATIC_VERSION
     }
@@ -131,18 +140,18 @@ def email_change(request):
         email = request.POST.get('email')
         user = User.objects.get(id=request.user.id)
         current_site = Site.objects.get_current()
-        kolt_email.confirm_email(
+        email_service.confirm_email(
             user=user,
             email=email,
             subject='Привязка email к аккаунту',
             template='email/email_change_email.html'
         )
-        kolt_email.send_email(
+        email_service.send_email(
             email=user.email,
             subject='Привязка email к аккаунту',
             template='email/email_change_notification_to_old_email.html',
             context={
-                'email': kolt_email.hiding_email(email),
+                'email': email_service.hiding_email(email),
                 'username': user.username,
                 'domain': current_site.domain
             }
@@ -210,7 +219,7 @@ def confirm_email(request):
     почты после регистрации """
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
-    kolt_email.confirm_email(
+    email_service.confirm_email(
         user=request.user,
         email=request.user.email,
         subject='Добро пожаловать в KoltAccount',
@@ -224,7 +233,7 @@ def activate_email(request, uidb64, token):
     if not request.user.is_authenticated:
         return redirect(reverse("kolt_login"))
 
-    if kolt_email.activate_email(uidb64, token):
+    if email_service.activate_email(uidb64, token):
         request.session['valid'] = True
     return redirect(reverse("confirm_email_complete_url"))
 
@@ -262,33 +271,33 @@ def master_password_reset(request):
 
 def get_crypto_settings(request):
     """ Получить настройки шифрования """
-    if service.is_ajax(request):
-        answer = service.get_crypto_settings(request.user)
-        return service.json_response(answer)
+    if core_service.is_ajax(request):
+        answer = crypto_service.get_crypto_settings(request.user)
+        return core_service.json_response(answer)
     return HttpResponseForbidden(render(request, '403.html'))
 
 
 def get_ip_info_system_switch(request):
     """ Закрыть сайт на техническое обслуживание """
-    if service.is_ajax(request) and request.user.is_staff:
+    if core_service.is_ajax(request) and request.user.is_staff:
         system_name = request.POST.get('system_name', None)
-        answer = site_settings.get_ip_info_system_switch(system_name)
-        return service.json_response(answer)
+        answer = site_settings_service.get_ip_info_system_switch(system_name)
+        return core_service.json_response(answer)
     return HttpResponseForbidden(render(request, '403.html'))
 
 
 def site_in_service_switch(request):
     """ Закрыть сайт на техническое обслуживание """
-    if service.is_ajax(request) and request.user.is_staff:
+    if core_service.is_ajax(request) and request.user.is_staff:
         checked = request.POST.get('checked', None)
-        answer = site_settings.site_in_service_switch(checked)
-        return service.json_response(answer)
+        answer = site_settings_service.site_in_service_switch(checked)
+        return core_service.json_response(answer)
     return HttpResponseForbidden(render(request, '403.html'))
 
 
 def create_account(request):
     """ Создает аккаунт """
-    if not service.is_ajax(request):
+    if not core_service.is_ajax(request):
         return HttpResponseForbidden(render(request, '403.html'))
 
     site = request.POST.get('site', None)
@@ -296,29 +305,29 @@ def create_account(request):
     _login = request.POST.get('login', None)
     password = request.POST.get('password', None)
 
-    answer = accounts.create_account(
+    answer = accounts_service.create_account(
         site=site,
         description=description,
         login=_login,
         password=password,
         user=request.user
     )
-    return service.json_response(answer)
+    return core_service.json_response(answer)
 
 
 def delete_account(request):
     """ Удаляет аккаунт """
-    if not service.is_ajax(request):
+    if not core_service.is_ajax(request):
         return HttpResponseForbidden(render(request, '403.html'))
 
     account_id = request.POST.get('account_id', None)
-    answer = accounts.delete_account(account_id)
-    return service.json_response(answer)
+    answer = accounts_service.delete_account(account_id)
+    return core_service.json_response(answer)
 
 
 def change_info_account(request):
     """ Изменяет информацию об аккаунте """
-    if not service.is_ajax(request):
+    if not core_service.is_ajax(request):
         return HttpResponseForbidden(render(request, '403.html'))
 
     site = request.POST.get('site', None)
@@ -327,19 +336,19 @@ def change_info_account(request):
     new_password = request.POST.get('new_password', None)
     account_id = request.POST.get('account_id', None)
 
-    answer = accounts.change_info_account(
+    answer = accounts_service.change_info_account(
         site=site,
         description=description,
         new_login=new_login,
         new_password=new_password,
         account_id=account_id
     )
-    return service.json_response(answer)
+    return core_service.json_response(answer)
 
 
 def change_or_create_master_password(request):
     """ Изменяет мастер пароль """
-    if not service.is_ajax(request):
+    if not core_service.is_ajax(request):
         return HttpResponseForbidden(render(request, '403.html'))
 
     sites = request.POST.get('sites', None)
@@ -356,26 +365,26 @@ def change_or_create_master_password(request):
         new_master_password=new_master_password,
         user=request.user
     )
-    return service.json_response(answer)
+    return core_service.json_response(answer)
 
 
 def check_username(request):
     """ Проверяет существование имени в БД """
-    if not service.is_ajax(request):
+    if not core_service.is_ajax(request):
         return HttpResponseForbidden(render(request, '403.html'))
 
     username = request.POST.get('username', None)
-    answer = service.check_username(username)
-    return service.json_response(answer)
+    answer = core_service.check_username(username)
+    return core_service.json_response(answer)
 
 
 def get_master_password(request):
     """ Возвращает мастер пароль """
-    if not service.is_ajax(request):
+    if not core_service.is_ajax(request):
         return HttpResponseForbidden(render(request, '403.html'))
 
     answer = master_password.get_master_password(user=request.user)
-    return service.json_response(answer)
+    return core_service.json_response(answer)
 
 
 def kolt_login(request):
@@ -401,7 +410,7 @@ def kolt_login(request):
 
         if user is not None:
             login(request, user)
-            nlh_thread = login_history.NewLoginHistory(
+            nlh_thread = login_history_service.NewLoginHistory(
                 user, request.META, system, browser)
             nlh_thread.start()
             nlh_thread.join(1.0)
@@ -444,7 +453,7 @@ def kolt_register(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
 
-        answer = service.check_if_password_correct(password1, password2)
+        answer = core_service.check_if_password_correct(password1, password2)
         if answer == 'success':
             try:
                 user = User.objects.create_user(
@@ -453,7 +462,7 @@ def kolt_register(request):
                     password=password1
                 )
 
-                kolt_email.confirm_email(
+                email_service.confirm_email(
                     user=user,
                     email=email,
                     subject='Добро пожаловать в KoltAccount',

@@ -1,4 +1,4 @@
-from core import kolt_email
+from core.kolt_email import service as email_service
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
@@ -80,7 +80,7 @@ class KoltPasswordResetForm(PasswordResetForm):
                     'protocol': 'https' if use_https else 'http',
                     **(extra_email_context or {}),
                 }
-                kolt_email.send_email(
+                email_service.send_email(
                     email=user_email,
                     subject=f'Сброс пароля на {site_name}',
                     template=html_email_template_name,

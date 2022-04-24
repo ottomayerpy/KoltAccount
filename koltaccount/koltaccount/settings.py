@@ -25,7 +25,14 @@ INSTALLED_APPS = [
     'dotenv',
 
     'home.apps.HomeConfig',
-    'core.apps.CoreConfig',
+    'core.crypto.apps.CryptoConfig',
+    'core.donation.apps.DonationConfig',
+    'core.kolt_email.apps.KoltEmailConfig',
+    'core.kolt_logger.apps.KoltLoggerConfig',
+    'core.login_history.apps.LoginHistoryConfig',
+    'core.site_settings.apps.SiteSettingsConfig',
+    'core.accounts.apps.AccountsConfig',
+    'core.kolt_profile.apps.KoltProfileConfig',
     'support.apps.SupportConfig'
 ]
 
@@ -83,10 +90,18 @@ CSP_IMG_SRC = ("'self'",)
 # Эта политика содержит 'unsafe-inline', что опасно в директиве style-src.
 
 
+# CP (Crypto Param)
+CP_KEY_ID = 1 # 256/8
+CP_IV_ID = 2 # 128/8
+CP_SALT_ID = 1
+
 # CS (Crypto Settings)
-CS_KEY_ID = 1
-CS_IV_ID = 2
-CS_SALT_ID = 1
+DECRYPT_MP_SUBSTRING_START = 0
+DECRYPT_MP_SUBSTRING_END = 64
+
+DECRYPT_SUBSTRING_START = 0
+DECRYPT_SUBSTRING_END = 32
+
 
 # Защита Referrer-Policy для контента
 PERMISSIONS_POLICY = {

@@ -9,7 +9,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from koltaccount.settings import SITE_PROTOCOL
 
-from .token_generator import account_activation_token
+from core.token_generator import account_activation_token
 
 
 class EmailThread(threading.Thread):

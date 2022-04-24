@@ -5,9 +5,9 @@ from django.shortcuts import render
 from koltaccount.settings import STATIC_VERSION
 from loguru import logger as log
 
-from . import kolt_logger
+from core.kolt_logger import service as logger_service
 
-from .models import SiteSetting
+from core.site_settings.models import SiteSetting
 
 
 class BaseViewMiddleware:
@@ -26,7 +26,7 @@ class BaseViewMiddleware:
 
     def process_exception(self, request, exception):
         log.error(traceback.format_exc())
-        kolt_logger.write_error_to_log_file(
+        logger_service.write_error_to_log_file(
             'ERROR', request.user, traceback.format_exc())
         return HttpResponseServerError(render(request, '500.html'))
 

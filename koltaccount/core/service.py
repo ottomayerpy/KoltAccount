@@ -2,31 +2,10 @@ import re
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from .models import CryptoSetting
 
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
-
-
-def get_crypto_settings(user: User):
-    """ Возвращает настройки шифрования """
-    cs = CryptoSetting.objects.get(user=user)
-    return {
-        'key': {
-            'size': cs.key.size,
-            'division': cs.key.devision
-        },
-        'iv': {
-            'size': cs.iv.size,
-            'division': cs.iv.devision
-        },
-        'salt': {
-            'size': cs.salt.size,
-            'division': cs.salt.devision
-        },
-        'iterations': cs.iterations
-    }
 
 
 def check_username(username: str) -> dict:

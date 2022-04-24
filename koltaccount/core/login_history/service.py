@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from koltaccount.settings import SITE_PROTOCOL, SUPPORT_EMAIL
 
-from . import ip_information
-from . import kolt_email
-from . import kolt_logger
+from .. import ip_information
+from core.kolt_email import service as email_service
+from core.kolt_logger import service as logger_service
 
-from .models import LoginHistory, SiteSetting
+from .models import LoginHistory
+from core.site_settings.models import SiteSetting
 
 
 class NewLoginHistory(threading.Thread):
@@ -34,7 +35,7 @@ class NewLoginHistory(threading.Thread):
                 to_email = SUPPORT_EMAIL
 
             current_site = Site.objects.get_current()
-            kolt_email.send_email(
+            email_service.send_email(
                 email=to_email,
                 subject='Переполнение запросов ipwhois.io',
                 template='notification_ip_info_completed_requests_to_admin',
@@ -53,7 +54,7 @@ class NewLoginHistory(threading.Thread):
                     location = f"{ip_info['city']}, {ip_info['country']}"
                 self.create_login_history(client_ip, location)
             else:
-                kolt_logger.write_error_to_log_file(
+                logger_service.write_error_to_log_file(
                     'NewLoginHistory ipwhois.io ERROR',
                     self.user.username,
                     ip_info
@@ -63,7 +64,7 @@ class NewLoginHistory(threading.Thread):
                 location = f"{ip_info['city']}, {ip_info['region']}"
                 self.create_login_history(client_ip, location)
             except KeyError:
-                kolt_logger.write_error_to_log_file(
+                logger_service.write_error_to_log_file(
                     'NewLoginHistory ipinfo.io ERROR',
                     self.user.username,
                     ip_info

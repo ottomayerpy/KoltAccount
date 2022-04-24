@@ -53,7 +53,7 @@ def check_email_template(request):
 def index(request):
     """ Главная страница """
     context = {
-        'title': 'KoltAccount',
+        'title': 'KoltAccount (beta)',
         'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
         'static_version': STATIC_VERSION
     }

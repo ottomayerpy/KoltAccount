@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" dir="ltr">
+<html lang="ru" dir="ltr" class="dark">
 
 <head>
     {% load static %}
@@ -8,12 +8,6 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="Описание страницы. Не менее 160 символов." />
     <meta name="keywords" content="облачное, хранение, аккаунтов, бесплатный, менеджер, паролей, удобный, безопасный, веб, приложение" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="KoltAccount" />
-    <meta name="twitter:description" content="Веб приложение для храниения аккаунтов" />
-    <meta name="twitter:image:src" content="https://koltaccount.ru{% static 'img/png/icon-512x512.png' %}" />
-    <meta name="twitter:url" content="https://koltaccount.ru/" />
-    <meta name="twitter:domain" content="koltaccount.ru" />
     <meta property="og:title" content="KoltAccount" />
     <meta property="og:description" content="Веб приложение для храниения аккаунтов" />
     <meta property="og:type" content="website" />
@@ -59,6 +53,18 @@
     <script defer src="{% static 'js/addons/sweet-alert.min.js' %}"></script>
     <script defer src="{% static 'js/base.js' %}?ver={{ static_version }}"></script>
     <script defer async src="{% static 'js/addons/SmoothScroll.js' %}"></script>
+    <!--<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                clifford: '#da373d',
+              }
+            }
+          }
+        }
+      </script>-->
     <title>{% block title %}{% endblock %}</title>
     {% block addons_head %}{% endblock %}
     {% block noscript %}

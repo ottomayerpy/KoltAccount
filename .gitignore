@@ -7,4 +7,3 @@ env
 .idea
 db.sqlite3
 logs
-frontend

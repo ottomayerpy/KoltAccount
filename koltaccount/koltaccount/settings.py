@@ -140,7 +140,7 @@ ROOT_URLCONF = 'koltaccount.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates',],
+        'DIRS': [BASE_DIR / 'frontend/templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -185,13 +185,13 @@ USE_L10N = True
 USE_TZ = True
 
 STATICFILES_DIRS = (
-    BASE_DIR / 'static',
+    BASE_DIR / 'frontend/static',
 )
 
-STATIC_URL = '/static/'
+STATIC_URL = '/frontend/static/'
 
-MEDIA_ROOT = BASE_DIR / 'media/'
-MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'frontend/media/'
+MEDIA_URL = '/frontend/media/'
 
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
 EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")

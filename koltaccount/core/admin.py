@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (Account, Donation, LoginHistory, MasterPassword, Profile,
-                     SiteSetting)
+                     SiteSetting, CryptoSetting, CryptoParam)
 
 
 class AccountAdmin(admin.ModelAdmin):
@@ -39,9 +39,25 @@ class SiteSettingAdmin(admin.ModelAdmin):
         model = SiteSetting
 
 
+class CryptoSettingAdmin(admin.ModelAdmin):
+    list_display = ['user', 'key', 'iv', 'salt', 'iterations', 'id']
+
+    class Meta:
+        model = CryptoSetting
+
+
+class CryptoParamAdmin(admin.ModelAdmin):
+    list_display = ['size', 'devision', 'id']
+
+    class Meta:
+        model = CryptoParam
+
+
 admin.site.register(Account, AccountAdmin)
 admin.site.register(MasterPassword, MasterPasswordAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(LoginHistory, LoginHistoryAdmin)
 admin.site.register(SiteSetting, SiteSettingAdmin)
+admin.site.register(CryptoSetting, CryptoSettingAdmin)
+admin.site.register(CryptoParam, CryptoParamAdmin)
 admin.site.register(Donation)

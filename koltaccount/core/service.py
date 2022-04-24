@@ -2,6 +2,7 @@ import re
 
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from .models import CryptoSetting
 
 
 def is_ajax(request):
@@ -9,20 +10,22 @@ def is_ajax(request):
 
 
 def get_crypto_settings(user: User):
+    """ Возвращает настройки шифрования """
+    cs = CryptoSetting.objects.get(user=user)
     return {
         'key': {
-            'size': 256,
-            'division': 8
+            'size': cs.key.size,
+            'division': cs.key.devision
         },
         'iv': {
-            'size': 128,
-            'division': 8
+            'size': cs.iv.size,
+            'division': cs.iv.devision
         },
         'salt': {
-            'size': 256,
-            'division': 8
+            'size': cs.salt.size,
+            'division': cs.salt.devision
         },
-        'iterations': 100
+        'iterations': cs.iterations
     }
 
 

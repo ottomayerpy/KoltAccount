@@ -82,6 +82,35 @@ class SiteSetting(models.Model):
         verbose_name_plural = 'Настройки сайта'
 
 
+class CryptoParam(models.Model):
+    """ Настройка отдельных параметров шифрования (например соли...) """
+    size = models.IntegerField('Размер', default=256)
+    devision = models.IntegerField('Делитель', default=8)
+
+    def __str__(self):
+        return f'{self.size}/{self.devision}'
+
+    class Meta:
+        verbose_name = 'Настройка отдельных параметров шифрования'
+        verbose_name_plural = 'Настройки отдельных параметров шифрования'
+
+
+class CryptoSetting(models.Model):
+    """ Индивидуальные настройки шифрования пользователя """
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    key = models.ForeignKey(CryptoParam, verbose_name='Ключ', related_name='CS_KEY', on_delete=models.CASCADE)
+    iv = models.ForeignKey(CryptoParam, verbose_name='IV', related_name='CS_IV', on_delete=models.CASCADE)
+    salt = models.ForeignKey(CryptoParam, verbose_name='Соль', related_name='CS_SALT', on_delete=models.CASCADE)
+    iterations = models.IntegerField('Кол-во интераций', default=10)
+
+    def __str__(self):
+        return str(self.user)
+
+    class Meta:
+        verbose_name = 'Настройка шифрования пользователя'
+        verbose_name_plural = 'Настройки шифрования пользователей'
+
+
 class Donation(models.Model):
     """ Пожертвования """
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)

@@ -12,6 +12,8 @@ urlpatterns = [
 
     path('lk/get_ip_info_system_switch/', views.get_ip_info_system_switch),
     path('lk/site_in_service_switch/', views.site_in_service_switch),
+    path('get_crypto_settings/', views.get_crypto_settings,
+         name='get_crypto_settings_url'),
     path('donation_notification/', views.donation_notification),
     path('create_account/', views.create_account),
     path('delete_account/', views.delete_account),

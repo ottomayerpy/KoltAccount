@@ -1,3 +1,4 @@
+import json
 import locale
 
 from core import (accounts, kolt_email, kolt_logger, login_history,
@@ -64,7 +65,7 @@ def index(request):
         return render(request, 'landing.html', context)
 
     context.update({
-        'accounts': Account.objects.filter(user=request.user)
+        'accounts': Account.objects.filter(user=request.user),
     })
 
     return render(request, 'home.html', context)
@@ -257,6 +258,14 @@ def master_password_reset(request):
             'form_message': 'Password is not valid'
         })
     return render(request, 'registration/master_password_reset.html', context)
+
+
+def get_crypto_settings(request):
+    """ Получить настройки шифрования """
+    if service.is_ajax(request):
+        answer = service.get_crypto_settings(request.user)
+        return service.json_response(answer)
+    return HttpResponseForbidden(render(request, '403.html'))
 
 
 def get_ip_info_system_switch(request):

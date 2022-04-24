@@ -8,6 +8,24 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
+def get_crypto_settings(user: User):
+    return {
+        'key': {
+            'size': 256,
+            'division': 8
+        },
+        'iv': {
+            'size': 128,
+            'division': 8
+        },
+        'salt': {
+            'size': 256,
+            'division': 8
+        },
+        'iterations': 100
+    }
+
+
 def check_username(username: str) -> dict:
     """ Проверяет существование имени в БД """
     is_exist_username = False

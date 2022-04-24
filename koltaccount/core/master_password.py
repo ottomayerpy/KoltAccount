@@ -1,9 +1,11 @@
 import json
+from random import randint
 
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
+from koltaccount.settings import CS_IV_ID, CS_KEY_ID, CS_SALT_ID
 
-from .models import Account, MasterPassword
+from .models import Account, CryptoParam, CryptoSetting, MasterPassword
 
 
 def master_password_reset(user: User, password: str) -> bool:
@@ -47,6 +49,12 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
 
         master_password.password = new_master_password
         master_password.save()
+
+        cs = CryptoSetting.objects.get(user=user)
+        cs.key=CryptoParam.objects.get(id=CS_KEY_ID)
+        cs.iv=CryptoParam.objects.get(id=CS_IV_ID)
+        cs.salt=CryptoParam.objects.get(id=CS_SALT_ID)
+        cs.iterations = randint(57, 7999)
 
     return {
         'status': 'success'

@@ -83,6 +83,11 @@ CSP_IMG_SRC = ("'self'",)
 # Эта политика содержит 'unsafe-inline', что опасно в директиве style-src.
 
 
+# CS (Crypto Settings)
+CS_KEY_ID = 1
+CS_IV_ID = 2
+CS_SALT_ID = 1
+
 # Защита Referrer-Policy для контента
 PERMISSIONS_POLICY = {
     'autoplay': ['none', ],

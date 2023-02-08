@@ -312,9 +312,7 @@ def master_password_reset(request):
         })
 
     if request.method == "POST":
-        password = request.POST.get("password")
-
-        if master_password.master_password_reset(request.user, password):
+        if master_password.master_password_reset(request) is not None:
             return redirect(reverse("home_url"))
 
         context.update({

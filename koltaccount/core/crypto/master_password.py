@@ -13,19 +13,27 @@ from koltaccount.settings import (CRYPT_STR_AES_MODE,
 from .models import MasterPassword
 
 
-def master_password_reset(user: User, password: str) -> bool:
-    """ Сброс мастер пароля """
-    if check_password(password, user.password):
-        master_password = MasterPassword.objects.get(user=user)
-        master_password.delete()
-        accounts = Account.objects.filter(user=user)
-        accounts.delete()
-        return True
-    return False
+def master_password_reset(request) -> tuple or None:
+    """ Сброс мастер пароля, удаляет запись мастер
+        пароля пользователя и все записи его аккаунтов
+
+    Args:
+        request (Request): Запрос
+
+    Returns:
+        tuple or None: Вернет словарь с удаленной записью
+                       мастер пароля в случае успеха, или
+                       вернет None в случае неудачной проверки
+                       пароля учетной записи пользователя
+    """
+    password = request.POST.get("password")
+    if check_password(password, request.user.password):
+        Account.objects.filter(user=request.user).delete()
+        return MasterPassword.objects.get(user=request.user).delete()
 
 
 def change_or_create_master_password(sites: str, descriptions: str, logins: str, passwords: str,
-                                     new_master_password: str, new_crypto_settings: str, user: User) -> dict:
+                                     new_master_password: str, new_crypto_settings: str, user: User) -> None:
     """ Изменяет мастер пароль """
     master_password, is_created = MasterPassword.objects.get_or_create(
         user=user,
@@ -35,16 +43,12 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
         }
     )
 
-    # Если False значит объект найден, и не был создан, а это значит, что
-    # существуют записанные аккаунты и их можно переписывать
-    if not is_created:
+    account = Account.objects.filter(user=user)
+    if account.count() > 0:
         sites = json.loads(sites)
         descriptions = json.loads(descriptions)
         logins = json.loads(logins)
         passwords = json.loads(passwords)
-
-        # Перезаписываем все аккаунты на новые значения
-        account = Account.objects.filter(user=user)
 
         for item in account:
             item.site = sites[str(item.id)]
@@ -53,12 +57,10 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
             item.password = passwords[str(item.id)]
             item.save()
 
+    if not is_created:
         master_password.password = new_master_password
+        master_password.crypto_settings = new_crypto_settings
         master_password.save()
-
-    return {
-        'status': 'success'
-    }
 
 
 def get_master_password(user: User) -> str:

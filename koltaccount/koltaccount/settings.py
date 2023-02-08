@@ -1,13 +1,18 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-
-from dotenv import load_dotenv
+import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR.parent.parent.parent / 'settings/.env')
+env = environ.Env()
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+ENVIRONMENT = BASE_DIR.parent.parent.parent / 'settings/.env'
+if os.path.exists(ENVIRONMENT):
+    environ.Env.read_env(ENVIRONMENT)
+else:
+    raise FileNotFoundError("Файл {} не найден".format(ENVIRONMENT))
+
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -44,10 +49,10 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Почта поддержки
-SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
-YANDEX_MONEY_WALLET_NUMBER = os.getenv("YANDEX_MONEY_WALLET_NUMBER")
-YANDEX_MONEY_DEFAULT_SUM = os.getenv("YANDEX_MONEY_DEFAULT_SUM")
-DONATION_NOTIFICATION_SECRET_KEY = os.getenv(
+SUPPORT_EMAIL = env("SUPPORT_EMAIL")
+YANDEX_MONEY_WALLET_NUMBER = env("YANDEX_MONEY_WALLET_NUMBER")
+YANDEX_MONEY_DEFAULT_SUM = env("YANDEX_MONEY_DEFAULT_SUM")
+DONATION_NOTIFICATION_SECRET_KEY = env(
     "DONATION_NOTIFICATION_SECRET_KEY")
 
 ###SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -94,13 +99,13 @@ CP_IV_ID = 2 # 128/8
 CP_SALT_ID = 1
 
 # CS (Crypto Settings)
-DECRYPT_MP_SUBSTRING_START = os.getenv("DECRYPT_MP_SUBSTRING_START")
-DECRYPT_MP_SUBSTRING_END = os.getenv("DECRYPT_MP_SUBSTRING_END")
+DECRYPT_MP_SUBSTRING_START = env("DECRYPT_MP_SUBSTRING_START")
+DECRYPT_MP_SUBSTRING_END = env("DECRYPT_MP_SUBSTRING_END")
 
-DECRYPT_STR_SUBSTRING_START = os.getenv("DECRYPT_STR_SUBSTRING_START")
-DECRYPT_STR_SUBSTRING_END = os.getenv("DECRYPT_STR_SUBSTRING_END")
-CRYPT_STR_AES_PADDING = os.getenv("CRYPT_STR_AES_PADDING")
-CRYPT_STR_AES_MODE = os.getenv("CRYPT_STR_AES_MODE")
+DECRYPT_STR_SUBSTRING_START = env("DECRYPT_STR_SUBSTRING_START")
+DECRYPT_STR_SUBSTRING_END = env("DECRYPT_STR_SUBSTRING_END")
+CRYPT_STR_AES_PADDING = env("CRYPT_STR_AES_PADDING")
+CRYPT_STR_AES_MODE = env("CRYPT_STR_AES_MODE")
 
 
 # Защита Referrer-Policy для контента
@@ -193,12 +198,12 @@ STATIC_URL = '/frontend/static/'
 MEDIA_ROOT = BASE_DIR / 'frontend/media/'
 MEDIA_URL = '/frontend/media/'
 
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
+EMAIL_USE_SSL = env("EMAIL_USE_SSL")
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

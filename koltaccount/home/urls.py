@@ -16,7 +16,6 @@ urlpatterns = [
     path('support/privacy/', views.privacy, name='privacy_url'),
     path('support/terms/', views.terms, name='terms_url'),
 
-    path('lk/get_ip_info_system_switch/', views.get_ip_info_system_switch),
     path('lk/site_in_service_switch/', views.site_in_service_switch),
     path('donation_notification/', views.donation_notification),
     path('create_account/', views.create_account),

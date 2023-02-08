@@ -11,17 +11,17 @@ def check_username(request) -> dict:
     return {"user": "exist"} if user else {"user": None}
 
 
-def check_if_password_correct(password: str, repeat_password: str) -> str:
+def check_if_password_correct(password: str, repeat_password: str) -> str or None:
     """ Проверка корректности пароля """
     if password != repeat_password:
         return "broken rule [password == repeat_password]"
-    if len(password) < 8:
+    elif len(password) < 8:
         return "broken rule [len > 8]"
-    if re.search("[a-z]", password) is None:
+    elif re.search("[a-z]", password) is None:
         return "broken rule [a-z]"
-    if re.search("[A-Z]", password) is None:
+    elif re.search("[A-Z]", password) is None:
         return "broken rule [A-Z]"
-    if re.search("[0-9]", password) is None:
+    elif re.search("[0-9]", password) is None:
         return "broken rule [0-9]"
 
 

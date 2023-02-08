@@ -22,7 +22,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from koltaccount.core.middleware import is_ajax
+from core.middleware import is_ajax
 from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,
                                   YANDEX_MONEY_DEFAULT_SUM,
                                   YANDEX_MONEY_WALLET_NUMBER)

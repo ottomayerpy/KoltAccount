@@ -1,10 +1,6 @@
 $(function() {
     let toggle_button;
 
-    $('.ip_system_select').on('change', function() {
-        get_ip_info_system_switch($('.ip_system_select').val());
-    });
-
     $('#site_in_service_button').on('change', function() {
         let is_service = 'false',
             button_text = 'Да, открыть!',
@@ -66,32 +62,6 @@ $(function() {
                     }
                 } else if (result['result'] == 'doesnotexist') {
                     swal('Ошибка', 'Настройка site_in_service не найдена');
-                } else {
-                    swal('Ошибка', result['result']);
-                }
-
-                preload_hide();
-            }
-        });
-    }
-
-    function get_ip_info_system_switch(system_name) {
-        preload_show();
-        $.ajax({
-            url: 'get_ip_info_system_switch/',
-            type: 'POST',
-            data: {
-                system_name: system_name
-            },
-            success: function(result) {
-                if (result['status'] == 'success') {
-                    swal({
-                        title: 'Успех!',
-                        text: 'Система ' + system_name + ' установлена.',
-                        type: 'success',
-                    });
-                } else if (result['result'] == 'doesnotexist') {
-                    swal('Ошибка', 'Настройка get_ip_info_system не найдена');
                 } else {
                     swal('Ошибка', result['result']);
                 }

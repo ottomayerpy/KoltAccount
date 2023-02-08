@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'core.site_settings.apps.SiteSettingsConfig',
     'core.accounts.apps.AccountsConfig',
     'core.kolt_profile.apps.KoltProfileConfig',
-    'support.apps.SupportConfig'
 ]
 
 STATIC_VERSION = 1
@@ -96,11 +95,13 @@ CP_IV_ID = 2 # 128/8
 CP_SALT_ID = 1
 
 # CS (Crypto Settings)
-DECRYPT_MP_SUBSTRING_START = 0
-DECRYPT_MP_SUBSTRING_END = 64
+DECRYPT_MP_SUBSTRING_START = os.getenv("DECRYPT_MP_SUBSTRING_START")
+DECRYPT_MP_SUBSTRING_END = os.getenv("DECRYPT_MP_SUBSTRING_END")
 
-DECRYPT_SUBSTRING_START = 0
-DECRYPT_SUBSTRING_END = 32
+DECRYPT_STR_SUBSTRING_START = os.getenv("DECRYPT_STR_SUBSTRING_START")
+DECRYPT_STR_SUBSTRING_END = os.getenv("DECRYPT_STR_SUBSTRING_END")
+CRYPT_STR_AES_PADDING = os.getenv("CRYPT_STR_AES_PADDING")
+CRYPT_STR_AES_MODE = os.getenv("CRYPT_STR_AES_MODE")
 
 
 # Защита Referrer-Policy для контента

@@ -1,8 +1,8 @@
 @font-face {
     font-family: 'Comfortaa';
-    src: url('/static/fonts/comfortaa/comfortaa_regular.woff2') format('woff2'),
-        url('/static/fonts/comfortaa/comfortaa_regular.woff') format('woff'),
-        url('/static/fonts/comfortaa/comfortaa_regular.ttf') format('truetype');
+    src: url('/frontend/static/fonts/comfortaa/comfortaa_regular.woff2') format('woff2'),
+        url('/frontend/static/fonts/comfortaa/comfortaa_regular.woff') format('woff'),
+        url('/frontend/static/fonts/comfortaa/comfortaa_regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -50,7 +50,7 @@ a,
 ::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: #d9d9d9;
-    background-image: url('/static/img/png/scrollbar_image.png');
+    background-image: url('/frontend/static/img/png/scrollbar_image.png');
     background-repeat: no-repeat;
     background-position: center;
     -webkit-box-shadow: 0 1px 1px #fff inset;
@@ -138,7 +138,7 @@ h2 {
     right: 10px;
     display: none;
     text-indent: -9999px;
-    background: url('/static/img/png/scroll_page_top.png') no-repeat;
+    background: url('/frontend/static/img/png/scroll_page_top.png') no-repeat;
 }
 
 .btn {
@@ -309,6 +309,10 @@ h2 {
 
 #cookie_notification button {
     float: right;
+}
+
+#pesonal-crypto-settings {
+    display: none;
 }
 
 .share-container a:hover {
@@ -505,7 +509,7 @@ h2 {
 }
 
 .input_clear {
-    background-image: url('/static/img/svg/donation/clear_input.svg');
+    background-image: url('/frontend/static/img/svg/donation/clear_input.svg');
     width: 28px;
     height: 36px;
     position: absolute;
@@ -721,11 +725,11 @@ h2 {
 }
 
 #donation_form_radio_yandex_money {
-    background-image: url('/static/img/svg/donation/yandex_money.svg');
+    background-image: url('/frontend/static/img/svg/donation/yandex_money.svg');
 }
 
 #donation_form_radio_visa_card {
-    background-image: url('/static/img/svg/donation/visa_card.svg');
+    background-image: url('/frontend/static/img/svg/donation/visa_card.svg');
 }
 
 .donation_form_donate_button {

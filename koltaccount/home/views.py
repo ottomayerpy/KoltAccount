@@ -4,7 +4,6 @@ from core import service as core_service
 from core.accounts import service as accounts_service
 from core.accounts.models import Account
 from core.crypto import master_password
-from core.crypto import service as crypto_service
 from core.crypto.models import MasterPassword
 from core.donation import yandex_donations
 from core.donation.models import Donation
@@ -23,7 +22,9 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from koltaccount.settings import SITE_PROTOCOL, STATIC_VERSION
+from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,
+                                  YANDEX_MONEY_DEFAULT_SUM,
+                                  YANDEX_MONEY_WALLET_NUMBER)
 from loguru import logger as log
 
 from .forms import (EmailChangeForm, KoltAuthenticationForm,
@@ -125,6 +126,58 @@ def lk(request):
         'static_version': STATIC_VERSION
     }
     return render(request, 'lk.html', context)
+
+
+def support(request):
+    context = {
+        'title': 'Помощь и поддержка',
+        'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
+        'static_version': STATIC_VERSION
+    }
+    return render(request, 'support/support.html', context)
+
+
+def donation(request):
+    context = {
+        'title': 'Пожертвования',
+        'wallet_number': YANDEX_MONEY_WALLET_NUMBER,
+        'default_sum': YANDEX_MONEY_DEFAULT_SUM,
+        'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
+        'static_version': STATIC_VERSION
+    }
+    return render(request, 'support/donation.html', context)
+
+
+def protection(request):
+    context = {
+        'title': 'Защита данных',
+        'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
+        'static_version': STATIC_VERSION
+    }
+    return render(request, 'support/protection.html', context)
+
+
+def privacy(request):
+    current_site = Site.objects.get_current()
+    context = {
+        'title': 'Политика конфиденциальности',
+        'face': 'Колтманом Никитой Николаевичем',
+        'protocol': f'{SITE_PROTOCOL}://',
+        'domain': current_site.domain,
+        'email': SUPPORT_EMAIL,
+        'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
+        'static_version': STATIC_VERSION
+    }
+    return render(request, 'support/privacy.html', context)
+
+
+def terms(request):
+    context = {
+        'title': 'Пользовательское соглашение',
+        'site_in_service': SiteSetting.objects.get(name='site_in_service').value,
+        'static_version': STATIC_VERSION
+    }
+    return render(request, 'support/terms.html', context)
 
 
 def email_change(request):
@@ -269,14 +322,6 @@ def master_password_reset(request):
     return render(request, 'registration/master_password_reset.html', context)
 
 
-def get_crypto_settings(request):
-    """ Получить настройки шифрования """
-    if core_service.is_ajax(request):
-        answer = crypto_service.get_crypto_settings(request.user)
-        return core_service.json_response(answer)
-    return HttpResponseForbidden(render(request, '403.html'))
-
-
 def get_ip_info_system_switch(request):
     """ Закрыть сайт на техническое обслуживание """
     if core_service.is_ajax(request) and request.user.is_staff:
@@ -356,6 +401,7 @@ def change_or_create_master_password(request):
     logins = request.POST.get('logins', None)
     passwords = request.POST.get('passwords', None)
     new_master_password = request.POST.get('new_master_password', None)
+    new_crypto_settings = request.POST.get('new_cs', None)
 
     answer = master_password.change_or_create_master_password(
         sites=sites,
@@ -363,6 +409,7 @@ def change_or_create_master_password(request):
         logins=logins,
         passwords=passwords,
         new_master_password=new_master_password,
+        new_crypto_settings=new_crypto_settings,
         user=request.user
     )
     return core_service.json_response(answer)

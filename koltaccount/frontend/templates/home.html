@@ -8,8 +8,8 @@
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/tour.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/addons/crypto-js.min.js' %}"></script>
-<script defer type="text/javascript" src="{% static 'js/kolt_crypto.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
+<script defer type="module" src="{% static 'js/kolt_crypto.js' %}?ver={{ static_version }}"></script>
+<script defer type="module" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
 {% endblock %}
 {% block content %}
 <div class="container account_container {% if not request.user.profile.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
@@ -108,6 +108,29 @@
                 <button type="button" class="close btn-close btn-close-create-account" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body modal-body-master-password">
+                <div id="pesonal-crypto-settings">
+                    <h4>Персональные настройки шифрования:</h4>
+                    <p>Если вы не знаете какие настройки устанавливать, то оставьте все как есть, и перейдите к установке мастер пароля</p>
+                    <label>Ключ (Key)</label>
+                    <select class="form-control key_select">
+                        <option value="256/8" selected>256/8</option>
+                        <option value="128/8">128/8</option>
+                    </select>
+                    <label>IV (iv)</label>
+                    <select class="form-control iv_select">
+                        <option value="128/8" selected>128/8</option>
+                        <option value="256/8">256/8</option>
+                    </select>
+                    <label>Соль (salt)</label>
+                    <select class="form-control salt_select">
+                        <option value="256/8" selected>256/8</option>
+                        <option value="128/8">128/8</option>
+                    </select>
+                    <label>Кол-во итераций (iterations)</label>
+                    <p>Оставьте поле пустым для рандомизации значения. Допустимо 57-7999</p>
+                    <input class="form-control" type="number" id="in-iterations" maxlength="5">
+                    <h4>Мастер пароль:</h4>
+                </div>
                 <label for="in-old_password">Старый пароль</label>
                 <input class="form-control" type="password" id="in-old_password" maxlength="254">
                 <label for="in-new_password">Новый пароль</label>

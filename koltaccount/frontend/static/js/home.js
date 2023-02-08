@@ -1,7 +1,10 @@
 /* Главная страница с таблицей аккаунтов */
+import {setCryptoSettings, enMP, deMP, encrypt, decrypt} from './kolt_crypto.js'
 
 $(function () {
     let master_password = '', // Хранит мастер пароль для расшифровки данных таблицы
+        cs = {}, // Хранит персональные настройки шифрования
+        default_cs = {}, // Хранит стандартные настройки шифрования
         press_timer = 0, // Хранит значение таймера для события долгого нажатия кнопки "Пароль"
         is_allow_copy = true, // Разрешает копирование при долгом нажатии кнопки "Пароль"
         is_allow_show_page = false; // Разрешает отображение страницы
@@ -29,6 +32,8 @@ $(function () {
             type: 'GET',
             success: function (result) {
                 master_password = result['result'];
+                cs = result['cs'];
+                default_cs = JSON.parse(result['default_cs']);
                 if (master_password != 'doesnotexist') {
                     // Открываем модальное окно ввода ключа/мастер пароля
                     $('#EnterKeyModal').modal('show');
@@ -37,8 +42,10 @@ $(function () {
                     // Отключаем поле ввода старого пароля в модальном окне изменения пароля
                     $('#in-old_password').attr('disabled', 'disabled').css('display', 'none');
                     $('label[for="in-old_password"]').css('display', 'none');
-                    $('.modal-body-master-password').css('height', '175px');
+                    $('#pesonal-crypto-settings').css('display', 'block');
+                    $('.modal-body-master-password').css('height', '560px');
                     $('#btn-send_master_password').text('Создать');
+                    $('#MasterPasswordModal .modal-title').text('Конфигурация шифрования');
                     // Открываем модальное окно изменения пароля
                     $('#MasterPasswordModal').modal('show');
                 }
@@ -66,7 +73,6 @@ $(function () {
         reader.onloadend = function () {
             var data = JSON.parse(reader.result);
             for (var i in data) {
-                console.log(data[i]['site']);
                 _create_account(data[i]['site'], data[i]['description'], data[i]['login'], data[i]['password']);
                 sleep(2000);
             }
@@ -96,9 +102,7 @@ $(function () {
                 password: encrypt(password, master_password)
             },
             success: function (result) {
-                if (result['status'] == 'success') {
-                    console.log(result['account_id']);
-                } else if (result['status'] == 'error') {
+                if (result['status'] == 'error') {
                     if (result['message'] == 'accountlimitreached') {
                         swal('Ошибка', 'Достигнут лимит в 200 аккаунтов');
                     } else {
@@ -316,9 +320,31 @@ $(function () {
         /* Изменить или создать мастер пароль */
         preload_show();
         setTimeout(function () {
+            const KEY = $('.key_select').val().split('/')
+            const IV = $('.iv_select').val().split('/')
+            const SALT = $('.salt_select').val().split('/')
+            const ITERATIONS = $('#in-iterations').val()
+            const CS = {
+                'KEY': {
+                    'size': KEY[0],
+                    'division': KEY[1]
+                },
+                'IV': {
+                    'size': IV[0],
+                    'division': IV[1]
+                },
+                'SALT': {
+                    'size': SALT[0],
+                    'division': SALT[1]
+                },
+                'ITERATIONS': ITERATIONS ? ITERATIONS : (Math.random() * (7999 - 57) + 57).toFixed(),
+            }
+            setCryptoSettings(default_cs, CS);
             const hash = enMP(new_master_password);
             const master_password_key = hash.key;
             const result = hash.result;
+
+            const NEW_CS = encrypt(JSON.stringify(CS), new_master_password);
 
             let sites = {},
                 descriptions = {},
@@ -353,6 +379,7 @@ $(function () {
                     descriptions: JSON.stringify(descriptions),
                     logins: JSON.stringify(logins),
                     passwords: JSON.stringify(passwords),
+                    new_cs: NEW_CS,
                     new_master_password: result
                 },
                 success: function (result) {
@@ -391,7 +418,16 @@ $(function () {
             // Расшифровываем полученый пароль введенным ключем
             preload_show();
             setTimeout(function () {
-                key = deMP(master_password, key);
+                // Устанавливаем настройки
+                setCryptoSettings(default_cs, {})
+                let decrypt_cs = decrypt(cs, key)
+                if (decrypt_cs) {
+                    setCryptoSettings(default_cs, JSON.parse(decrypt_cs))
+                    // Расшифровываем мастер пароль
+                    key = deMP(master_password, key);
+                } else {
+                    key = ''
+                }
 
                 if (key == '') {
                     // Если расшифровка не дала результата, то чистим input ввода ключа
@@ -569,6 +605,8 @@ $(function () {
             swal('Пароли не совпадают');
         } else if (master_password != $('#in-old_password').val() && !$('#in-old_password').attr('disabled')) {
             swal('Не правильный старый пароль');
+        } else if ($('#in-iterations').val() < 57 && $('#in-iterations').val() > 7999) {
+            swal('Не допустимый диапазон итераций');
         } else if (is_new_password && is_repeat_new_password) {
             change_or_create_master_password($('#in-repeat_new_password').val());
         }

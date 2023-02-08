@@ -1,11 +1,16 @@
 import json
 
+from core.accounts.models import Account
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
+from koltaccount.settings import (CRYPT_STR_AES_MODE,
+                                  CRYPT_STR_AES_PADDING,
+                                  DECRYPT_MP_SUBSTRING_END,
+                                  DECRYPT_MP_SUBSTRING_START,
+                                  DECRYPT_STR_SUBSTRING_END,
+                                  DECRYPT_STR_SUBSTRING_START)
 
-from .models import CryptoSetting
 from .models import MasterPassword
-from core.accounts.models import Account
 
 
 def master_password_reset(user: User, password: str) -> bool:
@@ -20,12 +25,13 @@ def master_password_reset(user: User, password: str) -> bool:
 
 
 def change_or_create_master_password(sites: str, descriptions: str, logins: str, passwords: str,
-                                     new_master_password: str, user: User) -> dict:
+                                     new_master_password: str, new_crypto_settings: str, user: User) -> dict:
     """ Изменяет мастер пароль """
     master_password, is_created = MasterPassword.objects.get_or_create(
         user=user,
         defaults={
-            'password': new_master_password
+            'password': new_master_password,
+            'crypto_settings': new_crypto_settings
         }
     )
 
@@ -50,8 +56,6 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
         master_password.password = new_master_password
         master_password.save()
 
-        CryptoSetting.change(user=user)
-
     return {
         'status': 'success'
     }
@@ -59,14 +63,35 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
 
 def get_master_password(user: User) -> str:
     """ Возвращает мастер пароль """
+    default_cs = {
+        'default_cs': json.dumps({
+            'DECRYPT_SUBSTRING': {
+                'mp': {
+                    'start': DECRYPT_MP_SUBSTRING_START,
+                    'end': DECRYPT_MP_SUBSTRING_END
+                },
+                'str': {
+                    'start': DECRYPT_STR_SUBSTRING_START,
+                    'end': DECRYPT_STR_SUBSTRING_END
+                }
+            },
+            'CRYPT_STR_AES': {
+                'mode': CRYPT_STR_AES_MODE,
+                'padding': CRYPT_STR_AES_PADDING
+            }
+        })
+    }
     try:
         master_password = MasterPassword.objects.get(user=user)
         return {
             'status': 'success',
-            'result': master_password.password
+            'result': master_password.password,
+            'cs': master_password.crypto_settings,
+            'default_cs': default_cs['default_cs']
         }
     except MasterPassword.DoesNotExist:
         return {
             'status': 'error',
-            'result': 'doesnotexist'
+            'result': 'doesnotexist',
+            'default_cs': default_cs['default_cs']
         }

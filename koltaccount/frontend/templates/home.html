@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block addons_head %}
@@ -16,10 +16,6 @@
     <div align="center" class="main_buttons">
         <button id="btn_create_account_modal" data-toggle="modal" data-target="#CreateAccountModal" class="btn btn-primary">Добавить аккаунт</button>
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-primary">Мастер пароль</button>
-        {% if request.user.is_staff %}
-        <!-- Потом удалить -->
-        <!-- <input id="btn_master_import" type="file" value="Import" class="btn btn-primary"/> -->
-        {% endif %}
     </div>
     <input class="form-control" placeholder="Поиск" type="text" id="in-search" maxlength="254">
     <table id="Accounts_table" class="tablesorter tablesorter-blue table-hover">

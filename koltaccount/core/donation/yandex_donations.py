@@ -1,6 +1,6 @@
-import hashlib
 import json
 
+from argon2 import PasswordHasher
 from django.contrib.auth.models import User
 from koltaccount.settings import DONATION_NOTIFICATION_SECRET_KEY
 
@@ -21,9 +21,8 @@ def calculate_hash(data: dict) -> str:
         data.get('label', '')
     )
 
-    hash_object = hashlib.sha1(text.encode('utf-8'))
-    hexd = hash_object.hexdigest()
-    return hexd
+    ph = PasswordHasher()
+    return ph.hash(text.encode('utf-8'))
 
 
 def create_donation(info: dict) -> bool:

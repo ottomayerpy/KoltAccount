@@ -198,8 +198,8 @@ STATIC_URL = '/frontend/static/'
 MEDIA_ROOT = BASE_DIR / 'frontend/media/'
 MEDIA_URL = '/frontend/media/'
 
-EMAIL_USE_TLS = env("EMAIL_USE_TLS")
-EMAIL_USE_SSL = env("EMAIL_USE_SSL")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=False)
+EMAIL_USE_SSL = env("EMAIL_USE_SSL", default=True)
 EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")

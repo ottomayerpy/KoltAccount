@@ -20,29 +20,22 @@ class NewLoginHistory(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        client_ip = self.get_client_ip(self.meta)
-        to_email = User.objects.get(username=self.request.user).email
-        current_site = Site.objects.get_current()
+        client_ip = self.get_client_ip()
 
         email_service.send_email(
-            email=to_email,
+            user=self.user,
             subject="Новый вход в аккаунт",
-            template="notification_login",
-            context={
-                "username": self.user.username,
-                "protocol": SITE_PROTOCOL,
-                "domain": current_site.domain
-            }
+            template="email/notification_login.html"
         )
         self.create_login_history(client_ip)
 
-    def get_client_ip(meta) -> str:
+    def get_client_ip(self) -> str:
         """ Получить ip адрес пользователя """
-        x_forwarded_for = meta.get("HTTP_X_FORWARDED_FOR")
+        x_forwarded_for = self.meta.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
             return x_forwarded_for.split(",")[-1].strip()
         else:
-            return meta.get("REMOTE_ADDR")
+            return self.meta.get("REMOTE_ADDR")
 
     def create_login_history(self, client_ip, location=None):
         """ Создает запись истории авторизации """

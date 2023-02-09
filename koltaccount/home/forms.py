@@ -81,7 +81,7 @@ class KoltPasswordResetForm(PasswordResetForm):
                     **(extra_email_context or {}),
                 }
                 email_service.send_email(
-                    email=user_email,
+                    user=user,
                     subject=f'Сброс пароля на {site_name}',
                     template=html_email_template_name,
                     context=context

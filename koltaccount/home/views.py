@@ -1,6 +1,6 @@
 import locale
 
-from core import service as core_service
+import core.service as core_service
 from core.accounts import service as accounts_service
 from core.accounts.models import Account
 from core.crypto import master_password
@@ -11,8 +11,10 @@ from core.kolt_email import service as email_service
 from core.kolt_logger import service as logger_service
 from core.login_history import service as login_history_service
 from core.login_history.models import LoginHistory
+from core.middleware import is_ajax
 from core.site_settings import service as site_settings_service
 from core.site_settings.models import SiteSetting
+from core.token_generator import account_activation_token
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.views import PasswordResetView
@@ -20,13 +22,13 @@ from django.contrib.sites.models import Site
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
-from core.middleware import is_ajax
 from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,
                                   YANDEX_MONEY_DEFAULT_SUM,
                                   YANDEX_MONEY_WALLET_NUMBER)
-from loguru import logger as log
 
 from .forms import (EmailChangeForm, KoltAuthenticationForm,
                     KoltPasswordResetForm, MasterPasswordResetForm,
@@ -194,14 +196,18 @@ def email_change(request):
         email = request.POST.get("email")
         user = User.objects.get(id=request.user.id)
         current_site = Site.objects.get_current()
-        email_service.confirm_email(
+        email_service.send_email(
             user=user,
-            email=email,
             subject="Привязка email к аккаунту",
-            template="email/email_change_email.html"
+            template="email/email_change_email.html",
+            context={
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": account_activation_token.make_token(user)
+            },
+            email=email
         )
         email_service.send_email(
-            email=user.email,
+            user=user,
             subject="Привязка email к аккаунту",
             template="email/email_change_notification_to_old_email.html",
             context={
@@ -273,11 +279,14 @@ def confirm_email(request):
     почты после регистрации """
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
-    email_service.confirm_email(
+    email_service.send_email(
         user=request.user,
-        email=request.user.email,
         subject="Добро пожаловать в KoltAccount",
-        template="email/registration_email_confirm_email.html"
+        template="email/registration_email_confirm_email.html",
+        context={
+            "uid": urlsafe_base64_encode(force_bytes(request.user.pk)),
+            "token": account_activation_token.make_token(request.user)
+        }
     )
     return redirect(reverse("confirm_email_done_url"))
 
@@ -456,58 +465,58 @@ class RegisterView(TemplateView):
     """ Регистрация пользователей """
 
     def dispatch(self, request, *args, **kwargs):
-        return kolt_register(request)
+        """ Регистрация """
+        if request.user.is_authenticated:
+            return redirect(reverse("home_url"))
 
+        context = {
+            "title": "Регистрация",
+            "form": RegisterForm,
+            "form_message": "None",
+            "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
+            "static_version": STATIC_VERSION
+        }
 
-def kolt_register(request):
-    """ Регистрация """
-    if request.user.is_authenticated:
-        return redirect(reverse("home_url"))
+        if request.method == "POST":
+            username = request.POST.get("username")
+            email = request.POST.get("email")
+            password1 = request.POST.get("password1")
+            password2 = request.POST.get("password2")
 
-    context = {
-        "title": "Регистрация",
-        "form": RegisterForm,
-        "form_message": "None",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+            answer = core_service.check_if_password_correct(password1, password2)
+            if answer is None:
+                try:
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password1
+                    )
 
-    if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password1 = request.POST.get("password1")
-        password2 = request.POST.get("password2")
+                    email_service.send_email(
+                        user=user,
+                        email=email,
+                        subject="Добро пожаловать в KoltAccount",
+                        template="email/registration_email_confirm_email.html",
+                        context={
+                            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                            "token": account_activation_token.make_token(user)
+                        }
+                    )
 
-        answer = core_service.check_if_password_correct(password1, password2)
-        if answer is None:
-            try:
-                user = User.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password1
-                )
-
-                email_service.confirm_email(
-                    user=user,
-                    email=email,
-                    subject="Добро пожаловать в KoltAccount",
-                    template="email/registration_email_confirm_email.html"
-                )
-
-                return redirect(reverse("kolt_login"))
-            except Exception as err:
-                if str(err) == "UNIQUE constraint failed: auth_user.username":
-                    context.update({
-                        "form_message": "username error",
-                        "username": username,
-                        "email": email
-                    })
-                else:
-                    raise
-        else:
-            context.update({
-                "form_message": answer,
-                "username": username,
-                "email": email
-            })
-    return render(request, "registration/register.html", context)
+                    return redirect(reverse("kolt_login"))
+                except Exception as err:
+                    if str(err) == "UNIQUE constraint failed: auth_user.username":
+                        context.update({
+                            "form_message": "username error",
+                            "username": username,
+                            "email": email
+                        })
+                    else:
+                        raise
+            else:
+                context.update({
+                    "form_message": answer,
+                    "username": username,
+                    "email": email
+                })
+        return render(request, "registration/register.html", context)

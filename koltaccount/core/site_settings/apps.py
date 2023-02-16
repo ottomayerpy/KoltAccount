@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class SiteSettingsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'core.site_settings'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "core.site_settings"

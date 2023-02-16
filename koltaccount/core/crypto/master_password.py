@@ -38,8 +38,8 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
     master_password, is_created = MasterPassword.objects.get_or_create(
         user=user,
         defaults={
-            'password': new_master_password,
-            'crypto_settings': new_crypto_settings
+            "password": new_master_password,
+            "crypto_settings": new_crypto_settings
         }
     )
 
@@ -66,34 +66,34 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
 def get_master_password(user: User) -> str:
     """ Возвращает мастер пароль """
     default_cs = {
-        'default_cs': json.dumps({
-            'DECRYPT_SUBSTRING': {
-                'mp': {
-                    'start': DECRYPT_MP_SUBSTRING_START,
-                    'end': DECRYPT_MP_SUBSTRING_END
+        "default_cs": json.dumps({
+            "DECRYPT_SUBSTRING": {
+                "mp": {
+                    "start": DECRYPT_MP_SUBSTRING_START,
+                    "end": DECRYPT_MP_SUBSTRING_END
                 },
-                'str': {
-                    'start': DECRYPT_STR_SUBSTRING_START,
-                    'end': DECRYPT_STR_SUBSTRING_END
+                "str": {
+                    "start": DECRYPT_STR_SUBSTRING_START,
+                    "end": DECRYPT_STR_SUBSTRING_END
                 }
             },
-            'CRYPT_STR_AES': {
-                'mode': CRYPT_STR_AES_MODE,
-                'padding': CRYPT_STR_AES_PADDING
+            "CRYPT_STR_AES": {
+                "mode": CRYPT_STR_AES_MODE,
+                "padding": CRYPT_STR_AES_PADDING
             }
         })
     }
     try:
         master_password = MasterPassword.objects.get(user=user)
         return {
-            'status': 'success',
-            'result': master_password.password,
-            'cs': master_password.crypto_settings,
-            'default_cs': default_cs['default_cs']
+            "status": "success",
+            "result": master_password.password,
+            "cs": master_password.crypto_settings,
+            "default_cs": default_cs["default_cs"]
         }
     except MasterPassword.DoesNotExist:
         return {
-            'status': 'error',
-            'result': 'doesnotexist',
-            'default_cs': default_cs['default_cs']
+            "status": "error",
+            "result": "doesnotexist",
+            "default_cs": default_cs["default_cs"]
         }

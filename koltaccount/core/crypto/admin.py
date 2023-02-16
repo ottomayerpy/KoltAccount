@@ -4,7 +4,7 @@ from .models import MasterPassword
 
 
 class MasterPasswordAdmin(admin.ModelAdmin):
-    list_display = ['user', 'password', 'id']
+    list_display = ["user", "password"]
 
     class Meta:
         model = MasterPassword

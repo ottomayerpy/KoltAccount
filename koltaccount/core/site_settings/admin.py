@@ -4,7 +4,7 @@ from .models import SiteSetting
 
 
 class SiteSettingAdmin(admin.ModelAdmin):
-    list_display = ['name', 'value', 'id']
+    list_display = ["name", "value"]
 
     class Meta:
         model = SiteSetting

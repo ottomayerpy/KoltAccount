@@ -8,8 +8,8 @@ def create_account(site: str, description: str,
     """ Создает новый аккаунт """
     if Account.objects.count() >= 200:
         return {
-            'status': 'error',
-            'message': 'accountlimitreached'
+            "status": "error",
+            "message": "accountlimitreached"
         }
 
     account = Account.objects.create(
@@ -21,8 +21,8 @@ def create_account(site: str, description: str,
     )
 
     return {
-        'status': 'success',
-        'account_id': account.id
+        "status": "success",
+        "account_id": account.id
     }
 
 
@@ -33,12 +33,12 @@ def delete_account(account_id: int) -> dict:
         account.delete()
 
         return {
-            'status': 'success'
+            "status": "success"
         }
     except Account.DoesNotExist:
         return {
-            'status': 'error',
-            'result': 'doesnotexist'
+            "status": "error",
+            "result": "doesnotexist"
         }
 
 
@@ -50,12 +50,12 @@ def change_info_account(site: str, description: str, new_login: str,
         account.site = site
         account.description = description
 
-        if new_login == '':
+        if new_login == "":
             account.login = account.login
         else:
             account.login = new_login
 
-        if new_password == '':
+        if new_password == "":
             account.password = account.password
         else:
             account.password = new_password
@@ -63,10 +63,10 @@ def change_info_account(site: str, description: str, new_login: str,
         account.save()
 
         return {
-            'status': 'success'
+            "status": "success"
         }
     except Account.DoesNotExist:
         return {
-            'status': 'error',
-            'result': 'doesnotexist'
+            "status": "error",
+            "result": "doesnotexist"
         }

@@ -4,7 +4,7 @@ from .models import Account
 
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ['user', 'updated', 'id']
+    list_display = ["user"]
 
     class Meta:
         model = Account

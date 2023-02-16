@@ -7,7 +7,7 @@ from core.crypto import master_password
 from core.crypto.models import MasterPassword
 from core.donation import yandex_donations
 from core.donation.models import Donation
-from core.kolt_email import service as email_service
+from core.email_service import send_email, hiding_email, activate_email as act_email
 from core.kolt_logger import service as logger_service
 from core.login_history import service as login_history_service
 from core.login_history.models import LoginHistory
@@ -49,7 +49,7 @@ def check_email_template(request):
         "domain": "koltaccount.ru",
         "uid": "MQ%5B0-9A-Za-z_%5",
         "token": "-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%",
-        "email": email_service.hiding_email(request.user.email)
+        "email": hiding_email(request.user.email)
     }
 
     # Шаблоны
@@ -196,7 +196,7 @@ def email_change(request):
         email = request.POST.get("email")
         user = User.objects.get(id=request.user.id)
         current_site = Site.objects.get_current()
-        email_service.send_email(
+        send_email(
             user=user,
             subject="Привязка email к аккаунту",
             template="email/email_change_email.html",
@@ -206,12 +206,12 @@ def email_change(request):
             },
             email=email
         )
-        email_service.send_email(
+        send_email(
             user=user,
             subject="Привязка email к аккаунту",
             template="email/email_change_notification_to_old_email.html",
             context={
-                "email": email_service.hiding_email(email),
+                "email": hiding_email(email),
                 "username": user.username,
                 "domain": current_site.domain
             }
@@ -279,7 +279,7 @@ def confirm_email(request):
     почты после регистрации """
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
-    email_service.send_email(
+    send_email(
         user=request.user,
         subject="Добро пожаловать в KoltAccount",
         template="email/registration_email_confirm_email.html",
@@ -296,7 +296,7 @@ def activate_email(request, uidb64, token):
     if not request.user.is_authenticated:
         return redirect(reverse("kolt_login"))
 
-    if email_service.activate_email(uidb64, token):
+    if act_email(uidb64, token):
         request.session["valid"] = True
     return redirect(reverse("confirm_email_complete_url"))
 
@@ -492,7 +492,7 @@ class RegisterView(TemplateView):
                         password=password1
                     )
 
-                    email_service.send_email(
+                    send_email(
                         user=user,
                         email=email,
                         subject="Добро пожаловать в KoltAccount",

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from koltaccount.settings import SITE_PROTOCOL
 
-from core.kolt_email import service as email_service
+from core.email_service import send_email
 
 from .models import LoginHistory
 
@@ -22,7 +22,7 @@ class NewLoginHistory(threading.Thread):
     def run(self):
         client_ip = self.get_client_ip()
 
-        email_service.send_email(
+        send_email(
             user=self.user,
             subject="Новый вход в аккаунт",
             template="email/notification_login.html"

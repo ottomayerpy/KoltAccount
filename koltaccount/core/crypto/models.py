@@ -1,17 +1,19 @@
-from django.contrib.auth.models import User
-from django.db import models
+from core.baseapp.models import BaseModel, UserModel
+from django.db.models import CASCADE, CharField, OneToOneField
+from django.utils.translation import gettext_lazy as _
 
 
-class MasterPassword(models.Model):
+class MasterPassword(BaseModel):
     """ Мастер пароль пользователя """
-    user = models.OneToOneField(
-        User, verbose_name='Пользователь', on_delete=models.CASCADE)
-    password = models.CharField('Пароль', max_length=255)
-    crypto_settings = models.CharField('Настройки шифрования', max_length=255)
+    user = OneToOneField(
+        UserModel, verbose_name=_("Пользователь"), on_delete=CASCADE)
+    password = CharField(verbose_name=_("Пароль"), max_length=255)
+    crypto_settings = CharField(verbose_name=_(
+        "Настройки шифрования"), max_length=255)
 
     def __str__(self):
         return self.user.username
 
     class Meta:
-        verbose_name = 'Мастер пароль'
-        verbose_name_plural = 'Мастер пароли'
+        verbose_name = "Мастер пароль"
+        verbose_name_plural = "Мастер пароли"

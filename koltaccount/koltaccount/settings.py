@@ -32,9 +32,9 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'core.crypto.apps.CryptoConfig',
     'core.donation.apps.DonationConfig',
-    'core.login_history.apps.LoginHistoryConfig',
     'core.site_settings.apps.SiteSettingsConfig',
     'core.accounts.apps.AccountsConfig',
+    'core.baseapp.apps.BaseappConfig'
 ]
 
 STATIC_VERSION = 1
@@ -42,6 +42,7 @@ SITE_ID = 3
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SITE_PROTOCOL = 'https'
 AUTH_USER_MODEL = "baseapp.UserModel"
+SITE_IN_SERVICE = {"value": "false"}
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

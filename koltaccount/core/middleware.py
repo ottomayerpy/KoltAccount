@@ -3,7 +3,7 @@ import traceback
 
 from django.http import HttpResponseForbidden, HttpResponseServerError
 from django.shortcuts import render
-from koltaccount.settings import STATIC_VERSION
+from koltaccount.settings import STATIC_VERSION, SITE_IN_SERVICE
 from loguru import logger as log
 
 from core.logger_service import write_error_to_log_file
@@ -15,7 +15,8 @@ class BaseViewMiddleware:
         self._get_response = get_response
 
     def __call__(self, request):
-        if not request.user.is_staff and SiteSetting.objects.get(name="site_in_service").value == "true":
+        site_in_service = SiteSetting.objects.filter(name="site_in_service") or SITE_IN_SERVICE
+        if not request.user.is_staff and (site_in_service.get("value") == "true"):
             context = {
                 "title": "Сайт закрыт на техническое обслуживание",
                 "static_version": STATIC_VERSION

@@ -10,8 +10,6 @@ from core.donation.models import Donation
 from core.email_service import activate_email as act_email
 from core.email_service import hiding_email, send_email
 from core.logger_service import get_logs
-from core.login_history import service as login_history_service
-from core.login_history.models import LoginHistory
 from core.middleware import is_ajax
 from core.site_settings import service as site_settings_service
 from core.site_settings.models import SiteSetting
@@ -123,7 +121,8 @@ def lk(request):
     """ Личный кабинет пользователя """
     context = {
         "title": "Личный кабинет",
-        "login_history": LoginHistory.objects.filter(user=request.user).order_by("-date"),
+        # TODO Добавить историю входа из AXES
+        "login_history": None, #LoginHistory.objects.filter(user=request.user).order_by("-date"),
         "donation": Donation.objects.filter(user=request.user).order_by("-timestamp"),
         "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
         "get_ip_info_system": SiteSetting.objects.get(name="get_ip_info_system").value,
@@ -438,17 +437,17 @@ def kolt_login(request):
     if request.method == "POST":
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
-        system = request.POST.get("system", None)
-        browser = request.POST.get("browser", None)
+        # system = request.POST.get("system", None)
+        # browser = request.POST.get("browser", None)
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
-            nlh_thread = login_history_service.NewLoginHistory(
-                user, request.META, system, browser)
-            nlh_thread.start()
-            nlh_thread.join(1.0)
+            # nlh_thread = login_history_service.NewLoginHistory(
+            #     user, request.META, system, browser)
+            # nlh_thread.start()
+            # nlh_thread.join(1.0)
             return redirect(reverse("home_url"))
 
         context.update({

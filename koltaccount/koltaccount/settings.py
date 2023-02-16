@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'core.crypto.apps.CryptoConfig',
     'core.donation.apps.DonationConfig',
-    'core.kolt_logger.apps.KoltLoggerConfig',
     'core.login_history.apps.LoginHistoryConfig',
     'core.site_settings.apps.SiteSettingsConfig',
     'core.accounts.apps.AccountsConfig',

@@ -1,10 +1,9 @@
 import json
 
 from core.accounts.models import Account
+from core.baseapp.models import UserModel
 from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import User
-from koltaccount.settings import (CRYPT_STR_AES_MODE,
-                                  CRYPT_STR_AES_PADDING,
+from koltaccount.settings import (CRYPT_STR_AES_MODE, CRYPT_STR_AES_PADDING,
                                   DECRYPT_MP_SUBSTRING_END,
                                   DECRYPT_MP_SUBSTRING_START,
                                   DECRYPT_STR_SUBSTRING_END,
@@ -33,7 +32,7 @@ def master_password_reset(request) -> tuple or None:
 
 
 def change_or_create_master_password(sites: str, descriptions: str, logins: str, passwords: str,
-                                     new_master_password: str, new_crypto_settings: str, user: User) -> None:
+                                     new_master_password: str, new_crypto_settings: str, user: UserModel) -> None:
     """ Изменяет мастер пароль """
     master_password, is_created = MasterPassword.objects.get_or_create(
         user=user,
@@ -63,7 +62,7 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
         master_password.save()
 
 
-def get_master_password(user: User) -> str:
+def get_master_password(user: UserModel) -> str:
     """ Возвращает мастер пароль """
     default_cs = {
         "default_cs": json.dumps({

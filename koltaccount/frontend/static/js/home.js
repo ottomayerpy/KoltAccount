@@ -545,7 +545,7 @@ $(function () {
             swal("Заполните поле \"Подтвердите новый пароль\"");
         } else if ($("#in-new_password").val() != $("#in-repeat_new_password").val()) {
             swal("Пароли не совпадают");
-        } else if (master_password != $("#in-old_password").val() && $("#in-old_password").attr("disabled")) {
+        } else if (master_password != $("#in-old_password").val() && !$("#in-old_password").attr("disabled")) {
             swal("Не правильный старый пароль");
         } else if ($("#in-iterations").val() < 57 && $("#in-iterations").val() > 7999) {
             swal("Не допустимый диапазон итераций");

@@ -42,7 +42,7 @@ SITE_ID = 3
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SITE_PROTOCOL = 'https'
 AUTH_USER_MODEL = "baseapp.UserModel"
-SITE_IN_SERVICE = {"value": "false"}
+SITE_IN_SERVICE = False
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

@@ -15,7 +15,7 @@ from core.site_settings import service as site_settings_service
 from core.site_settings.models import SiteSetting
 from core.token_generator import account_activation_token
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
+from core.baseapp.models import UserModel
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.models import Site
 from django.http import HttpResponse, HttpResponseForbidden
@@ -125,7 +125,6 @@ def lk(request):
         "login_history": None, #LoginHistory.objects.filter(user=request.user).order_by("-date"),
         "donation": Donation.objects.filter(user=request.user).order_by("-timestamp"),
         "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "get_ip_info_system": SiteSetting.objects.get(name="get_ip_info_system").value,
         "static_version": STATIC_VERSION
     }
     return render(request, "lk.html", context)
@@ -194,7 +193,7 @@ def email_change(request):
 
     if request.method == "POST":
         email = request.POST.get("email")
-        user = User.objects.get(id=request.user.id)
+        user = UserModel.objects.get(id=request.user.id)
         current_site = Site.objects.get_current()
         send_email(
             user=user,
@@ -486,7 +485,7 @@ class RegisterView(TemplateView):
             answer = core_service.check_if_password_correct(password1, password2)
             if answer is None:
                 try:
-                    user = User.objects.create_user(
+                    user = UserModel.objects.create_user(
                         username=username,
                         email=email,
                         password=password1

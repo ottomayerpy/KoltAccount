@@ -1,10 +1,10 @@
-from django.contrib.auth.models import User
+from core.baseapp.models import UserModel
 
 from .models import Account
 
 
 def create_account(site: str, description: str,
-                   login: str, password: str, user: User) -> dict:
+                   login: str, password: str, user: UserModel) -> dict:
     """ Создает новый аккаунт """
     if Account.objects.count() >= 200:
         return {

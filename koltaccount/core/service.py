@@ -1,13 +1,14 @@
 import re
 
-from django.contrib.auth.models import User
 from django.http import JsonResponse
+
+from core.baseapp.models import UserModel
 
 
 def check_username(request) -> dict:
     """ Проверяет существование имени в БД """
     username = request.POST.get("username", None)
-    user = User.objects.filter(username=username).exists()
+    user = UserModel.objects.filter(username=username).exists()
     return {"user": "exist"} if user else {"user": None}
 
 

@@ -3,8 +3,9 @@ import os
 import zipfile
 from datetime import datetime
 
-from django.contrib.auth.models import User
 from koltaccount.settings import BASE_DIR
+
+from core.baseapp.models import UserModel
 
 
 def get_logs() -> list:
@@ -30,7 +31,7 @@ def sorted_logs(logs: json) -> list:
     return sorted(logs.items(), key=lambda kv: kv[1]["date"], reverse=True)
 
 
-def write_error_to_log_file(error_type: str, user: User, traceback_format_exc: str) -> None:
+def write_error_to_log_file(error_type: str, user: UserModel, traceback_format_exc: str) -> None:
     """ Запись исключения в файл """
     try:
         _log_file = open(BASE_DIR / "logs/log.json")

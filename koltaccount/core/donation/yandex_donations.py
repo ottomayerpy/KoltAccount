@@ -1,7 +1,7 @@
 import json
 
 from argon2 import PasswordHasher
-from django.contrib.auth.models import User
+from core.baseapp.models import UserModel
 from koltaccount.settings import DONATION_NOTIFICATION_SECRET_KEY
 
 from .models import Donation
@@ -32,7 +32,7 @@ def create_donation(info: dict) -> bool:
     if donate_hash == info.get("sha1_hash", ""):
         try:
             Donation.objects.create(
-                user=User.objects.get(id=info.get("label", "")),
+                user=UserModel.objects.get(id=info.get("label", "")),
                 data=json.dumps(info)
             )
             return True

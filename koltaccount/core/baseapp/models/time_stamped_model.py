@@ -1,4 +1,4 @@
-from django.db.models import Model, DateTimeField
+from django.db.models import DateTimeField, Model
 from django.utils.translation import gettext_lazy as _
 
 

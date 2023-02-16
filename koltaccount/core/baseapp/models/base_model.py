@@ -1,10 +1,11 @@
 from uuid import uuid4
 
-from django.db.models import Model, UUIDField
+from core.baseapp.models.time_stamped_model import TimeStampedModel
+from django.db.models import UUIDField
 from django.utils.translation import gettext_lazy as _
 
 
-class AnotherBaseModel(Model):
+class BaseModel(TimeStampedModel):
     """ Основной базовый класс моделей приложения """
 
     id = UUIDField(primary_key=True, default=uuid4,

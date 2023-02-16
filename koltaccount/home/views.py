@@ -7,7 +7,8 @@ from core.crypto import master_password
 from core.crypto.models import MasterPassword
 from core.donation import yandex_donations
 from core.donation.models import Donation
-from core.email_service import send_email, hiding_email, activate_email as act_email
+from core.email_service import activate_email as act_email
+from core.email_service import hiding_email, send_email
 from core.logger_service import get_logs
 from core.login_history import service as login_history_service
 from core.login_history.models import LoginHistory

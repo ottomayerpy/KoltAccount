@@ -35,13 +35,13 @@ INSTALLED_APPS = [
     'core.login_history.apps.LoginHistoryConfig',
     'core.site_settings.apps.SiteSettingsConfig',
     'core.accounts.apps.AccountsConfig',
-    'core.kolt_profile.apps.KoltProfileConfig',
 ]
 
 STATIC_VERSION = 1
 SITE_ID = 3
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 SITE_PROTOCOL = 'https'
+AUTH_USER_MODEL = "baseapp.UserModel"
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

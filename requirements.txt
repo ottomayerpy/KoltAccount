@@ -7,3 +7,4 @@ django-permissions-policy==4.9.0
 django-axes==5.31.0
 django-environ==0.9.0
 argon2-cffi==21.3.0
+dotenv==0.9.9

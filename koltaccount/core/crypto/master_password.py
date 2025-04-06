@@ -61,6 +61,8 @@ def change_or_create_master_password(sites: str, descriptions: str, logins: str,
         master_password.crypto_settings = new_crypto_settings
         master_password.save()
 
+    return {"status": "success"}
+
 
 def get_master_password(user: UserModel) -> str:
     """ Возвращает мастер пароль """

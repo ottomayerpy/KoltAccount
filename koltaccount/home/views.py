@@ -53,10 +53,10 @@ def check_email_template(request):
 
     # Шаблоны
     templates = [
-        "email/registration_email_confirm_email",
-        "email/email_change_notification_to_old_email",
-        "email/email_change_email",
-        "email/notification_ip_info_completed_requests_to_admin"
+        "email/registration_email_confirm_email.html",
+        "email/email_change_notification_to_old_email.html",
+        "email/email_change_email.html",
+        "email/notification_ip_info_completed_requests_to_admin.html"
     ]
 
     return render(request, templates[0], context)

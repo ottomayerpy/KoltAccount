@@ -3,6 +3,7 @@ import {setCryptoSettings, enMP, deMP, encrypt, decrypt} from "./kolt_crypto.js"
 
 $(function () {
     let master_password = "", // Хранит мастер пароль для расшифровки данных таблицы
+        en_master_password = "", // Хранит исходный мастер пароль
         cs = {}, // Хранит персональные настройки шифрования
         default_cs = {}, // Хранит стандартные настройки шифрования
         press_timer = 0, // Хранит значение таймера для события долгого нажатия кнопки "Пароль"
@@ -32,6 +33,7 @@ $(function () {
             type: "GET",
             success: function (result) {
                 master_password = result["result"];
+                en_master_password = result["result"];
                 cs = result["cs"];
                 default_cs = JSON.parse(result["default_cs"]);
                 if (master_password != "doesnotexist") {
@@ -348,7 +350,7 @@ $(function () {
     }
 
     function authorization() {
-        /* Авторизация */
+        /* Авторизация (Модальное окно "Аутентификация") */
         let key = $("#in-enter_master_password").val();
 
         if (key == "") {
@@ -545,7 +547,7 @@ $(function () {
             swal("Заполните поле \"Подтвердите новый пароль\"");
         } else if ($("#in-new_password").val() != $("#in-repeat_new_password").val()) {
             swal("Пароли не совпадают");
-        } else if (master_password != $("#in-old_password").val() && !$("#in-old_password").attr("disabled")) {
+        } else if (!Boolean($("#in-old_password").attr("disabled")) && deMP(en_master_password, $("#in-old_password").val()) == "") {
             swal("Не правильный старый пароль");
         } else if ($("#in-iterations").val() < 57 && $("#in-iterations").val() > 7999) {
             swal("Не допустимый диапазон итераций");

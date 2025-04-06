@@ -216,7 +216,7 @@ def email_change(request):
             }
         )
         user.email = email
-        user.profile.is_active_email = False
+        user.is_active_email = False
         user.save()
         return redirect(reverse("email_change_done_url"))
     return render(request, "email/email_change_form.html", context)

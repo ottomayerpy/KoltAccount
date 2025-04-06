@@ -12,7 +12,7 @@
 <script defer type="module" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
 {% endblock %}
 {% block content %}
-<div class="container account_container {% if not request.user.profile.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
+<div class="container account_container {% if not request.user.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
     <div align="center" class="main_buttons">
         <button id="btn_create_account_modal" data-toggle="modal" data-target="#CreateAccountModal" class="btn btn-primary">Добавить аккаунт</button>
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-primary">Мастер пароль</button>

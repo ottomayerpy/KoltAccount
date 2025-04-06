@@ -170,7 +170,7 @@
             </div>
         </nav>
     </header>
-    {% if not request.user.profile.is_active_email and request.user.is_authenticated %}
+    {% if not request.user.is_active_email and request.user.is_authenticated %}
     {% if request.user.email %}
     <div class="confirm_email-notification">
         <p>Вам нужно подтвердить почту. Мы уже отправили вам письмо с инструкциями. Если письмо не пришло то нажмите <a href="{% url 'confirm_email_url' %}">здесь</a> для повторной отправки письма.</p>

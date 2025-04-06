@@ -62,7 +62,7 @@ class KoltPasswordResetForm(PasswordResetForm):
         email = self.cleaned_data["email"]
         email_field_name = UserModel.get_email_field_name()
         for user in self.get_users(email):
-            if user.profile.is_active_email:
+            if user.is_active_email:
                 if not domain_override:
                     current_site = get_current_site(request)
                     site_name = current_site.name

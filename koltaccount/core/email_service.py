@@ -64,9 +64,9 @@ def activate_email(uidb64, token) -> bool:
         for old_user in old_users:
             if not old_user.username == user.username:
                 old_user.email = ""
-                old_user.profile.is_active_email = False
+                old_user.is_active_email = False
                 old_user.save()
-        user.profile.is_active_email = True
+        user.is_active_email = True
         user.save()
         return True
     return False

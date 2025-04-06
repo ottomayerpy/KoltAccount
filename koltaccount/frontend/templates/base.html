@@ -95,6 +95,9 @@
                     {% else %}
                     <a class="logo navbar-brand" href="{% url 'home_url' %}">KoltAccount (beta)</a>
                     {% endif %}
+                    {% if request.user.is_staff %}
+                    <a class="logo cpu_temp navbar-brand" id="cpu_temp"></a>
+                    {% endif %}
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right account-nav">

@@ -16,17 +16,16 @@ class BaseViewMiddleware:
         self._get_response = get_response
 
     def __call__(self, request):
-        # try:
-        #     site_in_service = SiteSetting.objects.get(name="site_in_service").value == "true"
-        # except ObjectDoesNotExist:
-        #     site_in_service = SITE_IN_SERVICE
+        site_in_service = SiteSetting.objects.filter(name="site_in_service").first()
+        if site_in_service:
+            site_in_service = site_in_service.value == "true"
 
-        # if not request.user.is_staff and site_in_service:
-        #     context = {
-        #         "title": "Сайт закрыт на техническое обслуживание",
-        #         "static_version": STATIC_VERSION
-        #     }
-        #     return render(request, "site_in_service.html", context)
+        if not request.user.is_staff and site_in_service:
+            context = {
+                "title": "Сайт закрыт на техническое обслуживание",
+                "static_version": STATIC_VERSION
+            }
+            return render(request, "site_in_service.html", context)
         return self._get_response(request)
 
     def process_exception(self, request, exception):

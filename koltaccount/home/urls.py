@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='home_url'),
+    path('get_cpu_temp', views.get_cpu_temp, name='get_cpu_temp_url'),
     path('lk/', views.lk, name='lk_url'),
     path('noscript/', views.noscript, name='noscript_url'),
     path('logs/', views.logs, name='logs_url'),

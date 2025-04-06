@@ -62,13 +62,31 @@ def check_email_template(request):
     return render(request, templates[0], context)
 
 
-def index(request):
-    """ Главная страница """
-    context = {
-        "title": "KoltAccount (beta)",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
+def get_cpu_temp(_):
+    cpu_temp = SiteSetting.objects.filter(name="cpu_temp_path").first()
+    cpu_temp_path = cpu_temp.value if cpu_temp else False
+    if cpu_temp_path:
+        with open(cpu_temp_path) as f:
+            temp = round(int(f.read()) / 1000, 1)
+            return HttpResponse(f"{temp}°")
+
+
+def get_context(context: dict) -> dict:
+    site_in_service = SiteSetting.objects.filter(name="site_in_service").first()
+
+    base_context = {
+        "site_in_service": site_in_service.value if site_in_service else False,
         "static_version": STATIC_VERSION
     }
+
+    if context:
+        base_context.update(context)
+    return base_context
+
+
+def index(request):
+    """ Главная страница """
+    context = get_context({"title": "KoltAccount (beta)"})
 
     if not request.user.is_authenticated:
         context.update({
@@ -87,27 +105,17 @@ def logs(request):
     """ Страница с отображением последних логов """
     if not request.user.is_staff:
         return HttpResponseForbidden(render(request, "403.html"))
-
-    context = {
-        "title": "Логи",
-        "logs": get_logs(),
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Логи", "logs": get_logs()})
     return render(request, "logs.html", context)
 
 
 def noscript(request):
     """ Страница отображаемая если пользователь отключит javascript """
-    context = {
-        "title": "Включите javascript!",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Включите javascript!"})
     return render(request, "noscript.html", context)
 
 
-@csrf_exempt  # TODO Че этот декоратор тут делает???
+#@csrf_exempt  # TODO Че этот декоратор тут делает???
 def donation_notification(request):
     """ Уведомление о получении пожертвования """
     if request.method == "POST":
@@ -119,77 +127,54 @@ def donation_notification(request):
 
 def lk(request):
     """ Личный кабинет пользователя """
-    context = {
+    context = get_context({
         "title": "Личный кабинет",
         # TODO Добавить историю входа из AXES
         "login_history": None, #LoginHistory.objects.filter(user=request.user).order_by("-date"),
         "donation": Donation.objects.filter(user=request.user).order_by("-timestamp"),
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    })
     return render(request, "lk.html", context)
 
 
 def support(request):
-    context = {
-        "title": "Помощь и поддержка",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Помощь и поддержка"})
     return render(request, "support/support.html", context)
 
 
 def donation(request):
-    context = {
+    context = get_context({
         "title": "Пожертвования",
         "wallet_number": YANDEX_MONEY_WALLET_NUMBER,
-        "default_sum": YANDEX_MONEY_DEFAULT_SUM,
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+        "default_sum": YANDEX_MONEY_DEFAULT_SUM
+    })
     return render(request, "support/donation.html", context)
 
 
 def protection(request):
-    context = {
-        "title": "Защита данных",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Защита данных"})
     return render(request, "support/protection.html", context)
 
 
 def privacy(request):
     current_site = Site.objects.get_current()
-    context = {
+    context = get_context({
         "title": "Политика конфиденциальности",
         "face": "Колтманом Никитой Николаевичем",
         "protocol": f"{SITE_PROTOCOL}://",
         "domain": current_site.domain,
-        "email": SUPPORT_EMAIL,
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+        "email": SUPPORT_EMAIL
+    })
     return render(request, "support/privacy.html", context)
 
 
 def terms(request):
-    context = {
-        "title": "Пользовательское соглашение",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Пользовательское соглашение"})
     return render(request, "support/terms.html", context)
 
 
 def email_change(request):
     """ Изменить адрес электронной почты """
-    context = {
-        "title": "Изменить почтовый адрес",
-        "form": EmailChangeForm,
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Изменить почтовый адрес", "form": EmailChangeForm})
 
     if request.method == "POST":
         email = request.POST.get("email")
@@ -225,33 +210,21 @@ def email_change(request):
 def email_change_done(request):
     """ Страница которая говорит о том что письмо с
     инструкциями по изменению почтового адреса отправлено """
-    context = {
-        "title": "Письмо с инструкциями по изменению почтового адреса отправлено",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Письмо с инструкциями по изменению почтового адреса отправлено"})
     return render(request, "email/email_change_done.html", context)
 
 
 def email_change_complete(request):
     """ Страница которая говорит о том что
     изменение адреса почты завершено """
-    context = {
-        "title": "Изменение адреса почты завершено",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Изменение адреса почты завершено"})
     return render(request, "email/email_change_complete.html", context)
 
 
 def confirm_email_done(request):
     """ Страница которая говорит о том что
     отправленно письмо подтверждения почты после регистрации """
-    context = {
-        "title": "Письмо отправленно",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Письмо отправленно"})
     return render(request, "email/confirm_email_done.html", context)
 
 
@@ -264,12 +237,7 @@ def confirm_email_complete(request):
         valid = request.session["valid"]
         del request.session["valid"]
 
-    context = {
-        "title": "Подтверждение почты",
-        "valid": valid,
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+    context = get_context({"title": "Подтверждение почты", "valid": valid})
     return render(request, "email/confirm_email_complete.html", context)
 
 
@@ -305,14 +273,12 @@ def master_password_reset(request):
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
 
-    context = {
+    context = get_context({
         "title": "Сброс мастер пароля",
         "form": MasterPasswordResetForm,
         "form_message": "None",
-        "master_password": False,
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+        "master_password": False
+    })
 
     if MasterPassword.objects.filter(user=request.user).exists():
         context.update({
@@ -425,13 +391,11 @@ def kolt_login(request):
     if request.user.is_authenticated:
         return redirect(reverse("home_url"))
 
-    context = {
+    context = get_context({
         "title": "Авторизация",
         "form": KoltAuthenticationForm,
-        "form_message": "None",
-        "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-        "static_version": STATIC_VERSION
-    }
+        "form_message": "None"
+    })
 
     if request.method == "POST":
         username = request.POST.get("username", None)
@@ -468,13 +432,11 @@ class RegisterView(TemplateView):
         if request.user.is_authenticated:
             return redirect(reverse("home_url"))
 
-        context = {
+        context = get_context({
             "title": "Регистрация",
             "form": RegisterForm,
-            "form_message": "None",
-            "site_in_service": SiteSetting.objects.get(name="site_in_service").value,
-            "static_version": STATIC_VERSION
-        }
+            "form_message": "None"
+        })
 
         if request.method == "POST":
             username = request.POST.get("username")

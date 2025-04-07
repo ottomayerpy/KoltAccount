@@ -36,7 +36,7 @@ class BaseViewMiddleware:
 
 
 def is_ajax(function):
-    """ Декоратор посылает если не ajax запрос """
+    """ Декоратор посылает 403 если не ajax запрос """
     @functools.wraps(function)
     def wrapper(request, *args, **kwargs):
         if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":

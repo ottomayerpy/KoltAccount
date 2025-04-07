@@ -54,11 +54,9 @@ $(function() {
                     if (result['checked'] == 'true') {
                         switch_obj.setAttribute("checked", "checked");
                         $('#site_in_service_button').addClass('toggle-button_active');
-                        $('.navbar-brand').removeClass('logo').addClass('logo_site-close').text('Сайт закрыт');
                     } else {
                         switch_obj.removeAttribute("checked");
                         $('#site_in_service_button').removeClass('toggle-button_active');
-                        $('.navbar-brand').removeClass('logo_site-close').addClass('logo').text('KoltAccount');
                     }
                 } else if (result['result'] == 'doesnotexist') {
                     swal('Ошибка', 'Настройка site_in_service не найдена');

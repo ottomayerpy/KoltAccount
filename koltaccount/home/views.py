@@ -18,7 +18,7 @@ from django.contrib.auth import authenticate, login
 from core.baseapp.models import UserModel
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.models import Site
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseServerError
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -62,13 +62,14 @@ def check_email_template(request):
     return render(request, templates[0], context)
 
 
-def get_cpu_temp(_):
+def get_cpu_temp(_) -> HttpResponse:
     cpu_temp = SiteSetting.objects.filter(name="cpu_temp_path").first()
     cpu_temp_path = cpu_temp.value if cpu_temp else False
     if cpu_temp_path:
         with open(cpu_temp_path) as f:
             temp = round(int(f.read()) / 1000, 1)
             return HttpResponse(f"{temp}°")
+    return HttpResponseServerError("Не установлена настройка сайта cpu_temp_path")
 
 
 def get_context(context: dict) -> dict:
@@ -115,13 +116,12 @@ def noscript(request):
     return render(request, "noscript.html", context)
 
 
-#@csrf_exempt  # TODO Че этот декоратор тут делает???
 def donation_notification(request):
     """ Уведомление о получении пожертвования """
     if request.method == "POST":
         if yandex_donations.create_donation(request.POST.dict()):
-            return HttpResponse(status=200)
-        return HttpResponse(status=500)
+            return HttpResponse()
+        return HttpResponseServerError()
     return HttpResponseForbidden(render(request, "403.html"))
 
 

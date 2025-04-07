@@ -1,5 +1,5 @@
 /* Главная страница с таблицей аккаунтов */
-import {setCryptoSettings, enMP, deMP, encrypt, decrypt} from "./kolt_crypto.js"
+import {setCryptoSettings, enMP, deMP, encrypt, decrypt} from "./kolt_crypto.js";
 
 $(function () {
     let master_password = "", // Хранит мастер пароль для расшифровки данных таблицы

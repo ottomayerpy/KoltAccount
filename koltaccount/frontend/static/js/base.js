@@ -77,20 +77,20 @@ $(function() {
         } catch {}
     }
 
-    function requestCpuTemp() {
-        $.ajax({
-            url: "/get_cpu_temp",
-            type: "GET",
-            success: function (result) {
-                $("#cpu_temp").text(result);
-            }
-        });
-    }
+    // function requestCpuTemp() {
+    //     $.ajax({
+    //         url: "/get_cpu_temp",
+    //         type: "GET",
+    //         success: function (result) {
+    //             $("#cpu_temp").text(result);
+    //         }
+    //     });
+    // }
 
-    $("#cpu_temp").on("click", function () {
-        setInterval(requestCpuTemp, 1000);
-    });
+    // $("#cpu_temp").on("click", function () {
+    //     setInterval(requestCpuTemp, 1000);
+    // });
 
     checkCookies();
-    requestCpuTemp();
+    // requestCpuTemp();
 });

@@ -23,7 +23,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,
                                   YANDEX_MONEY_DEFAULT_SUM,
@@ -87,7 +86,7 @@ def get_context(context: dict) -> dict:
 
 def index(request):
     """ Главная страница """
-    context = get_context({"title": "KoltAccount (beta)"})
+    context = get_context({"title": "KoltAccount"})
 
     if not request.user.is_authenticated:
         context.update({
@@ -159,7 +158,7 @@ def privacy(request):
     current_site = Site.objects.get_current()
     context = get_context({
         "title": "Политика конфиденциальности",
-        "face": "Колтманом Никитой Николаевичем",
+        "face": "Колтман Никита Николаевич",
         "protocol": f"{SITE_PROTOCOL}://",
         "domain": current_site.domain,
         "email": SUPPORT_EMAIL

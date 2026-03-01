@@ -1,10 +1,9 @@
 import functools
 import traceback
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseForbidden, HttpResponseServerError
 from django.shortcuts import render
-from koltaccount.settings import SITE_IN_SERVICE, STATIC_VERSION
+from koltaccount.settings import STATIC_VERSION
 from loguru import logger as log
 
 from core.logger_service import write_error_to_log_file

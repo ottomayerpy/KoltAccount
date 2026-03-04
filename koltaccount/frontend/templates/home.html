@@ -3,12 +3,11 @@
 {% block title %}{{ title }}{% endblock %}
 {% block addons_head %}
 <link rel="stylesheet" href="{% static 'css/table-theme-blue.css' %}?ver={{ static_version }}">
-<script defer type="text/javascript" src="{% static 'js/addons/jquery.tablesorter.min.js' %}"></script>
+<script defer type="text/javascript" src="{% static 'js/addons/jquery.tablesorter.min.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/bubbly_animation.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/tour.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/addons/crypto-js.min.js' %}"></script>
-<script defer type="module" src="{% static 'js/kolt_crypto.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/addons/crypto-js.min.js' %}?ver={{ static_version }}"></script>
 <script defer type="module" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
 {% endblock %}
 {% block content %}
@@ -16,6 +15,10 @@
     <div align="center" class="main_buttons">
         <button id="btn_create_account_modal" data-toggle="modal" data-target="#CreateAccountModal" class="btn btn-primary">Добавить аккаунт</button>
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-primary">Мастер пароль</button>
+        {% if request.user.is_staff %}
+        <input id="btn_master_import" type="file" value="Import" class="btn btn-primary"/>
+        <button id="btn_master_export" data-toggle="modal" class="btn btn-primary">Мастер экспорт</button>
+        {% endif %}
     </div>
     <input class="form-control" placeholder="Поиск" type="text" id="in-search" maxlength="254">
     <table id="Accounts_table" class="tablesorter tablesorter-blue table-hover">

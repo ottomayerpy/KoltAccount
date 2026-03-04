@@ -1,5 +1,6 @@
 /* Главная страница с таблицей аккаунтов */
 import {setCryptoSettings, enMP, deMP, encrypt, decrypt} from "./kolt_crypto.js";
+import {saveJSONToFile} from "./save_json_to_file.js";
 
 $(function () {
     let master_password = "", // Хранит мастер пароль для расшифровки данных таблицы
@@ -72,14 +73,23 @@ $(function () {
         $("#pesonal-crypto-settings").css("display", "block");
     });
 
-    function create_account() {
+    function create_account(data) {
         /* Добавление нового аккаунта в таблице */
         preload_show();
 
-        let site = $("#in-site").val(),
-            description = $("#in-description").val(),
-            login = encrypt($("#in-login").val(), master_password),
-            password = encrypt($("#in-password").val(), master_password);
+        let site, description, login, password;
+
+        if (data) {
+            site = data.site;
+            description = data.description;
+            login = data.login;
+            password = data.password;
+        } else {
+            site = $("#in-site").val();
+            description = $("#in-description").val();
+            login = $("#in-login").val();
+            password = $("#in-password").val();
+        }
 
         $.ajax({
             url: "create_account/",
@@ -87,8 +97,8 @@ $(function () {
             data: {
                 site: encrypt(site, master_password),
                 description: encrypt(description, master_password),
-                login: login,
-                password: password,
+                login: encrypt(login, master_password),
+                password: encrypt(password, master_password),
             },
             success: function (result) {
                 let account_id = result["account_id"];
@@ -105,16 +115,20 @@ $(function () {
 
                     // Добавляем в конец таблицы только что созданную запись аккаунта
                     $("tbody").append(tr);
-                    // Сортируем таблицу
-                    $("table").trigger("sorton", [[[1, 0]]]);
-                    // Закрываем модальное окно создания аккаунта
-                    $("#CreateAccountModal").modal("hide");
                     // Обновляем счетчик аккаунтов
                     $("#js-account-counter").text(parseInt($("#js-account-counter").text()) + 1);
-                    // Чистим поля
-                    $("#in-site").val("");
-                    $("#in-description").val("");
-                    // Памятка: поле логина и пароля очищаются всегда при закрытии модального окна
+
+                    if (!data) {
+                        console.log("!data");
+                        // Сортируем таблицу
+                        $("table").trigger("sorton", [[[1, 0]]]);
+                        // Закрываем модальное окно создания аккаунта
+                        $("#CreateAccountModal").modal("hide");
+                        // Чистим поля
+                        $("#in-site").val("");
+                        $("#in-description").val("");
+                        // Памятка: поле логина и пароля очищаются всегда при закрытии модального окна
+                    }
                 } else if (result["status"] == "error") {
                     if (result["message"] == "accountlimitreached") {
                         swal("Ошибка", "Достигнут лимит в 200 аккаунтов");
@@ -750,4 +764,111 @@ $(function () {
                 show_or_copy_login_or_password(_login);
             }, 500); // 500 миллисекунд
         }));
+
+    $('#btn_master_import').on('change', function () {
+        /* Мастер импорт аккаунтов из json файлов */
+        var file = this.files[0],
+            reader = new FileReader;
+
+        reader.onloadend = function () {
+            var data = JSON.parse(reader.result);
+            for (var i in data) {
+                console.log(data[i]['site']);
+                create_account({
+                    site: data[i]['site'],
+                    description: data[i]['description'],
+                    login: data[i]['login'],
+                    password: data[i]['password']
+                });
+                sleep(2000);
+            }
+        };
+
+        reader.readAsText(file);
+        // Сортируем таблицу
+        $("table").trigger("sorton", [[[1, 0]]]);
+    });
+
+    $('#btn_master_export').on('click', function () {
+        master_export();
+    });
+
+    function sleep(miliseconds) {
+        /* Остановить выполнение кода */
+        var currentTime = new Date().getTime();
+        while (currentTime + miliseconds >= new Date().getTime()) {
+        }
+    }
+
+    // function _create_account(site, description, login, password) {
+    //     /* Добавление нового аккаунта в таблице !ТОЛЬКО ДЛЯ МАСТЕР ИМПОРТА! */
+    //     preload_show();
+
+    //     $.ajax({
+    //         url: 'create_account/',
+    //         type: 'POST',
+    //         data: {
+    //             site: encrypt(site, master_password),
+    //             description: encrypt(description, master_password),
+    //             login: encrypt(login, master_password),
+    //             password: encrypt(password, master_password)
+    //         },
+    //         success: function (result) {
+    //             if (result['status'] == 'success') {
+    //                 console.log(result['account_id']);
+    //             } else if (result['status'] == 'error') {
+    //                 if (result['message'] == 'accountlimitreached') {
+    //                     swal('Ошибка', 'Достигнут лимит в 200 аккаунтов');
+    //                 } else {
+    //                     swal('Ошибка', result['message']);
+    //                 }
+    //             } else {
+    //                 swal('Ошибка', result['result']);
+    //             }
+
+    //             preload_hide();
+    //         },
+    //         error: function (jqXHR, text, error) {
+    //             if (error == 'Forbidden') {
+    //                 swal(
+    //                     'Ошибка 403',
+    //                     'Этот сайт требует наличия файла cookie CSRF при отправке форм.' +
+    //                     ' Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie,' +
+    //                     ' включите их снова, по крайней мере, для этого сайта.'
+    //                 )
+    //                 preload_hide();
+    //             }
+    //         }
+    //     });
+    // }
+
+    function master_export() {
+        /* Мастер экспорт аккаунтов в json файл */
+        var jd = [{"data": "data"}];
+        let index = -1;
+        let indexitem = 0;
+        $('#Accounts_table td').each(function () {
+            let data = $(this).text();
+
+            if (data == '') {
+                index += 1;
+                indexitem = 0
+                jd[index] = {}
+            } else {
+                if (indexitem == 0) {
+                    jd[index] = {...jd[index], site: data}
+                } else if (indexitem == 1) {
+                    jd[index] = {...jd[index], description: data}
+                } else if (indexitem == 2) {
+                    jd[index] = {...jd[index], login: decrypt(data, master_password)}
+                } else if (indexitem == 3) {
+                    jd[index] = {...jd[index], password: decrypt(data, master_password)}
+                } 
+
+                indexitem += 1;
+            }
+        });
+
+        saveJSONToFile(jd);
+    }
 });

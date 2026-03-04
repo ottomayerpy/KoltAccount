@@ -41,7 +41,7 @@
 .tablesorter-blue .header,
 .tablesorter-blue .tablesorter-header {
 	/* black (unsorted) double arrow */
-	background-image: url(/static/img/gif/bg.gif);
+	background-image: url(/frontend/static/img/gif/bg.gif);
 	/* white (unsorted) double arrow */
 	/* background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); */
 	/* image */
@@ -57,7 +57,7 @@
 .tablesorter-blue .tablesorter-headerAsc {
 	background-color: #9fbfdf;
 	/* black asc arrow */
-	background-image: url(/static/img/gif/asc.gif);
+	background-image: url(/frontend/static/img/gif/asc.gif);
 	/* white asc arrow */
 	/* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
 	/* image */
@@ -68,7 +68,7 @@
 .tablesorter-blue .tablesorter-headerDesc {
 	background-color: #8cb3d9;
 	/* black desc arrow */
-	background-image: url(/static/img/gif/desc.gif);
+	background-image: url(/frontend/static/img/gif/desc.gif);
 	/* white desc arrow */
 	/* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); */
 	/* image */
@@ -120,7 +120,7 @@
 	background-position: center center !important;
 	background-repeat: no-repeat !important;
 	/* background-image: url(../addons/pager/icons/loading.gif) !important; */
-	background-image: url('/static/img/gif/loading.gif') !important;
+	background-image: url('/frontend/static/img/gif/loading.gif') !important;
 }
 
 /* Zebra Widget - row alternating colors */

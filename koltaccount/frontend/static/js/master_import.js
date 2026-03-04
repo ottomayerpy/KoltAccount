@@ -1,4 +1,4 @@
-/*
+/* Файл для хранения кода (не используется)
 
 {% if request.user.is_staff %}
 <input id="btn_master_import" type="file" value="Import" class="btn btn-primary"/>

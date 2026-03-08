@@ -77,6 +77,17 @@
     --btn-close-hover-bg: #e4e4e4;
     --btn-close-hover-color: #d32f2f;
     --btn-close-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+    /* Цвета для SweetAlert */
+    --swal-bg: #ffffff;
+    --swal-border: #e0e0e0;
+    --swal-title-color: #1a1a1a;
+    --swal-text-color: #555555;
+    --swal-cancel-bg: #6c757d;
+    --swal-cancel-hover: #5a6268;
+    --swal-success: #28a745;
+    --swal-error: #dc3545;
+    --swal-warning: #ffc107;
 }
 
 /* --------------------------------------------------------------------------
@@ -146,6 +157,17 @@ body.dark-theme {
     --btn-close-hover-bg: #3d3d3d;
     --btn-close-hover-color: #ff5252;
     --btn-close-shadow: 0 2px 8px rgba(0,0,0,0.3);
+
+    /* Цвета для SweetAlert */
+    --swal-bg-dark: #2d2d2d;
+    --swal-border-dark: #444444;
+    --swal-title-color-dark: #ffffff;
+    --swal-text-color-dark: #b0b0b0;
+    --swal-cancel-bg-dark: #4a4a4a;
+    --swal-cancel-hover-dark: #5a5a5a;
+    --swal-success-dark: #4caf50;
+    --swal-error-dark: #f44336;
+    --swal-warning-dark: #ff9800;
 }
 
 /* ==========================================================================
@@ -269,7 +291,7 @@ header {
 }
 
 /* ==========================================================================
-   3.20. Dropdown меню (кастомизация Bootstrap)
+   3.3. Dropdown меню (кастомизация Bootstrap)
    ========================================================================== */
 
 /* Контейнер dropdown */
@@ -379,6 +401,150 @@ header {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ==========================================================================
+   3.4. SweetAlert2 - Адаптация под темы
+   ========================================================================== */
+
+/* Применяем переменные к SweetAlert2 */
+.swal2-popup {
+    background: var(--swal2-background) !important;
+    color: var(--swal2-color) !important;
+    box-shadow: var(--swal2-box-shadow) !important;
+}
+
+.swal2-title {
+    color: var(--swal2-title-color) !important;
+}
+
+.swal2-html-container {
+    color: var(--swal2-content-color) !important;
+}
+
+/* Кнопка подтверждения */
+.swal2-confirm {
+    background-color: var(--swal2-confirm-button-bg) !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm:hover {
+    background-color: var(--swal2-confirm-button-hover) !important;
+    transform: translateY(-1px);
+}/* Светлая тема */
+.sweet-alert {
+    background-color: var(--swal-bg) !important;
+    border-color: var(--swal-border) !important;
+}
+
+.sweet-alert h2 {
+    color: var(--swal-title-color) !important;
+}
+
+.sweet-alert p {
+    color: var(--swal-text-color) !important;
+}
+
+/* Кнопка подтверждения */
+.sweet-alert button {
+    background-color: var(--btn-kolt-bg) !important;
+    color: var(--btn-kolt-text) !important;
+}
+
+.sweet-alert button:hover {
+    background-color: var(--btn-kolt-hover) !important;
+}
+
+.sweet-alert button:active {
+    background-color: var(--btn-kolt-active) !important;
+}
+
+/* Кнопка отмены */
+.sweet-alert button.cancel {
+    background-color: var(--swal-cancel-bg) !important;
+}
+
+.sweet-alert button.cancel:hover {
+    background-color: var(--swal-cancel-hover) !important;
+}
+
+/* Иконки для светлой темы */
+.sweet-alert .icon.success {
+    border-color: var(--swal-success) !important;
+}
+.sweet-alert .icon.success .line {
+    background-color: var(--swal-success) !important;
+}
+
+.sweet-alert .icon.error {
+    border-color: var(--swal-error) !important;
+}
+.sweet-alert .icon.error .line {
+    background-color: var(--swal-error) !important;
+}
+
+.sweet-alert .icon.warning {
+    border-color: var(--swal-warning) !important;
+}
+.sweet-alert .icon.warning .body,
+.sweet-alert .icon.warning .dot {
+    background-color: var(--swal-warning) !important;
+}
+
+/* Темная тема */
+body.dark-theme .sweet-alert {
+    background-color: var(--swal-bg-dark) !important;
+    border-color: var(--swal-border-dark) !important;
+}
+
+body.dark-theme .sweet-alert h2 {
+    color: var(--swal-title-color-dark) !important;
+}
+
+body.dark-theme .sweet-alert p {
+    color: var(--swal-text-color-dark) !important;
+}
+
+body.dark-theme .sweet-alert button {
+    background-color: var(--btn-kolt-bg) !important;
+}
+
+body.dark-theme .sweet-alert button:hover {
+    background-color: var(--btn-kolt-hover) !important;
+}
+
+body.dark-theme .sweet-alert button:active {
+    background-color: var(--btn-kolt-active) !important;
+}
+
+body.dark-theme .sweet-alert button.cancel {
+    background-color: var(--swal-cancel-bg-dark) !important;
+}
+
+body.dark-theme .sweet-alert button.cancel:hover {
+    background-color: var(--swal-cancel-hover-dark) !important;
+}
+
+body.dark-theme .sweet-alert .icon.success {
+    border-color: var(--swal-success-dark) !important;
+}
+body.dark-theme .sweet-alert .icon.success .line {
+    background-color: var(--swal-success-dark) !important;
+}
+
+body.dark-theme .sweet-alert .icon.error {
+    border-color: var(--swal-error-dark) !important;
+}
+body.dark-theme .sweet-alert .icon.error .line {
+    background-color: var(--swal-error-dark) !important;
+}
+
+body.dark-theme .sweet-alert .icon.warning {
+    border-color: var(--swal-warning-dark) !important;
+}
+body.dark-theme .sweet-alert .icon.warning .body,
+body.dark-theme .sweet-alert .icon.warning .dot {
+    background-color: var(--swal-warning-dark) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -757,8 +923,7 @@ tbody tr {
 }
 
 .account_table_th_icon div {
-    margin-left: 3px;
-    margin-top: 3px;
+    margin: 4px;
 }
 
 /* --------------------------------------------------------------------------

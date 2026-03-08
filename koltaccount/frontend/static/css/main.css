@@ -130,8 +130,8 @@ body.dark-theme {
 /* --------------------------------------------------------------------------
    2.2. Типографика
    -------------------------------------------------------------------------- */
-p, h1, h2, h4, h5, strong, label, td, th,
-.auth, .popover-title, .popover-content, .simple-tabs {
+p, h1, h2, h4, h5, strong, label, td, th, button, a,
+.auth, .popover-title, .popover-content, .logo, .simple-tabs {
     font-family: Comfortaa;
     color: var(--text-color);
 }
@@ -304,6 +304,7 @@ header {
     background-color: var(--colorscheme);
     box-shadow: 0 2px 25px var(--shadow-box-bubbly-button);
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .bubbly-button:before,
@@ -317,6 +318,34 @@ header {
     content: '';
     transition: all ease-in-out .5s;
     background-repeat: no-repeat;
+}
+
+.bubbly-button:before {
+    top: -75%;
+    display: none;
+    background-image: radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, transparent 20%, var(--colorscheme) 20%, transparent 30%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, transparent 10%, var(--colorscheme) 15%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%);
+    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
+}
+
+.bubbly-button:after {
+    bottom: -75%;
+    display: none;
+    background-image: radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, transparent 10%, var(--colorscheme) 15%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%);
+    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
 }
 
 .bubbly-button:active {
@@ -979,6 +1008,10 @@ tbody tr {
 
 #pesonal-crypto-settings {
     display: none;
+}
+
+.main_buttons {
+    margin-top: 10px;
 }
 
 .share-container a:hover,

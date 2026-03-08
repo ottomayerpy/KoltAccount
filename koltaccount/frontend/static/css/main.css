@@ -11,7 +11,7 @@
    -------------------------------------------------------------------------- */
 :root {
     /* Цветовая схема */
-    --colorscheme: rgb(30, 157, 231);
+    --colorscheme: rgb(30, 125, 230);
     --colorschemehover: rgb(25, 134, 197);
 
     /* Фоны */
@@ -56,8 +56,27 @@
     --success-color: rgb(51, 206, 59);
 
     /* Эффекты */
-    --shadow-box-bubbly-button: rgba(46, 109, 164, 0.5);
-    --simple-tabs-border-hover: rgba(0, 0, 0, 0.425);
+    --shadow-box-bubbly-button: rgb(77, 122, 190);
+    --simple-tabs-border-hover: rgba(194, 194, 194, 0.425);
+
+    /* Кнопки действий */
+    --btn-kolt-bg: rgb(30, 125, 230);
+    --btn-kolt-hover: rgb(24, 100, 200);    /* Затемнение на 20% */
+    --btn-kolt-active: rgb(18, 80, 160);    /* Затемнение на 35% */
+
+    --btn-kolt-text: #ffffff;
+    --btn-kolt-text-hover: #ffffff;
+    --btn-kolt-text-active: #ffffff;
+
+    --btn-kolt-shadow: rgba(30, 125, 230, 0.3);
+    --btn-kolt-border: transparent;
+
+    /* Кнопка закрытия (крестик) */
+    --btn-close-bg: #f0f0f0;
+    --btn-close-color: #555;
+    --btn-close-hover-bg: #e4e4e4;
+    --btn-close-hover-color: #d32f2f;
+    --btn-close-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* --------------------------------------------------------------------------
@@ -65,7 +84,7 @@
    -------------------------------------------------------------------------- */
 body.dark-theme {
     /* Цветовая схема */
-    --colorscheme: rgb(187, 134, 252);
+    --colorscheme: rgb(175, 100, 255);
     --colorschemehover: rgb(157, 101, 229);
 
     /* Фоны */
@@ -75,7 +94,7 @@ body.dark-theme {
     --card-bg: rgb(45, 45, 45);
     --input-bg: rgb(51, 51, 51);
     --cookie-bg: rgb(45, 45, 45);
-    --lk-block: rgb(19, 19, 19);
+    --navbar: rgb(34, 34, 34);
     --support-content-bg: rgb(43, 43, 43);
 
     /* Текст */
@@ -106,8 +125,27 @@ body.dark-theme {
     --table-hover: rgb(61, 61, 61);
 
     /* Эффекты */
-    --shadow-box-bubbly-button: rgb(187, 134, 252);
-    --simple-tabs-border-hover: rgba(255, 255, 255, 0.425);
+    --shadow-box-bubbly-button: rgb(128, 77, 190);
+    --simple-tabs-border-hover: rgba(194, 194, 194, 0.425);
+
+    /* Кнопки действий */
+    --btn-kolt-bg: rgb(175, 100, 255);
+    --btn-kolt-hover: rgb(155, 75, 235);    /* Затемнение фиолетового */
+    --btn-kolt-active: rgb(130, 55, 215);   /* Сильное затемнение */
+
+    --btn-kolt-text: #ffffff;
+    --btn-kolt-text-hover: #ffffff;
+    --btn-kolt-text-active: #ffffff;
+
+    --btn-kolt-shadow: rgba(175, 100, 255, 0.4);
+    --btn-kolt-border: rgba(255, 255, 255, 0.1);
+
+    /* Кнопка закрытия (крестик) */
+    --btn-close-bg: #2d2d2d;
+    --btn-close-color: #aaa;
+    --btn-close-hover-bg: #3d3d3d;
+    --btn-close-hover-color: #ff5252;
+    --btn-close-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* ==========================================================================
@@ -346,25 +384,34 @@ header {
 /* --------------------------------------------------------------------------
    3.3. Кнопки
    -------------------------------------------------------------------------- */
+
 .btn-kolt {
-    font-weight: 600;
-    color: white;
-    background-color: var(--link-color);
-    border-color: var(--link-border-color);
+    background-color: var(--btn-kolt-bg);
+    color: var(--btn-kolt-text);
+    border: 1px solid var(--btn-kolt-border);
+    
+    /* Базовые стили */
+    padding: 8px 16px;
+    border-radius: 6px;
+    /* font-family: inherit; */
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .btn-kolt:hover {
-    color: white;
-    background-color: var(--link-hover-color);
-    border-color: var(--link-hover-border-color);
-    text-decoration: none;
+    background-color: var(--btn-kolt-hover);
+    color: var(--btn-kolt-text-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--btn-kolt-shadow);
 }
 
-.btn-kolt:active,
-.btn-kolt:focus {
-    color: white;
-    background-color: var(--link-active-color);
-    border-color: var(--link-active-border-color);
+.btn-kolt:active {
+    background-color: var(--btn-kolt-active);
+    color: var(--btn-kolt-text-active);
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px var(--btn-kolt-shadow);
 }
 
 .btn-reshow_modal {
@@ -385,29 +432,74 @@ header {
     width: 130px;
 }
 
+/* Кнопка закрытия (крестик) */
 .btn-close {
-    color: var(--text-color);
-    margin-top: -7px !important;
-    padding: 14px 20px !important;
-    margin-right: -7px;
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--btn-close-bg);
+    cursor: pointer;
+    padding: 0;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--btn-close-shadow);
+    z-index: 10;
+}
+
+.btn-close::before,
+.btn-close::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 2px;
+    background-color: var(--btn-close-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.btn-close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.btn-close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .btn-close:hover {
-    color: var(--footer-link);
+    background-color: var(--btn-close-hover-bg);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.btn-close-create-account {
-    margin-top: -39px !important;
+.btn-close:hover::before,
+.btn-close:hover::after {
+    background-color: var(--btn-close-hover-color);
 }
 
-.btn-close_account-modal {
-    position: absolute;
-    left: calc(50% - 20px);
-    top: 360px;
-    margin-right: 0;
-    margin-top: 0;
-    padding: 0;
-    opacity: 0.6;
+.btn-close:active {
+    transform: scale(0.9);
+}
+
+.btn-close:active::before,
+.btn-close:active::after {
+    animation: spinAndScale 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes spinAndScale {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) rotate(180deg) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg) scale(1);
+    }
 }
 
 /* Кнопка с пузырьковым эффектом */
@@ -1376,7 +1468,7 @@ tbody tr {
     }
 }
 
-@media (max-width: 313px) {
+/* @media (max-width: 313px) {
     .btn-close_account-modal {
         position: absolute;
         left: calc(50% - 20px);
@@ -1386,7 +1478,7 @@ tbody tr {
         padding: 0;
         opacity: 0.6;
     }
-}
+} */
 
 @media (max-width: 303px) {
     .form_radio_group label {

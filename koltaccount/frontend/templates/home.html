@@ -51,8 +51,8 @@
         <div class="modal-content">
             <div class="modal-header modal-header-create-account">
                 <button type="button" class="btn btn-danger btn-round btn-main-fix modal-header-create-account_delete_button" data-site="" data-id="" id="modal-btn-account_delete">Удалить</button>
-                <button class="btn btn-kolt bubbly-button btn-round btn-main-fix" id="modal-btn-save">Сохранить</button>
-                <button type="button" class="close btn-close btn-close_account-modal" data-dismiss="modal" aria-hidden="true">×</button>
+                <button class="btn btn-kolt btn-round btn-main-fix" id="modal-btn-save">Сохранить</button>
+                <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
             <div class="modal-body modal-body-show-account">
                 <label for="modal-site">Сайт</label>
@@ -80,7 +80,7 @@
         <div class="modal-content">
             <div class="modal-header modal-header-create-account">
                 <h4 class="modal-title">Добавить аккаунт</h4>
-                <button type="button" class="close btn-close btn-close-create-account" data-dismiss="modal" aria-hidden="true">×</button>
+                <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
             <div class="modal-body modal-body-create-account">
                 <label for="in-site">Сайт</label>
@@ -91,7 +91,7 @@
                 <input class="form-control" type="text" id="in-login" maxlength="254">
                 <label for="in-password">Пароль</label>
                 <input class="form-control" type="password" id="in-password" maxlength="254">
-                <button class="btn btn-kolt bubbly-button btn-round btn-main-fix btn-send" id="btn-send_account">Добавить</button>
+                <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_account">Добавить</button>
             </div>
         </div>
     </div>
@@ -101,7 +101,7 @@
         <div class="modal-content">
             <div class="modal-header modal-header-create-account">
                 <h4 class="modal-title">Мастер пароль</h4>
-                <button type="button" class="close btn-close btn-close-create-account" data-dismiss="modal" aria-hidden="true">×</button>
+                <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
             <div class="modal-body modal-body-master-password">
                 <div id="pesonal-crypto-settings">
@@ -135,10 +135,10 @@
                 <input class="form-control" type="password" id="in-repeat_new_password" maxlength="254">
                 {% if request.user.is_staff %}
                 <input id="btn_master_import" type="file" value="Import" style="display: none;"/>
-                <label for="btn_master_import" class="btn btn-kolt bubbly-button btn-round">Мастер импорт</label>
-                <button id="btn_master_export" data-toggle="modal" style="margin-top: 5px;" class="btn btn-kolt bubbly-button btn-round">Мастер экспорт</button>
+                <label for="btn_master_import" class="btn btn-kolt btn-round">Мастер импорт</label>
+                <button id="btn_master_export" data-toggle="modal" style="margin-top: 5px;" class="btn btn-kolt btn-round">Мастер экспорт</button>
                 {% endif %}
-                <button class="btn btn-kolt bubbly-button btn-round btn-main-fix btn-send" id="btn-send_master_password">Изменить</button>
+                <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_master_password">Изменить</button>
                 <div id="password_info">
                     <h5>Пароль должен соответствовать критериям:</h5>
                     <ul>
@@ -157,7 +157,7 @@
         <div class="modal-content">
             <div class="modal-header modal-header-create-account">
                 <h4 class="modal-title">Аутентификация</h4>
-                <button type="button" class="close btn-close btn-close-create-account" data-dismiss="modal" aria-hidden="true">×</button>
+                <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
             <div class="modal-body modal-body-enter-password">
                 <label for="in-enter_master_password">Введите мастер пароль</label>

@@ -230,6 +230,119 @@ header {
     font-weight: 800;
 }
 
+/* ==========================================================================
+   3.20. Dropdown меню (кастомизация Bootstrap)
+   ========================================================================== */
+
+/* Контейнер dropdown */
+.dropdown {
+    position: relative;
+}
+
+/* Кнопка/ссылка открывающая dropdown */
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.dropdown-toggle:hover,
+.dropdown-toggle:focus {
+    text-decoration: none;
+}
+
+/* Само выпадающее меню */
+.dropdown-menu {
+    background-color: #222 !important;
+    border-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    padding: 5px 0;
+    margin-top: 0;
+}
+
+/* Пункты меню */
+.dropdown-menu > li {
+    margin: 0;
+}
+
+.dropdown-menu > li > a {
+    display: block;
+    padding: 8px 20px !important;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+/* Стили для ссылок внутри dropdown */
+.dropdown-menu > li > a p {
+    margin: 0;
+    padding: 0;
+    color: white !important;
+    font-size: 14px;
+}
+
+/* Убираем стандартные стили Bootstrap */
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background-color: var(--accent-bg) !important;
+    background-image: none !important;
+    text-decoration: none;
+}
+
+.dropdown-menu > .active > a p {
+    color: white !important;
+}
+
+/* Стрелочка (caret) */
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px dashed;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    color: currentColor;
+    transition: transform 0.3s ease;
+}
+
+/* Поворот caret при открытом dropdown */
+.dropdown.open .caret {
+    transform: rotate(180deg);
+}
+
+/* Анимация появления */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    min-width: 160px;
+    animation: dropdownFade 0.2s ease;
+}
+
+.dropdown.open .dropdown-menu {
+    display: block;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:focus, .navbar-inverse .navbar-nav > .open > a:hover {
+  color: #fff;
+  background-color: #222;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* --------------------------------------------------------------------------
    3.3. Кнопки
    -------------------------------------------------------------------------- */

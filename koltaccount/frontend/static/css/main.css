@@ -1142,7 +1142,7 @@ tbody tr {
 /* --------------------------------------------------------------------------
    3.12. Скроллбар
    -------------------------------------------------------------------------- */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     width: 11px;
 }
 
@@ -1172,22 +1172,62 @@ tbody tr {
     height: 0;
     background-image: url('');
     background-repeat: no-repeat;
-}
+} */
 
 /* --------------------------------------------------------------------------
    3.13. Кнопка прокрутки вверх
    -------------------------------------------------------------------------- */
-.scrollup {
-    width: 40px;
-    height: 40px;
-    opacity: 0.3;
+.scrollup-wrapper {
     position: fixed;
-    float: right;
-    bottom: 10px;
-    right: 10px;
-    display: none;
-    text-indent: -9999px;
-    background: url('/frontend/static/img/png/scroll_page_top.png') no-repeat;
+    right: 30px;
+    bottom: 30px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.scrollup-wrapper .scrollup-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--btn-kolt-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    pointer-events: auto;
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+.scrollup-wrapper .scrollup-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    border-left: 3px solid var(--btn-kolt-text);
+    border-top: 3px solid var(--btn-kolt-text);
+    transform: translate(-50%, -25%) rotate(45deg);
+    border-radius: 2px;
+}
+
+.scrollup-wrapper .scrollup-btn.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scrollup-wrapper .scrollup-btn:hover {
+    background: var(--btn-kolt-hover);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.scrollup-wrapper .scrollup-btn:active {
+    transform: translateY(-2px) scale(0.95);
 }
 
 /* --------------------------------------------------------------------------
@@ -1633,18 +1673,6 @@ tbody tr {
     }
 }
 
-/* @media (max-width: 313px) {
-    .btn-close_account-modal {
-        position: absolute;
-        left: calc(50% - 20px);
-        top: 360px;
-        margin-right: 0;
-        margin-top: 0;
-        padding: 0;
-        opacity: 0.6;
-    }
-} */
-
 @media (max-width: 303px) {
     .form_radio_group label {
         border-right: 1px solid var(--border-color);
@@ -1671,5 +1699,21 @@ tbody tr {
     .navbar-nav > li > a {
         padding-top: 10px;
         padding-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .scrollup-wrapper {
+        right: 20px;
+        bottom: 20px;
+    }
+    .scrollup-wrapper .scrollup-btn {
+        width: 45px;
+        height: 45px;
+    }
+    .scrollup-wrapper .scrollup-btn::before {
+        width: 14px;
+        height: 14px;
+        border-width: 2.5px;
     }
 }

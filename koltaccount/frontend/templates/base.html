@@ -53,7 +53,7 @@
     <script defer src="{% static 'js/addons/sweet-alert.min.js' %}"></script>
     <script defer src="{% static 'js/base.js' %}?ver={{ static_version }}"></script>
     <script defer src="{% static 'js/theme.js' %}?ver={{ static_version }}"></script>
-    <script defer async src="{% static 'js/addons/SmoothScroll.js' %}"></script>
+    <script defer src="{% static 'js/scrollup.js' %}?ver={{ static_version }}"></script>
     <!--<script src="https://cdn.tailwindcss.com"></script> TODO: Что это? Удалить...
     <script>
         tailwind.config = {
@@ -208,12 +208,14 @@
             <div class="button-close cookie_accept"><i></i></div>
         </div>
     </footer>
-    <a href="#" class="scrollup">Наверх</a>
     <div class="theme-toggle-container">
         <button class="theme-toggle" id="theme-toggle" aria-label="Переключить тему">
             <span class="theme-toggle__icon">🌙</span>
             <span class="theme-toggle__text">Темная тема</span>
         </button>
+    </div>
+    <div class="scrollup-wrapper">
+        <button class="scrollup-btn" aria-label="Наверх"></button>
     </div>
 </body>
 

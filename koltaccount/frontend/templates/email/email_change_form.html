@@ -17,7 +17,7 @@
                         {% load crispy_forms_tags %}
                         <form method="post">{% csrf_token %}
                             {{ form|crispy }}
-                            <button type="submit" class="btn btn-primary btn-block bubbly-button default">Сохранить</button>
+                            <button type="submit" class="btn btn-kolt btn-block bubbly-button default">Сохранить</button>
                         </form>
                     </div>
                     <p class="terms_confirm-text">Нажимая на кнопку «Сохранить», вы даете согласие на обработку персональных данных и соглашаетесь c <a href="{% url 'privacy_url' %}" target="_blank">политикой конфиденциальности</a>.</p>

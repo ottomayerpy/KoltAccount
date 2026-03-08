@@ -1,8 +1,8 @@
 .support-content {
     padding: 25px;
 
-    color: #f4f7fb;
-    background: #010b23;
+    color: var(--text-color);
+    background: var(--support-content-bg);
     border-radius: 5px;
     margin-bottom: 5px;
 }
@@ -31,6 +31,7 @@
     font-size: 14px;
     font-weight: 500;
     line-height: 1.43;
+    color: var(--text-color);
 
     position: relative;
 
@@ -49,21 +50,21 @@
     text-align: left;
 
     opacity: 1;
-    color: #f4f7fb;
+    /* color: #f4f7fb; */
     border: none;
     border-radius: 0;
     outline: none;
     outline: 0 !important;
     background-color: rgba(244, 247, 251, 0);
-    -webkit-box-shadow: 0 1px 0 0 rgba(221, 225, 230, .3);
-            box-shadow: 0 1px 0 0 rgba(221, 225, 230, .3);
+    /* -webkit-box-shadow: 0 1px 0 0 rgba(221, 225, 230, .3);
+            box-shadow: 0 1px 0 0 rgba(221, 225, 230, .3); */
 }
 
 
-.simple-tabs:hover {
+/* .simple-tabs:hover {
     -webkit-box-shadow: 0 1px 0 0 rgba(221, 225, 230, .67);
             box-shadow: 0 1px 0 0 rgba(221, 225, 230, .67);
-}
+} */
 
 .swiper-container {
     font-size: 16px;
@@ -102,5 +103,4 @@
 
 .help_block {
     border-radius: 2px;
-    background: #fff;
 }

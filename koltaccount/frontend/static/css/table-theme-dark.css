@@ -1,0 +1,157 @@
+/*************
+  Dark Theme
+ *************/
+.tablesorter-dark {
+	width: 100%;
+	background-color: #1a1a1a;
+	margin: 10px 0 15px;
+	text-align: left;
+	border-spacing: 0;
+	border: #2b2b2b 1px solid;
+	font: 14px/18px Arial, Sans-serif;
+	color: #ccc;
+}
+.tablesorter-dark th,
+.tablesorter-dark td {
+	border: #2b2b2b 1px solid;
+	border-width: 0 1px 1px 0;
+	padding: 4px;
+}
+
+/* header */
+.tablesorter-dark th,
+.tablesorter-dark thead td {
+	font: bold 12px/20px Arial, Sans-serif;
+	color: #fff;
+	background-color: #1a1a1a;
+	text-shadow: 0 1px 0 rgba(204, 204, 204, 0.7);
+}
+.tablesorter-dark thead th {
+	border-bottom: #2b2b2b 2px solid;
+}
+.tablesorter-dark .header,
+.tablesorter-dark .tablesorter-header {
+	background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+	background-repeat: no-repeat;
+	background-position: center right;
+	padding: 4px 18px 4px 4px;
+	cursor: pointer;
+}
+.tablesorter-dark .headerSortUp,
+.tablesorter-dark .tablesorter-headerSortUp,
+.tablesorter-dark .tablesorter-headerAsc {
+	background-color: #333;
+	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+}
+.tablesorter-dark .headerSortDown,
+.tablesorter-dark .tablesorter-headerSortDown,
+.tablesorter-dark .tablesorter-headerDesc {
+	background-color: #2b2b2b;
+	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+}
+.tablesorter-dark thead .sorter-false {
+	background-image: none;
+	cursor: default;
+}
+
+/* tfoot */
+.tablesorter-dark tfoot th,
+.tablesorter-dark tfoot td {
+	background-color: #202020;
+	color: #fff;
+}
+.tablesorter-dark tfoot .tablesorter-headerSortUp,
+.tablesorter-dark tfoot .tablesorter-headerSortDown,
+.tablesorter-dark tfoot .tablesorter-headerAsc,
+.tablesorter-dark tfoot .tablesorter-headerDesc {
+	background-image: none;
+}
+
+/* tbody */
+.tablesorter-dark td {
+	color: #ccc;
+	background-color: #1a1a1a;
+}
+
+/* hovered row colors */
+.tablesorter-dark tbody > tr:hover > td {
+	background-color: #333;
+}
+
+/* Zebra Widget */
+.tablesorter-dark tbody tr.odd td {
+	background-color: #202020;
+}
+.tablesorter-dark tbody tr.even td {
+	background-color: #101010;
+}
+
+/* Column colors */
+.tablesorter-dark td.primary,
+.tablesorter-dark tr.odd td.primary {
+	background-color: #0a0a0a;
+}
+.tablesorter-dark tr.even td.primary {
+	background-color: #050505;
+}
+.tablesorter-dark td.secondary,
+.tablesorter-dark tr.odd td.secondary {
+	background-color: #0f0f0f;
+}
+.tablesorter-dark tr.even td.secondary {
+	background-color: #0a0a0a;
+}
+.tablesorter-dark td.tertiary,
+.tablesorter-dark tr.odd td.tertiary {
+	background-color: #191919;
+}
+.tablesorter-dark tr.even td.tertiary {
+	background-color: #0f0f0f;
+}
+
+/* filter widget */
+.tablesorter-dark .tablesorter-filter-row td {
+	background: #202020;
+	line-height: normal;
+	text-align: center;
+	transition: line-height 0.1s ease;
+}
+.tablesorter-dark .tablesorter-filter-row .disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+.tablesorter-dark .tablesorter-filter-row.hideme td {
+	padding: 2px;
+	line-height: 0;
+}
+.tablesorter-dark .tablesorter-filter-row.hideme .tablesorter-filter {
+	height: 1px;
+	border: 0;
+	opacity: 0;
+}
+.tablesorter-dark .tablesorter-filter {
+	width: 98%;
+	padding: 4px;
+	background-color: #1a1a1a;
+	border: 1px solid #2b2b2b;
+	color: #ddd;
+	box-sizing: border-box;
+	transition: height 0.1s ease;
+}
+
+/* table processing indicator */
+.tablesorter-dark .tablesorter-processing {
+	background: url('data:image/gif;base64,R0lGODlhFAAUAKEAAO7u7lpaWgAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBCgACACwAAAAAFAAUAAACQZRvoIDtu1wLQUAlqKTVxqwhXIiBnDg6Y4eyx4lKW5XK7wrLeK3vbq8J2W4T4e1nMhpWrZCTt3xKZ8kgsggdJmUFACH5BAEKAAIALAcAAAALAAcAAAIUVB6ii7jajgCAuUmtovxtXnmdUAAAIfkEAQoAAgAsDQACAAcACwAAAhRUIpmHy/3gUVQAQO9NetuugCFWAAAh+QQBCgACACwNAAcABwALAAACE5QVcZjKbVo6ck2AF95m5/6BSwEAIfkEAQoAAgAsBwANAAsABwAAAhOUH3kr6QaAcSrGWe1VQl+mMUIBACH5BAEKAAIALAIADQALAAcAAAIUlICmh7ncTAgqijkruDiv7n2YUAAAIfkEAQoAAgAsAAAHAAcACwAAAhQUIGmHyedehIoqFXLKfPOAaZdWAAAh+QQFCgACACwAAAIABwALAAACFJQFcJiXb15zLYRl7cla8OtlGGgUADs=') center center no-repeat !important;
+}
+
+/* other */
+.tablesorter-dark caption {
+	background: #202020;
+}
+.tablesorter-dark .filtered {
+	display: none;
+}
+.tablesorter-dark .tablesorter-errorRow td {
+	text-align: center;
+	background-color: #e6bf99;
+}

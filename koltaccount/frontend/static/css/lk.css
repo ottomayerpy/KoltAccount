@@ -1,12 +1,12 @@
 .support-content {
     color: #333;
-    background: #fff;
+    background-color: var(--body-bg);
     padding: 0px;
 }
 
 .simple-tabs {
-    color: #333;
-    background-color: #fff;
+    color: var(--text-color);
+    background-color: var(--body-bg);
     border-radius: 5px;
     margin: 5px;
     text-align: center;
@@ -15,7 +15,7 @@
 }
 
 .simple-tabs:hover {
-    border-color: rgba(0, 0, 0, 0.425);
+    border-color: var(--simple-tabs-border-hover);
 }
 
 .swiper-container {
@@ -23,7 +23,7 @@
 }
 
 .lk-block {
-    background-color: #EEEEEE;
+    background-color: var(--lk-block);
     border-radius: 3px;
     padding: 10px;
     margin: 5px;

@@ -54,18 +54,6 @@
     <script defer src="{% static 'js/base.js' %}?ver={{ static_version }}"></script>
     <script defer src="{% static 'js/theme.js' %}?ver={{ static_version }}"></script>
     <script defer src="{% static 'js/scrollup.js' %}?ver={{ static_version }}"></script>
-    <!--<script src="https://cdn.tailwindcss.com"></script> TODO: Что это? Удалить...
-    <script>
-        tailwind.config = {
-          theme: {
-            extend: {
-              colors: {
-                clifford: '#da373d',
-              }
-            }
-          }
-        }
-      </script>-->
     <title>{% block title %}{% endblock %}</title>
     {% block addons_head %}{% endblock %}
     {% block noscript %}

@@ -19,6 +19,8 @@
     --accent-bg: rgb(240, 240, 240);
     --header-bg: rgb(248, 249, 250);
     --card-bg: rgb(255, 255, 255);
+    --block-bg: rgb(240, 240, 240);
+    --modal-bg: rgb(255, 255, 255);
     --input-bg: rgb(255, 255, 255);
     --cookie-bg: rgb(255, 255, 255);
     --lk-block: rgb(241, 241, 241);
@@ -57,7 +59,7 @@
 
     /* Эффекты */
     --shadow-box-bubbly-button: rgb(77, 122, 190);
-    --simple-tabs-border-hover: rgba(194, 194, 194, 0.425);
+    --simple-tabs-border-hover: rgba(58, 58, 58, 0.425);
 
     /* Кнопки действий */
     --btn-kolt-bg: rgb(30, 125, 230);
@@ -116,7 +118,9 @@ body.dark-theme {
     --body-bg: rgb(26, 26, 26);
     --accent-bg: rgb(45, 45, 45);
     --header-bg: rgb(36, 36, 36);
-    --card-bg: rgb(45, 45, 45);
+    --card-bg: rgb(26, 26, 26);
+    --block-bg: rgb(30, 30, 30);
+    --modal-bg: rgb(45, 45, 45);
     --input-bg: rgb(51, 51, 51);
     --cookie-bg: rgb(45, 45, 45);
     --navbar: rgb(34, 34, 34);
@@ -1118,7 +1122,7 @@ tbody tr {
    3.7. Модальные окна
    -------------------------------------------------------------------------- */
 .modal-content {
-    background-color: var(--card-bg);
+    background-color: var(--modal-bg);
     color: var(--text-color);
 }
 

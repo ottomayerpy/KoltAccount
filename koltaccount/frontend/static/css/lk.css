@@ -23,7 +23,7 @@
 }
 
 .lk-block {
-    background-color: var(--navbar);
+    background-color: var(--block-bg);
     border-radius: 3px;
     padding: 10px;
     margin: 5px;

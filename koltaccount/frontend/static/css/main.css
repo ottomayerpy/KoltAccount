@@ -1095,26 +1095,48 @@ tbody tr {
 /* --------------------------------------------------------------------------
    3.10. Подвал (footer)
    -------------------------------------------------------------------------- */
-.footer-policy_terms {
-    list-style: none outside none;
-    padding-left: 0;
-}
-
-.footer-urls a {
-    color: var(--footer-link);
-    text-decoration: none;
-}
-
 .footer-urls_privacy-terms {
-    width: 270px;
+    display: flex;
+    gap: 20px; /* Расстояние между ссылками */
+    justify-content: center; /* Центрирование */
+    padding: 20px 0;
+}
+
+.footer-urls_privacy-terms a {
+    text-decoration: none;
+    position: relative;
 }
 
 .footer-urls_privacy-terms p {
+    margin: 0;
     font-size: 14px;
+    transition: all 0.3s ease;
+    
+    /* Светлая тема */
+    color: var(--text-color);
 }
 
-.footer-urls_privacy-terms a:hover {
-    color: var(--text-color);
+/* Подчеркивание с анимацией */
+.footer-urls_privacy-terms a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    transition: width 0.3s ease;
+    
+    /* Цвет подчеркивания через ваши переменные */
+    background: var(--btn-kolt-bg);
+}
+
+.footer-urls_privacy-terms a:hover::after {
+    width: 100%;
+}
+
+.footer-urls_privacy-terms a:hover p {
+    color: var(--btn-kolt-bg);
+    transform: translateY(-2px);
 }
 
 .copyright {
@@ -1680,5 +1702,17 @@ tbody tr {
         width: 14px;
         height: 14px;
         border-width: 2.5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-urls_privacy-terms {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .footer-urls_privacy-terms p {
+        font-size: 12px;
     }
 }

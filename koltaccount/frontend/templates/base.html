@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" http-equiv="X-UA-Compatible" />
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta name="description" content="Описание страницы. Не менее 160 символов." />
-    <meta name="keywords" content="облачное, хранение, аккаунтов, бесплатный, менеджер, паролей, удобный, безопасный, веб, приложение" />
+    <meta name="keywords"
+        content="облачное, хранение, аккаунтов, бесплатный, менеджер, паролей, удобный, безопасный, веб, приложение" />
     <meta property="og:title" content="KoltAccount" />
     <meta property="og:description" content="Веб приложение для храниения аккаунтов" />
     <meta property="og:type" content="website" />
@@ -54,6 +55,7 @@
     <script defer src="{% static 'js/base.js' %}?ver={{ static_version }}"></script>
     <script defer src="{% static 'js/theme.js' %}?ver={{ static_version }}"></script>
     <script defer src="{% static 'js/scrollup.js' %}?ver={{ static_version }}"></script>
+    <script defer src="{% static 'js/header.js' %}?ver={{ static_version }}"></script>
     <title>{% block title %}{% endblock %}</title>
     {% block addons_head %}{% endblock %}
     {% block noscript %}
@@ -69,109 +71,114 @@
         <div class="loader"></div>
     </div>
     {% endblock %}
-    <header class="container">
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    {% if request.user.is_staff and site_in_service == 'true' %}
-                    <a class="logo_site-close navbar-brand" href="{% url 'home_url' %}">Сайт закрыт</a>
-                    {% else %}
-                    <a class="logo navbar-brand" href="{% url 'home_url' %}">KoltAccount</a>
-                    {% endif %}
-                    <!-- {% if request.user.is_staff %}
-                    <a class="logo cpu_temp navbar-brand" id="cpu_temp"></a>
-                    {% endif %} -->
-                </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right account-nav">
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Левая часть -->
+            <div class="header-left">
+                {% if request.user.is_staff and site_in_service == 'true' %}
+                <a class="logo logo-warning" href="{% url 'home_url' %}">Сайт закрыт</a>
+                {% else %}
+                <a class="logo" href="{% url 'home_url' %}">KoltAccount</a>
+                {% endif %}
+            </div>
+
+            <!-- Правая часть -->
+            <div class="header-right">
+                <button class="mobile-menu-toggle" aria-label="Меню">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <nav class="main-nav">
+                    <ul class="nav-list">
                         {% if request.user.is_staff %}
-                        <li>
-                            <a href="{% url 'logs_url' %}">
-                                <p class="navbar-text">Логи</p>
-                            </a>
+                        <li class="nav-item">
+                            <a href="{% url 'logs_url' %}" class="nav-link">Логи</a>
                         </li>
                         {% endif %}
+
                         {% if request.user.is_superuser %}
-                        <li>
-                            <a href="{% url 'admin:index' %}">
-                                <p class="navbar-text">Админка</p>
-                            </a>
+                        <li class="nav-item">
+                            <a href="{% url 'admin:index' %}" class="nav-link">Админка</a>
                         </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">
-                                <p class="navbar-text">Прочее <span class="caret"></span></p>
+
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle">
+                                Прочее <span class="dropdown-arrow">▼</span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{% url 'support_url' %}">
-                                        <p>Помощь</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'donation_url' %}">
-                                        <p>Пожертвования</p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'lk_url' %}">
-                                        <p>Кабинет</p>
-                                    </a>
-                                </li>
+                                <li><a href="{% url 'support_url' %}" class="dropdown-item">Помощь</a></li>
+                                <li><a href="{% url 'donation_url' %}" class="dropdown-item">Пожертвования</a></li>
+                                <li><a href="{% url 'lk_url' %}" class="dropdown-item">Кабинет</a></li>
                             </ul>
                         </li>
+
                         {% else %}
-                        <li>
-                            <a href="{% url 'support_url' %}">
-                                <p class="navbar-text">Помощь</p>
-                            </a>
+
+                        <li class="nav-item">
+                            <a href="{% url 'support_url' %}" class="nav-link">Помощь</a>
                         </li>
+
                         {% if request.user.is_authenticated %}
-                        <li>
-                            <a href="{% url 'donation_url' %}">
-                                <p class="navbar-text">Пожертвования</p>
-                            </a>
+                        <li class="nav-item">
+                            <a href="{% url 'donation_url' %}" class="nav-link">Пожертвования</a>
                         </li>
-                        <li>
-                            <a href="{% url 'lk_url' %}">
-                                <p class="navbar-text">Кабинет</p>
-                            </a>
+                        <li class="nav-item">
+                            <a href="{% url 'lk_url' %}" class="nav-link">Кабинет</a>
                         </li>
                         {% else %}
-                        <li class="base_li_account_buttons">
-                            <div align="center">
-                                <a href="{% url 'kolt_login' %}" class="btn btn-kolt btn-round btn-main-fix">
-                                    Войти
-                                </a>
-                            </div>
-                        </li>
-                        <li class="base_li_account_buttons">
-                            <div align="center">
-                                <a href="{% url 'register_url' %}" class="btn btn-kolt btn-round btn-main-fix base_li_register_button">
-                                    Зарегистрироваться
-                                </a>
-                            </div>
+                        <li class="nav-item auth-buttons">
+                            <a href="{% url 'kolt_login' %}" class="btn-kolt btn-small">Войти</a>
+                            <a href="{% url 'register_url' %}"
+                                class="btn-kolt btn-small btn-outline">Зарегистрироваться</a>
                         </li>
                         {% endif %}
+
                         {% endif %}
                     </ul>
-                </div>
+                </nav>
             </div>
-        </nav>
+        </div>
     </header>
+
+    <!-- Мобильное меню -->
+    <div class="mobile-nav">
+        <ul class="mobile-nav-list">
+            <!-- Копия пунктов для мобильных -->
+            {% if request.user.is_staff %}
+            <li class="nav-item"><a href="{% url 'logs_url' %}" class="nav-link">Логи</a></li>
+            {% endif %}
+
+            {% if request.user.is_superuser %}
+            <li class="nav-item"><a href="{% url 'admin:index' %}" class="nav-link">Админка</a></li>
+            <li class="nav-item"><a href="{% url 'support_url' %}" class="nav-link">Помощь</a></li>
+            <li class="nav-item"><a href="{% url 'donation_url' %}" class="nav-link">Пожертвования</a></li>
+            <li class="nav-item"><a href="{% url 'lk_url' %}" class="nav-link">Кабинет</a></li>
+            {% else %}
+            <li class="nav-item"><a href="{% url 'support_url' %}" class="nav-link">Помощь</a></li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item"><a href="{% url 'donation_url' %}" class="nav-link">Пожертвования</a></li>
+            <li class="nav-item"><a href="{% url 'lk_url' %}" class="nav-link">Кабинет</a></li>
+            {% else %}
+            <li class="nav-item auth-buttons">
+                <a href="{% url 'kolt_login' %}" class="btn-kolt btn-small">Войти</a>
+                <a href="{% url 'register_url' %}" class="btn-kolt btn-small btn-outline">Зарегистрироваться</a>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </div>
     {% if not request.user.is_active_email and request.user.is_authenticated %}
     {% if request.user.email %}
     <div class="confirm_email-notification">
-        <p>Вам нужно подтвердить почту. Мы уже отправили вам письмо с инструкциями. Если письмо не пришло то нажмите <a href="{% url 'confirm_email_url' %}">здесь</a> для повторной отправки письма.</p>
+        <p>Вам нужно подтвердить почту. Мы уже отправили вам письмо с инструкциями. Если письмо не пришло то нажмите <a
+                href="{% url 'confirm_email_url' %}">здесь</a> для повторной отправки письма.</p>
     </div>
     {% else %}
     <div class="confirm_email-notification">
-        <p>У вас не указана почта, привязать почту к учетной записи можно <a href="{% url 'email_change_url' %}">здесь</a>.</p>
+        <p>У вас не указана почта, привязать почту к учетной записи можно <a
+                href="{% url 'email_change_url' %}">здесь</a>.</p>
     </div>
     {% endif %}
     {% endif %}
@@ -192,7 +199,8 @@
             </div>
         </div>
         <div id="cookie_notification">
-            <p>Для улучшения работы сайта мы используем файлы cookie. Продолжая работу с сайтом, Вы разрешаете использование cookie-файлов.</p>
+            <p>Для улучшения работы сайта мы используем файлы cookie. Продолжая работу с сайтом, Вы разрешаете
+                использование cookie-файлов.</p>
             <div class="button-close cookie_accept"><i></i></div>
         </div>
     </footer>

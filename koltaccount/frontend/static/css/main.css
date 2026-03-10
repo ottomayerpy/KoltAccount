@@ -1404,7 +1404,7 @@ tbody tr {
     position: fixed;
     left: 30px;
     bottom: 30px;
-    z-index: 10000;
+    z-index: 9998;
 }
 
 /* Кнопка темы */
@@ -2084,46 +2084,8 @@ body.dark-theme .theme-toggle:hover {
 /* ==========================================================================
    5. ПРЕЛОАДЕР
    ========================================================================== */
-.preload {
-    position: fixed;
-    z-index: 1090;
-    top: 0;
-    left: 0;
-    visibility: visible;
-    width: 100%;
-    height: 100%;
-    transition: .3s all;
-    opacity: 1;
-    background: var(--body-bg);
-}
 
-.preload-done {
-    visibility: hidden !important;
-    transition: .2s;
-    opacity: 0 !important;
-}
-
-.loader,
-.loader:after {
-    border-radius: 50%;
-    width: 10em;
-    height: 10em;
-}
-
-.loader {
-    opacity: 1;
-    top: 50%;
-    margin: -50px auto;
-    font-size: 10px;
-    position: relative;
-    text-indent: -9999em;
-    border-top: 1.1em solid rgba(255, 255, 255, 0.2);
-    border-right: 1.1em solid rgba(255, 255, 255, 0.2);
-    border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
-    border-left: 1.1em solid #ffffff;
-    transform: translateZ(0);
-    animation: load 1.1s infinite linear;
-}
+   /* В base.html */
 
 /* ==========================================================================
    6. АНИМАЦИИ
@@ -2152,15 +2114,6 @@ body.dark-theme .theme-toggle:hover {
     100% {
         background-position: 0 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
         background-size: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
-    }
-}
-
-@keyframes load {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
     }
 }
 

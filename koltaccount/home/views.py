@@ -127,20 +127,20 @@ def donation_notification(request):
 
 def lk(request):
     """ Личный кабинет пользователя """
-    
+
     # Получаем историю входов из AccessLog
     login_history = AccessLog.objects.filter(
         username=request.user.username
     ).order_by('-attempt_time')[:50]
-    
+
     # Получаем неудачные попытки из AccessAttempt
     failed_attempts = AccessAttempt.objects.filter(
         username=request.user.username
     ).order_by('-attempt_time')[:20]
-    
+
     # Объединяем и сортируем
     combined_history = []
-    
+
     for log in login_history:
         combined_history.append({
             'type': 'log',
@@ -148,7 +148,7 @@ def lk(request):
             'is_active': log.logout_time is None,
             'time': log.attempt_time
         })
-    
+
     for attempt in failed_attempts:
         combined_history.append({
             'type': 'attempt',
@@ -156,10 +156,10 @@ def lk(request):
             'is_active': False,
             'time': attempt.attempt_time
         })
-    
+
     # Сортируем по времени
     combined_history.sort(key=lambda x: x['time'], reverse=True)
-    
+
     context = get_context({
         "title": "Личный кабинет",
         "login_history": combined_history[:50],  # Ограничим 50 записями

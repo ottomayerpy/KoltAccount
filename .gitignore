@@ -5,5 +5,6 @@ env
 .env
 .vscode
 .idea
+.flake8
 db.sqlite3
 logs

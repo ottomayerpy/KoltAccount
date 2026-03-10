@@ -73,7 +73,6 @@
     {% endblock %}
     <header class="site-header">
         <div class="header-container">
-            <!-- Левая часть -->
             <div class="header-left">
                 {% if request.user.is_staff and site_in_service == 'true' %}
                 <a class="logo logo-warning" href="{% url 'home_url' %}">Сайт закрыт</a>
@@ -81,57 +80,55 @@
                 <a class="logo" href="{% url 'home_url' %}">KoltAccount</a>
                 {% endif %}
             </div>
-
-            <!-- Правая часть -->
             <div class="header-right">
-                <button class="mobile-menu-toggle" aria-label="Меню">
+                <button class="k-mobile-menu-toggle" aria-label="Меню">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
 
-                <nav class="main-nav">
-                    <ul class="nav-list">
+                <nav class="k-nav">
+                    <ul class="k-nav-list">
                         {% if request.user.is_staff %}
-                        <li class="nav-item">
-                            <a href="{% url 'logs_url' %}" class="nav-link">Логи</a>
+                        <li class="k-nav-item">
+                            <a href="{% url 'logs_url' %}" class="k-nav-link">Логи</a>
                         </li>
                         {% endif %}
 
                         {% if request.user.is_superuser %}
-                        <li class="nav-item">
-                            <a href="{% url 'admin:index' %}" class="nav-link">Админка</a>
+                        <li class="k-nav-item">
+                            <a href="{% url 'admin:index' %}" class="k-nav-link">Админка</a>
                         </li>
 
-                        <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle">
-                                Прочее <span class="dropdown-arrow">▼</span>
+                        <li class="k-nav-item k-dropdown">
+                            <a href="#" class="k-nav-link k-dropdown-toggle">
+                                Прочее <span class="k-dropdown-arrow">▼</span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'support_url' %}" class="dropdown-item">Помощь</a></li>
-                                <li><a href="{% url 'donation_url' %}" class="dropdown-item">Пожертвования</a></li>
-                                <li><a href="{% url 'lk_url' %}" class="dropdown-item">Кабинет</a></li>
+                            <ul class="k-dropdown-menu">
+                                <li><a href="{% url 'support_url' %}" class="k-dropdown-item">Помощь</a></li>
+                                <li><a href="{% url 'donation_url' %}" class="k-dropdown-item">Пожертвования</a></li>
+                                <li><a href="{% url 'lk_url' %}" class="k-dropdown-item">Кабинет</a></li>
                             </ul>
                         </li>
 
                         {% else %}
 
-                        <li class="nav-item">
-                            <a href="{% url 'support_url' %}" class="nav-link">Помощь</a>
+                        <li class="k-nav-item">
+                            <a href="{% url 'support_url' %}" class="k-nav-link">Помощь</a>
                         </li>
 
                         {% if request.user.is_authenticated %}
-                        <li class="nav-item">
-                            <a href="{% url 'donation_url' %}" class="nav-link">Пожертвования</a>
+                        <li class="k-nav-item">
+                            <a href="{% url 'donation_url' %}" class="k-nav-link">Пожертвования</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{% url 'lk_url' %}" class="nav-link">Кабинет</a>
+                        <li class="k-nav-item">
+                            <a href="{% url 'lk_url' %}" class="k-nav-link">Кабинет</a>
                         </li>
                         {% else %}
-                        <li class="nav-item auth-buttons">
+                        <li class="k-nav-item k-auth-buttons">
                             <a href="{% url 'kolt_login' %}" class="btn-kolt btn-small">Войти</a>
                             <a href="{% url 'register_url' %}"
-                                class="btn-kolt btn-small btn-outline">Зарегистрироваться</a>
+                                class="btn-kolt btn-small k-btn-outline">Зарегистрироваться</a>
                         </li>
                         {% endif %}
 
@@ -140,35 +137,32 @@
                 </nav>
             </div>
         </div>
-    </header>
-
-    <!-- Мобильное меню -->
-    <div class="mobile-nav">
-        <ul class="mobile-nav-list">
-            <!-- Копия пунктов для мобильных -->
+        <div class="k-mobile-nav">
+        <ul class="k-mobile-nav-list">
             {% if request.user.is_staff %}
-            <li class="nav-item"><a href="{% url 'logs_url' %}" class="nav-link">Логи</a></li>
+            <li class="k-mobile-item"><a href="{% url 'logs_url' %}" class="k-mobile-link">Логи</a></li>
             {% endif %}
 
             {% if request.user.is_superuser %}
-            <li class="nav-item"><a href="{% url 'admin:index' %}" class="nav-link">Админка</a></li>
-            <li class="nav-item"><a href="{% url 'support_url' %}" class="nav-link">Помощь</a></li>
-            <li class="nav-item"><a href="{% url 'donation_url' %}" class="nav-link">Пожертвования</a></li>
-            <li class="nav-item"><a href="{% url 'lk_url' %}" class="nav-link">Кабинет</a></li>
+            <li class="k-mobile-item"><a href="{% url 'admin:index' %}" class="k-mobile-link">Админка</a></li>
+            <li class="k-mobile-item"><a href="{% url 'support_url' %}" class="k-mobile-link">Помощь</a></li>
+            <li class="k-mobile-item"><a href="{% url 'donation_url' %}" class="k-mobile-link">Пожертвования</a></li>
+            <li class="k-mobile-item"><a href="{% url 'lk_url' %}" class="k-mobile-link">Кабинет</a></li>
             {% else %}
-            <li class="nav-item"><a href="{% url 'support_url' %}" class="nav-link">Помощь</a></li>
+            <li class="k-mobile-item"><a href="{% url 'support_url' %}" class="k-mobile-link">Помощь</a></li>
             {% if request.user.is_authenticated %}
-            <li class="nav-item"><a href="{% url 'donation_url' %}" class="nav-link">Пожертвования</a></li>
-            <li class="nav-item"><a href="{% url 'lk_url' %}" class="nav-link">Кабинет</a></li>
+            <li class="k-mobile-item"><a href="{% url 'donation_url' %}" class="k-mobile-link">Пожертвования</a></li>
+            <li class="k-mobile-item"><a href="{% url 'lk_url' %}" class="k-mobile-link">Кабинет</a></li>
             {% else %}
-            <li class="nav-item auth-buttons">
+            <li class="k-mobile-item k-mobile-auth">
                 <a href="{% url 'kolt_login' %}" class="btn-kolt btn-small">Войти</a>
-                <a href="{% url 'register_url' %}" class="btn-kolt btn-small btn-outline">Зарегистрироваться</a>
+                <a href="{% url 'register_url' %}" class="btn-kolt btn-small k-btn-outline">Зарегистрироваться</a>
             </li>
             {% endif %}
             {% endif %}
         </ul>
     </div>
+    </header>
     {% if not request.user.is_active_email and request.user.is_authenticated %}
     {% if request.user.email %}
     <div class="confirm_email-notification">

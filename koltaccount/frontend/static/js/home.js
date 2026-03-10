@@ -763,6 +763,7 @@ $(function () {
                         td.innerHTML = decrypt(td.innerHTML, masterPassword);
                     }
                 });
+
                 // Конфигурируем сортировку
                 $("#Accounts_table").tablesorter({
                     sortList: [
@@ -770,6 +771,8 @@ $(function () {
                         [1, 0],
                     ],
                 });
+                // Сортируем еще раз
+                sortTable();
             }
 
             // Скачиваем иконку для каждого сайта в таблице

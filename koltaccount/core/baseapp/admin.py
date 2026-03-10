@@ -9,7 +9,7 @@ class PersonAdmin(UserAdmin):
     add_form = PersonCreationForm
     form = PersonChangeForm
     model = UserModel
-    list_display = ["username", "email"]
+    list_display = ["username", "email", "is_active_email"]
 
 
 admin.site.register(UserModel, PersonAdmin)

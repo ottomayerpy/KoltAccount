@@ -9,21 +9,20 @@ import {
 import { saveJSONToFile } from "./save_json_to_file.js";
 
 $(function () {
-    let master_password = "", // Хранит мастер пароль для расшифровки данных таблицы
-        en_master_password = "", // Хранит исходный мастер пароль
+    let masterPassword = "", // Хранит мастер пароль для расшифровки данных таблицы
+        enMasterPassword = "", // Хранит исходный мастер пароль
         cs = {}, // Хранит персональные настройки шифрования
-        default_cs = {}, // Хранит стандартные настройки шифрования
-        press_timer = 0, // Хранит значение таймера для события долгого нажатия кнопки "Пароль"
-        is_allow_copy = true, // Разрешает копирование при долгом нажатии кнопки "Пароль"
-        is_allow_show_page = false; // Разрешает отображение страницы
+        defaultCs = {}, // Хранит стандартные настройки шифрования
+        pressTimer = 0, // Хранит значение таймера для события долгого нажатия кнопки "Пароль"
+        isAllowCopy = true, // Разрешает копирование при долгом нажатии кнопки "Пароль"
+        isAllowShowPage = false; // Разрешает отображение страницы
 
-    get_master_password();
+    const LOGIN_TYPE = "login";
+    const PASSWORD_TYPE = "password";
 
-    // Константы для функции show_or_copy_login_or_password(type_data)
-    const _login = "login",
-        _password = "password";
+    getMasterPassword();
 
-    function reload() {
+    function reloadPage() {
         /* Перезагрузка страницы */
         location.href = location.href;
     }
@@ -31,19 +30,19 @@ $(function () {
     // Прячем копирайт чтобы не мешал
     $(".footer-urls").hide();
 
-    function get_master_password() {
+    function getMasterPassword() {
         /* Получение мастер пароля */
-        preload_show();
+        preloadShow();
 
         $.ajax({
             url: "get_master_password/",
             type: "GET",
             success: function (result) {
-                master_password = result["result"];
-                en_master_password = result["result"];
+                masterPassword = result["result"];
+                enMasterPassword = result["result"];
                 cs = result["cs"];
-                default_cs = JSON.parse(result["default_cs"]);
-                if (master_password != "doesnotexist") {
+                defaultCs = JSON.parse(result["default_cs"]);
+                if (masterPassword != "doesnotexist") {
                     // Открываем модальное окно ввода ключа/мастер пароля
                     $("#EnterKeyModal").modal("show");
                 } else {
@@ -62,7 +61,7 @@ $(function () {
                     // Открываем модальное окно изменения пароля
                     $("#MasterPasswordModal").modal("show");
                 }
-                preload_hide();
+                preloadHide();
             },
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
@@ -72,7 +71,7 @@ $(function () {
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
                     );
-                    preload_hide();
+                    preloadHide();
                 }
             },
         });
@@ -83,64 +82,64 @@ $(function () {
         $("#pesonal-crypto-settings").css("display", "block");
     });
 
-    function create_account(data) {
+    function createAccount(data) {
         /* Добавление нового аккаунта в таблице */
-        preload_show();
+        preloadShow();
 
         let site, description, login, password;
 
         if (data) {
             site = data.site;
             description = data.description;
-            login = encrypt(data.login, master_password);
-            password = encrypt(data.password, master_password);
+            login = encrypt(data.login, masterPassword);
+            password = encrypt(data.password, masterPassword);
         } else {
             site = $("#in-site").val();
             description = $("#in-description").val();
-            login = encrypt($("#in-login").val(), master_password);
-            password = encrypt($("#in-password").val(), master_password);
+            login = encrypt($("#in-login").val(), masterPassword);
+            password = encrypt($("#in-password").val(), masterPassword);
         }
 
         $.ajax({
             url: "create_account/",
             type: "POST",
             data: {
-                site: encrypt(site, master_password),
-                description: encrypt(description, master_password),
+                site: encrypt(site, masterPassword),
+                description: encrypt(description, masterPassword),
                 login: login,
                 password: password,
             },
             success: function (result) {
-                let account_id = result["account_id"];
+                let accountId = result["account_id"];
 
                 if (result["status"] == "success") {
                     let newRow =
                         '<tr data-toggle="modal" data-target="#AccountModal" data-id="' +
-                        account_id +
+                        accountId +
                         '">' +
                         '<td class="td-favicon"><img data-id="' +
-                        account_id +
+                        accountId +
                         '" class="favicon-sites" height="16" width="16" alt="icon" ' +
                         'src="https://favicon.yandex.net/favicon/' +
                         site +
                         '"></td>' +
                         '<td class="td-site" data-id="' +
-                        account_id +
+                        accountId +
                         '">' +
                         site +
                         "</td>" +
                         '<td class="td-description" data-id="' +
-                        account_id +
+                        accountId +
                         '">' +
                         description +
                         "</td>" +
                         '<td class="td-login td-hide" data-id="' +
-                        account_id +
+                        accountId +
                         '">' +
                         login +
                         "</td>" +
                         '<td class="td-password td-hide" data-id="' +
-                        account_id +
+                        accountId +
                         '">' +
                         password +
                         "</td>" +
@@ -153,14 +152,14 @@ $(function () {
                         parseInt($("#js-account-counter").text()) + 1,
                     );
 
-                    sortingTable();
+                    sortTable();
 
                     if (!data) {
                         // Закрываем модальное окно
                         $("#CreateAccountModal").modal("hide");
 
                         // Подсветка новой строки
-                        highlightRow(account_id);
+                        highlightRow(accountId);
 
                         // Чистим поля
                         $("#in-site").val("");
@@ -176,7 +175,7 @@ $(function () {
                     swal("Ошибка", result["result"]);
                 }
 
-                preload_hide();
+                preloadHide();
             },
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
@@ -186,15 +185,15 @@ $(function () {
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
                     );
-                    preload_hide();
+                    preloadHide();
                 }
             },
         });
     }
 
-    function highlightRow(account_id) {
+    function highlightRow(accountId) {
         setTimeout(function () {
-            let $newRow = $("tr[data-id='" + account_id + "']");
+            let $newRow = $("tr[data-id='" + accountId + "']");
             if ($newRow.length) {
                 $("html, body").animate(
                     {
@@ -212,20 +211,20 @@ $(function () {
         }, 100);
     }
 
-    function delete_account(account_id) {
+    function deleteAccount(accountId) {
         /* Удаление аккаунта */
-        preload_show();
+        preloadShow();
 
         $.ajax({
             url: "delete_account/",
             type: "POST",
             data: {
-                account_id: account_id,
+                account_id: accountId,
             },
             success: function (result) {
                 if (result["status"] == "success") {
                     // Скрываем запись из таблицы
-                    $('tr[data-id="' + account_id + '"]').hide();
+                    $('tr[data-id="' + accountId + '"]').hide();
                     // Обновляем счетчик аккаунтов
                     $("#js-account-counter").text(
                         parseInt($("#js-account-counter").text()) - 1,
@@ -240,7 +239,7 @@ $(function () {
                     }
                 }
 
-                preload_hide();
+                preloadHide();
             },
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
@@ -250,45 +249,45 @@ $(function () {
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
                     );
-                    preload_hide();
+                    preloadHide();
                 }
             },
         });
     }
 
-    function change_info_account() {
+    function changeInfoAccount() {
         /* Изменение информации аккаунта */
-        preload_show();
+        preloadShow();
 
         let site = $("#modal-site").val(),
             description = $("#modal-description").val(),
-            new_login = $("#modal-new_login").val(),
-            new_password = $("#modal-new_password").val(),
-            account_id = $("#modal-btn-account_delete").attr("data-id");
+            newLogin = $("#modal-new_login").val(),
+            newPassword = $("#modal-new_password").val(),
+            accountId = $("#modal-btn-account_delete").attr("data-id");
 
-        if (new_login != "") {
+        if (newLogin != "") {
             // Если был введен новый логин, то шифруем его
-            new_login = encrypt(new_login, master_password);
+            newLogin = encrypt(newLogin, masterPassword);
         }
-        if (new_password != "") {
+        if (newPassword != "") {
             // Если был введен новый пароль, то шифруем его
-            new_password = encrypt(new_password, master_password);
+            newPassword = encrypt(newPassword, masterPassword);
         }
 
         $.ajax({
             url: "change_info_account/",
             type: "POST",
             data: {
-                site: encrypt(site, master_password),
-                description: encrypt(description, master_password),
-                new_login: new_login,
-                new_password: new_password,
-                account_id: account_id,
+                site: encrypt(site, masterPassword),
+                description: encrypt(description, masterPassword),
+                new_login: newLogin,
+                new_password: newPassword,
+                account_id: accountId,
             },
             success: function (result) {
                 if (result["status"] == "success") {
                     // Ищем в таблице аккаунт который изменяли
-                    let tr = $('tr[data-id="' + account_id + '"]');
+                    let tr = $('tr[data-id="' + accountId + '"]');
                     // Обновляем значения в таблице
                     tr.find(".td-favicon")
                         .find("img")
@@ -298,20 +297,20 @@ $(function () {
                         );
                     tr.find(".td-site").text(site);
                     tr.find(".td-description").text(description);
-                    if (new_login != "") {
+                    if (newLogin != "") {
                         // Если был введен логин, обновляем его в таблице
-                        tr.find(".td-login").text(new_login);
+                        tr.find(".td-login").text(newLogin);
                         // Чистим поле ввода логина
                         $("#modal-new_login").val("");
                     }
-                    if (new_password != "") {
+                    if (newPassword != "") {
                         // Если был введен пароль, обновляем его в таблице
-                        tr.find(".td-password").text(new_password);
+                        tr.find(".td-password").text(newPassword);
                         // Чистим поле ввода пароля
                         $("#modal-new_password").val("");
                     }
                     // Сортируем таблицу
-                    sortingTable();
+                    sortTable();
                     // Скрываем модальное окно просмотра аккаунта
                     $("#AccountModal").modal("hide");
                 } else {
@@ -322,9 +321,9 @@ $(function () {
                     }
                 }
 
-                highlightRow(account_id);
+                highlightRow(accountId);
 
-                preload_hide();
+                preloadHide();
             },
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
@@ -334,15 +333,15 @@ $(function () {
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
                     );
-                    preload_hide();
+                    preloadHide();
                 }
             },
         });
     }
 
-    function change_or_create_master_password(new_master_password) {
+    function changeOrCreateMasterPassword(newMasterPassword) {
         /* Изменить или создать мастер пароль */
-        preload_show();
+        preloadShow();
         setTimeout(function () {
             const KEY = $(".key_select").val().split("/");
             const IV = $(".iv_select").val().split("/");
@@ -365,12 +364,12 @@ $(function () {
                     ? ITERATIONS
                     : (Math.random() * (7999 - 57) + 57).toFixed(),
             };
-            setCryptoSettings(default_cs, CS);
-            const hash = enMP(new_master_password);
-            const master_password_key = hash.key;
+            setCryptoSettings(defaultCs, CS);
+            const hash = enMP(newMasterPassword);
+            const masterPasswordKey = hash.key;
             const result = hash.result;
 
-            const NEW_CS = encrypt(JSON.stringify(CS), new_master_password);
+            const NEW_CS = encrypt(JSON.stringify(CS), newMasterPassword);
 
             let sites = {},
                 descriptions = {},
@@ -381,29 +380,29 @@ $(function () {
             if (tds.length > 0) {
                 // Если таблица не пустая, то проходим циклом по ее элементам
                 tds.each(function (index, td) {
-                    let account_id = td.getAttribute("data-id");
+                    let accountId = td.getAttribute("data-id");
                     if (td.className == "td-site") {
                         // Шифруем строку из ячейки и присваиваем ее массиву под индексом ее id в базе данных
-                        sites[account_id] = encrypt(
+                        sites[accountId] = encrypt(
                             td.innerHTML,
-                            master_password_key,
+                            masterPasswordKey,
                         );
                     } else if (td.className == "td-description") {
-                        descriptions[account_id] = encrypt(
+                        descriptions[accountId] = encrypt(
                             td.innerHTML,
-                            master_password_key,
+                            masterPasswordKey,
                         );
                     } else if (td.className == "td-login td-hide") {
                         // Тоже самое, только предварительно расшировать, потому что логин хранится в ячейке в зашифрованном виде
-                        logins[account_id] = encrypt(
-                            decrypt(td.innerHTML, master_password),
-                            master_password_key,
+                        logins[accountId] = encrypt(
+                            decrypt(td.innerHTML, masterPassword),
+                            masterPasswordKey,
                         );
                     } else if (td.className == "td-password td-hide") {
                         // Тоже самое, только предварительно расшировать, потому что пароль хранится в ячейке в зашифрованном виде
-                        passwords[account_id] = encrypt(
-                            decrypt(td.innerHTML, master_password),
-                            master_password_key,
+                        passwords[accountId] = encrypt(
+                            decrypt(td.innerHTML, masterPassword),
+                            masterPasswordKey,
                         );
                     }
                 });
@@ -421,9 +420,9 @@ $(function () {
                     new_master_password: result,
                 },
                 success: function (result) {
-                    preload_hide();
+                    preloadHide();
                     if (result["status"] == "success") {
-                        reload();
+                        reloadPage();
                     } else {
                         swal("Ошибка", result["result"]);
                     }
@@ -436,14 +435,14 @@ $(function () {
                                 " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                                 " включите их снова, по крайней мере, для этого сайта.",
                         );
-                        preload_hide();
+                        preloadHide();
                     }
                 },
             });
         }, 600);
     }
 
-    function authorization() {
+    function authorize() {
         /* Авторизация (Модальное окно "Аутентификация") */
         let key = $("#in-enter_master_password").val();
 
@@ -454,15 +453,15 @@ $(function () {
             $("#EnterKeyModal").modal("show");
         } else {
             // Расшифровываем полученый пароль введенным ключем
-            preload_show();
+            preloadShow();
             setTimeout(function () {
                 // Устанавливаем настройки
-                setCryptoSettings(default_cs, {});
-                let decrypt_cs = decrypt(cs, key);
-                if (decrypt_cs) {
-                    setCryptoSettings(default_cs, JSON.parse(decrypt_cs));
+                setCryptoSettings(defaultCs, {});
+                let decryptCs = decrypt(cs, key);
+                if (decryptCs) {
+                    setCryptoSettings(defaultCs, JSON.parse(decryptCs));
                     // Расшифровываем мастер пароль
-                    key = deMP(en_master_password, key);
+                    key = deMP(enMasterPassword, key);
                 } else {
                     key = "";
                 }
@@ -476,47 +475,47 @@ $(function () {
                     $("#EnterKeyModal").modal("show");
                 } else {
                     // Присваиваем ключ/мастер пароль глобальной переменной "Мастер пароль"
-                    master_password = key;
+                    masterPassword = key;
                     // Даем разрешение на загрузку таблицы/страницы
-                    is_allow_show_page = true;
+                    isAllowShowPage = true;
                     // Скрываем модальное окно ввода пароля
                     $("#EnterKeyModal").modal("hide");
                 }
 
-                preload_hide();
+                preloadHide();
             }, 600);
         }
     }
 
-    function show_or_copy_login_or_password(type_data) {
+    function showOrCopyLoginOrPassword(type) {
         /* Отобразить на экране или скопировать в буфер обмена логин или пароль аккаунта */
         let key = "";
 
-        if (type_data == _login) {
+        if (type == LOGIN_TYPE) {
             // Если нужно скопировать логин то расшифровываем логин
-            key = decrypt($("#modal-login").val(), master_password);
+            key = decrypt($("#modal-login").val(), masterPassword);
         } else {
             // Если не логин, то пароль
-            key = decrypt($("#modal-password").val(), master_password);
+            key = decrypt($("#modal-password").val(), masterPassword);
         }
 
         if (key != "") {
             // Если расшифрока дала результат
-            if (is_allow_copy) {
+            if (isAllowCopy) {
                 // и если копирование разрешено, то копируем логин или пароль в буфер обмена
-                copy_clipboard(key);
+                copyToClipboard(key);
             } else {
                 // Если копирование не разрешено, значит нужно вывести логин или пароль на экран
                 swal(key);
                 // Разрешаем в дальнейшем копирование
-                is_allow_copy = true;
+                isAllowCopy = true;
             }
         } else {
             swal("Ошибка", "Не правильный пароль");
         }
     }
 
-    function copy_clipboard(text) {
+    function copyToClipboard(text) {
         /* Скопировать текст в буфер обмена */
         let $tmp = $("<input>");
         $("#AccountModal").append($tmp);
@@ -528,7 +527,7 @@ $(function () {
     $("#btn-enter_master_password").on("click", function () {
         /* Собитие нажатия кнопки "Войти" в модальном окне авторизации */
         // Проходим авторизацию
-        authorization();
+        authorize();
     });
 
     $("#btn-send_account").on("click", function () {
@@ -542,16 +541,16 @@ $(function () {
         } else if ($("#in-password").val() == "") {
             swal('Заполните поле "Пароль"');
         } else {
-            create_account();
+            createAccount();
         }
     });
 
-    let is_new_password = false,
-        is_repeat_new_password = false;
+    let isNewPasswordValid = false,
+        isRepeatPasswordValid = false;
 
     $("#in-new_password")
         .on("input", function () {
-            check_new_password();
+            validateNewPassword();
         })
         .focus(function () {
             $("#password_info").show();
@@ -561,73 +560,73 @@ $(function () {
         });
 
     $("#in-repeat_new_password").on("input", function () {
-        check_repeat_new_password();
+        validateRepeatPassword();
     });
 
-    function check_new_password() {
+    function validateNewPassword() {
         let password = $("#in-new_password").val(),
-            is_length = false,
-            is_letter = false,
-            is_capital = false,
-            is_number = false;
+            isLengthValid = false,
+            hasLetter = false,
+            hasCapital = false,
+            hasNumber = false;
 
         if (password.length < 8) {
             $("#length").removeClass("valid").addClass("invalid");
-            is_length = false;
+            isLengthValid = false;
         } else {
             $("#length").removeClass("invalid").addClass("valid");
-            is_length = true;
+            isLengthValid = true;
         }
 
         if (password.match(/[a-z]/)) {
             $("#letter").removeClass("invalid").addClass("valid");
-            is_letter = true;
+            hasLetter = true;
         } else {
             $("#letter").removeClass("valid").addClass("invalid");
-            is_letter = false;
+            hasLetter = false;
         }
 
         if (password.match(/[A-Z]/)) {
             $("#capital").removeClass("invalid").addClass("valid");
-            is_capital = true;
+            hasCapital = true;
         } else {
             $("#capital").removeClass("valid").addClass("invalid");
-            is_capital = false;
+            hasCapital = false;
         }
 
         if (password.match(/[0-9]/)) {
             $("#number").removeClass("invalid").addClass("valid");
-            is_number = true;
+            hasNumber = true;
         } else {
             $("#number").removeClass("valid").addClass("invalid");
-            is_number = false;
+            hasNumber = false;
         }
 
-        if (is_length && is_letter && is_capital && is_number) {
+        if (isLengthValid && hasLetter && hasCapital && hasNumber) {
             $("#in-new_password").removeClass("input-invalid");
-            is_new_password = true;
+            isNewPasswordValid = true;
         } else {
             $("#in-new_password").addClass("input-invalid");
-            is_new_password = false;
+            isNewPasswordValid = false;
         }
 
-        check_repeat_new_password();
+        validateRepeatPassword();
     }
 
-    function check_repeat_new_password() {
+    function validateRepeatPassword() {
         let password = $("#in-new_password").val(),
             password2 = $("#in-repeat_new_password").val();
 
         if (password == password2) {
             $("#in-repeat_new_password").removeClass("input-invalid");
-            is_repeat_new_password = true;
+            isRepeatPasswordValid = true;
         } else {
             $("#in-repeat_new_password").addClass("input-invalid");
-            is_repeat_new_password = false;
+            isRepeatPasswordValid = false;
         }
     }
 
-    function send_master_password() {
+    function submitMasterPassword() {
         /* Событие нажатия на кнопку "Изменить" в модальном окне изменения мастер пароля */
         if (
             ($("#in-old_password").val() == "" &&
@@ -638,8 +637,6 @@ $(function () {
             swal('Заполните поле "Старый пароль"');
         } else if ($("#in-new_password").val() == "") {
             swal('Заполните поле "Новый пароль"');
-            // } else if ($("#in-old_password").val() == $("#in-new_password").val()) {
-            //     swal("Старый и новый пароль не могут совпадать");
         } else if ($("#in-repeat_new_password").val() == "") {
             swal('Заполните поле "Подтвердите новый пароль"');
         } else if (
@@ -648,7 +645,7 @@ $(function () {
             swal("Пароли не совпадают");
         } else if (
             !Boolean($("#in-old_password").attr("disabled")) &&
-            deMP(en_master_password, $("#in-old_password").val()) == ""
+            deMP(enMasterPassword, $("#in-old_password").val()) == ""
         ) {
             swal("Не правильный старый пароль");
         } else if (
@@ -656,22 +653,20 @@ $(function () {
             $("#in-iterations").val() > 7999
         ) {
             swal("Не допустимый диапазон итераций");
-        } else if (is_new_password && is_repeat_new_password) {
-            change_or_create_master_password(
-                $("#in-repeat_new_password").val(),
-            );
+        } else if (isNewPasswordValid && isRepeatPasswordValid) {
+            changeOrCreateMasterPassword($("#in-repeat_new_password").val());
         }
     }
 
     $("#btn-send_master_password").on("click", function () {
-        send_master_password();
+        submitMasterPassword();
     });
 
     $(".modal-body-master-password input").on("keypress", function (e) {
         /* Событие нажатия клавиши (Ввод текста в поле создания/изменения мастер пароля) */
         if (e.keyCode == 13) {
             // Если нажата клавиша "Enter"
-            send_master_password();
+            submitMasterPassword();
         }
     });
 
@@ -688,7 +683,7 @@ $(function () {
             },
             function () {
                 // Если была нажата кнопка "Да, удалить это!", то удаляем аккаунт
-                delete_account($("#modal-btn-account_delete").attr("data-id"));
+                deleteAccount($("#modal-btn-account_delete").attr("data-id"));
             },
         );
     });
@@ -700,29 +695,29 @@ $(function () {
         } else if ($("#modal-description").val() == "") {
             swal('Заполните поле "Описание"');
         } else {
-            change_info_account();
+            changeInfoAccount();
         }
     });
 
     $("#modal-btn-login").on("click", function () {
         /* Событие нажатия кнопки "Логин" в модальном окне просмотра аккаунта */
-        show_or_copy_login_or_password(_login);
+        showOrCopyLoginOrPassword(LOGIN_TYPE);
     });
 
     $("#modal-btn-password").on("click", function () {
         /* Событие нажатия кнопки "Пароль" в модальном окне просмотра аккаунта */
-        show_or_copy_login_or_password(_password);
+        showOrCopyLoginOrPassword(PASSWORD_TYPE);
     });
 
     $("#AccountModal").on("show.bs.modal", function (e) {
         /* Событие перед открытием модального окна просмотра аккаунта */
-        let account_id = $(e.relatedTarget).attr("data-id"),
-            site = $('.td-site[data-id="' + account_id + '"]').text(),
+        let accountId = $(e.relatedTarget).attr("data-id"),
+            site = $('.td-site[data-id="' + accountId + '"]').text(),
             description = $(
-                '.td-description[data-id="' + account_id + '"]',
+                '.td-description[data-id="' + accountId + '"]',
             ).text(),
-            login = $('.td-login[data-id="' + account_id + '"]').text(),
-            password = $('.td-password[data-id="' + account_id + '"]').text();
+            login = $('.td-login[data-id="' + accountId + '"]').text(),
+            password = $('.td-password[data-id="' + accountId + '"]').text();
 
         // Заполняем модальное окно
         $("#modal-site").val(site);
@@ -730,7 +725,7 @@ $(function () {
         $("#modal-login").val(login);
         $("#modal-password").val(password);
         $("#modal-new_password").val("");
-        $("#modal-btn-account_delete").attr("data-id", account_id);
+        $("#modal-btn-account_delete").attr("data-id", accountId);
         $("#modal-btn-account_delete").attr("data-site", site);
     });
 
@@ -747,14 +742,14 @@ $(function () {
 
     $("#MasterPasswordModal").on("hide.bs.modal", function () {
         /* Событие закрытия модального окна изменения мастер пароля */
-        if (master_password == "doesnotexist") {
+        if (masterPassword == "doesnotexist") {
             $(".js-reload_master_password_modal").show();
         }
     });
 
     $("#EnterKeyModal").on("hide.bs.modal", function () {
         /* Событие закрытия модального окна ввода ключа/мастер пароля */
-        if (is_allow_show_page) {
+        if (isAllowShowPage) {
             let tds = $("td");
             if (tds.length > 0) {
                 // Если таблицы не пустая, то проходим циклом по всем ячейкам
@@ -765,7 +760,7 @@ $(function () {
                         td.className != "td-favicon"
                     ) {
                         // Расшифровываем ячейки, кроме ячеек логина, пароля и иконки
-                        td.innerHTML = decrypt(td.innerHTML, master_password);
+                        td.innerHTML = decrypt(td.innerHTML, masterPassword);
                     }
                 });
                 // Конфигурируем сортировку
@@ -814,17 +809,17 @@ $(function () {
 
     $("#in-search").on("keyup", function () {
         /* Событие отжатия клавиши (Ввода текста в поле поиска) */
-        let tr = $("tbody tr");
+        let $rows = $("tbody tr");
         if ($(this).val() == "") {
             // Если поле поиска пусто, то показываем все аккаунты
-            tr.fadeIn(100);
+            $rows.fadeIn(100);
         } else {
             // Если поле поиска не пусто, то показываем аккаунты наиболее подходящие по вводу, остальные скрываем
-            let td = $(
+            let $matchingCells = $(
                 ".td-site:contains(" + $(this).val().toLowerCase() + ")",
             );
-            tr.fadeOut(100);
-            td.parent().fadeIn(100);
+            $rows.fadeOut(100);
+            $matchingCells.parent().fadeIn(100);
         }
     });
 
@@ -832,7 +827,7 @@ $(function () {
         /* Событие нажатия клавиши (Ввод текста в поле ключа/мастер пароля) */
         if (e.keyCode == 13) {
             // Если нажата клавиша "Enter", проходим авторизацию
-            authorization();
+            authorize();
         }
     });
 
@@ -841,15 +836,15 @@ $(function () {
         .on("touchend mouseup", function () {
             /* Событие отжатия клавиши или сенсора */
             // Очищаем таймер
-            clearTimeout(press_timer);
+            clearTimeout(pressTimer);
         })
         .on("touchstart mousedown", function () {
             /* Событие нажатия клавиши или сенсора */
             // Устанавливаем таймер
-            press_timer = window.setTimeout(function () {
+            pressTimer = window.setTimeout(function () {
                 // Запрещаем копирование пароля в буфер обмена так как показываем пароль на экране
-                is_allow_copy = false;
-                show_or_copy_login_or_password(_password);
+                isAllowCopy = false;
+                showOrCopyLoginOrPassword(PASSWORD_TYPE);
             }, 500); // 500 миллисекунд
         });
 
@@ -858,20 +853,20 @@ $(function () {
         .on("touchend mouseup", function () {
             /* Событие отжатия клавиши или сенсора */
             // Очищаем таймер
-            clearTimeout(press_timer);
+            clearTimeout(pressTimer);
         })
         .on("touchstart mousedown", function () {
             /* Событие нажатия клавиши или сенсора */
             // Устанавливаем таймер
-            press_timer = window.setTimeout(function () {
+            pressTimer = window.setTimeout(function () {
                 // Запрещаем копирование логина в буфер обмена так как показываем логин на экране
-                is_allow_copy = false;
-                show_or_copy_login_or_password(_login);
+                isAllowCopy = false;
+                showOrCopyLoginOrPassword(LOGIN_TYPE);
             }, 500); // 500 миллисекунд
         });
 
     $("#btn_master_import").on("change", async function () {
-        preload_show();
+        preloadShow();
         $("#MasterPasswordModal").modal("hide");
 
         const reader = new FileReader();
@@ -881,7 +876,7 @@ $(function () {
 
         const data = JSON.parse(reader.result);
         for (let i in data) {
-            create_account({
+            createAccount({
                 site: data[i]["site"],
                 description: data[i]["description"],
                 login: data[i]["login"],
@@ -890,20 +885,22 @@ $(function () {
             await new Promise((r) => setTimeout(r, 0));
         }
 
-        sortingTable();
-        preload_hide();
+        sortTable();
+        preloadHide();
     });
 
     $("#btn_master_export").on("click", function () {
-        let old_password = $("#in-old_password").val();
-        if (old_password == "") {
+        let oldPassword = $("#in-old_password").val();
+        if (oldPassword == "") {
             swal('Введите пароль в поле "Старый пароль"');
-        } else if (deMP(en_master_password, old_password) == "") {
+        } else if (deMP(enMasterPassword, oldPassword) == "") {
             swal("Не правильный пароль");
-        } else master_export();
+        } else {
+            exportAccounts();
+        }
     });
 
-    function sortingTable() {
+    function sortTable() {
         let $table = $("#Accounts_table");
         $table.trigger("update");
         setTimeout(function () {
@@ -911,39 +908,67 @@ $(function () {
         }, 100);
     }
 
-    function master_export() {
+    function exportAccounts() {
         /* Мастер экспорт аккаунтов в json файл */
-        var jd = [{ data: "data" }];
-        let index = -1;
-        let indexitem = 0;
+        var jsonData = [{ data: "data" }];
+        let rowIndex = -1;
+        let cellIndex = 0;
         $("#Accounts_table td").each(function () {
             let data = $(this).text();
 
             if (data == "") {
-                index += 1;
-                indexitem = 0;
-                jd[index] = {};
+                rowIndex += 1;
+                cellIndex = 0;
+                jsonData[rowIndex] = {};
             } else {
-                if (indexitem == 0) {
-                    jd[index] = { ...jd[index], site: data };
-                } else if (indexitem == 1) {
-                    jd[index] = { ...jd[index], description: data };
-                } else if (indexitem == 2) {
-                    jd[index] = {
-                        ...jd[index],
-                        login: decrypt(data, master_password),
+                if (cellIndex == 0) {
+                    jsonData[rowIndex] = { ...jsonData[rowIndex], site: data };
+                } else if (cellIndex == 1) {
+                    jsonData[rowIndex] = {
+                        ...jsonData[rowIndex],
+                        description: data,
                     };
-                } else if (indexitem == 3) {
-                    jd[index] = {
-                        ...jd[index],
-                        password: decrypt(data, master_password),
+                } else if (cellIndex == 2) {
+                    jsonData[rowIndex] = {
+                        ...jsonData[rowIndex],
+                        login: decrypt(data, masterPassword),
+                    };
+                } else if (cellIndex == 3) {
+                    jsonData[rowIndex] = {
+                        ...jsonData[rowIndex],
+                        password: decrypt(data, masterPassword),
                     };
                 }
 
-                indexitem += 1;
+                cellIndex += 1;
             }
         });
 
-        saveJSONToFile(jd, "KoltAccount dump");
+        saveJSONToFile(jsonData, "KoltAccount dump");
+    }
+
+    // Глобальные функции для совместимости с существующим кодом
+    window.main_show_preload = function () {
+        preloadShow();
+    };
+
+    window.main_hide_preload = function () {
+        preloadHide();
+    };
+
+    window.preload_show = function () {
+        preloadShow();
+    };
+
+    window.preload_hide = function () {
+        preloadHide();
+    };
+
+    function preloadShow() {
+        $("#page-preload").removeClass("preload-done");
+    }
+
+    function preloadHide() {
+        $("#page-preload").addClass("preload-done");
     }
 });

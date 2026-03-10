@@ -2,8 +2,6 @@
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block addons_head %}
-<link rel="stylesheet" href="{% static 'css/support.css' %}?ver={{ static_version }}"/>
-<link rel="stylesheet" href="{% static 'css/lk.css' %}?ver={{ static_version }}"/>
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/lk.js' %}?ver={{ static_version }}"></script>
 {% if request.user.is_staff %}
@@ -17,7 +15,7 @@
             <h2 align="center">{{ title }}</h2>
             <div class="support-content">
                 <aside>
-                    <div class="row">
+                    <div class="row lk-row">
                         <div class="col-md-4 lk-block">
                             <div align="center">
                                 <button class="simple-tabs" data-nav-tab="true" data-tabs-id="1">Профиль</button>

@@ -1530,7 +1530,7 @@ body.dark-theme .theme-toggle:hover {
 .confirm_email-notification {
     background-color: var(--accent-bg);
     width: 100%;
-    margin-bottom: -20px;
+    margin-bottom: -10px;
 }
 
 .confirm_email-notification p {
@@ -1723,6 +1723,175 @@ body.dark-theme .theme-toggle:hover {
 .horizontal-bottom-line {
     margin: 6px 6px 0;
     border-bottom: 1px solid var(--border-color);
+}
+
+/* --------------------------------------------------------------------------
+   3.19. Личный кабинет и поддержка
+   -------------------------------------------------------------------------- */
+
+/* ===== Контент поддержки (из support.css) ===== */
+.support-content {
+    padding: 25px;
+    color: var(--text-color);
+    background: var(--support-content-bg);
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+/* ===== Вкладки (из lk.css - ПРОЩЕ) ===== */
+.simple-tabs {
+    color: var(--text-color);
+    background-color: var(--body-bg);
+    border-radius: 5px;
+    margin: 5px;
+    text-align: center;
+    width: calc(100% - 60px);
+    border: 1px solid var(--card-border);
+    transition: border-color 0.3s ease;
+    padding: 8px 0;
+}
+
+.simple-tabs:hover {
+    border-color: var(--simple-tabs-border-hover);
+}
+
+.simple-tabs__pagination {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 28px;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* ===== Слайдер (из support.css) ===== */
+.swiper-container {
+    font-size: 16px;
+    line-height: 20px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    margin-right: auto;
+    margin-left: auto;
+    color: var(--text-color);
+    opacity: 0.95;
+}
+
+.swiper-container strong {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 10px;
+    cursor: default;
+}
+
+.swiper-container > div {
+    display: none;
+    cursor: default;
+}
+
+.swiper-container > div.active {
+    display: block;
+}
+
+/* ===== Блоки помощи (из support.css) ===== */
+.help_block {
+    border-radius: 2px;
+}
+
+/* ===== Блоки ЛК (из lk.css) ===== */
+.lk-block {
+    background-color: var(--block-bg);
+    border-radius: 3px;
+    padding: 10px;
+    margin: 5px;
+}
+
+.lk-block_info {
+    margin-right: -15px;
+}
+
+.lk-row {
+    margin-left: -20px;
+    margin-right: 0px;
+}
+
+/* ===== Элементы авторизации в ЛК (из lk.css) ===== */
+.auth {
+    margin: 6px 0 0;
+    height: 48px;
+    line-height: 1.23;
+    padding-left: 20px;
+}
+
+.auth-top {
+    padding: 8px 0 2px;
+}
+
+.auth-ip {
+    display: none;
+    background: #262626b8;
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px #000000b8;
+    position: absolute;
+    left: 45px;
+    color: white;
+    width: auto;
+    margin-top: -20px;
+    padding: 5px 15px;
+}
+
+.auth-display {
+    display: inline-block;
+}
+
+.auth-bottom {
+    color: var(--footer-link);
+    max-width: 450px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 12.5px;
+}
+
+/* ===== Переключатель (из lk.css) ===== */
+.toggle-button {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 19px;
+    margin: 0;
+    vertical-align: top;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: all 0.3s cubic-bezier(0.2, 0.85, 0.32, 1.2);
+}
+
+.toggle-button::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    left: 2px;
+    top: 1.5px;
+    width: 15px;
+    height: 15px;
+    background-color: var(--btn-kolt-bg);
+    border-radius: 50%;
+    transform: translateX(0);
+    transition: all 0.3s cubic-bezier(0.2, 0.85, 0.32, 1.2);
+}
+
+.toggle-button_active::after {
+    transform: translateX(calc(100% + 4px));
+    background-color: #fff;
+}
+
+.toggle-button_active {
+    background-color: var(--btn-kolt-bg);
 }
 
 /* ==========================================================================
@@ -2011,5 +2180,19 @@ body.dark-theme .theme-toggle:hover {
     
     .k-mobile-nav {
         display: none;  /* Скрываем мобильное меню на десктопе */
+    }
+}
+
+@media (max-width: 991px) {
+    .lk-block_info {
+        margin-right: 5px;
+    }
+}
+
+@media (max-width: 354px) {
+    .simple-tabs {
+        width: -webkit-fill-available;
+        width: -moz-available;
+        width: stretch;
     }
 }

@@ -135,7 +135,7 @@
                 <input class="form-control" type="password" id="in-repeat_new_password" maxlength="254">
                 {% if request.user.is_staff %}
                 <input id="btn_master_import" type="file" value="Import" style="display: none;"/>
-                <label for="btn_master_import" class="btn btn-kolt btn-round">Мастер импорт</label>
+                <label for="btn_master_import" class="btn btn-kolt btn-round" accept=".json,application/json">Мастер импорт</label>
                 <button id="btn_master_export" data-toggle="modal" style="margin-top: 5px;" class="btn btn-kolt btn-round">Мастер экспорт</button>
                 {% endif %}
                 <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_master_password">Изменить</button>

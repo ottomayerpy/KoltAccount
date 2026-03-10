@@ -55,17 +55,20 @@
                                             <div class="card-body">
                                                 <strong>Действия</strong>
                                                 <div class="mt-5">
-                                                    <a href="{% url 'email_change_url' %}" class="btn btn-kolt btn-block default">
+                                                    <a href="{% url 'email_change_url' %}"
+                                                        class="btn btn-kolt btn-block default">
                                                         Изменить почту
                                                     </a>
                                                 </div>
                                                 <div class="mt-5">
-                                                    <a href="{% url 'password_change' %}" class="btn btn-kolt btn-block default">
+                                                    <a href="{% url 'password_change' %}"
+                                                        class="btn btn-kolt btn-block default">
                                                         Изменить пароль
                                                     </a>
                                                 </div>
                                                 <div class="mt-5">
-                                                    <a href="{% url 'master_password_reset_url' %}" class="btn btn-kolt btn-block default">
+                                                    <a href="{% url 'master_password_reset_url' %}"
+                                                        class="btn btn-kolt btn-block default">
                                                         Сбросить мастер пароль
                                                     </a>
                                                 </div>
@@ -103,32 +106,90 @@
                                 </div>
                                 <div class="js-swiper-tabs" data-tabs="3">
                                     <strong>История авторизаций</strong>
-                                    {% for history in login_history %}
-                                    <div class="auth">
-                                        <div class="auth-ip" data-number="{{ forloop.counter }}">
-                                            IP адрес: {{ history.ip }}
+                                    <div class="auth-history-container">
+                                        {% if login_history %}
+                                        {% for item in login_history %}
+                                        {% if item.type == 'log' %}
+                                        <div
+                                            class="auth-item {% if item.is_active %}auth-active{% else %}auth-completed{% endif %}">
+                                            <div class="auth-header">
+                                                <span class="auth-status">
+                                                    {% if item.is_active %}
+                                                    ● Активен
+                                                    {% else %}
+                                                    ○ Завершен
+                                                    {% endif %}
+                                                </span>
+                                                <span class="auth-time">
+                                                    {{ item.data.attempt_time|date:"d.m.Y H:i:s" }}
+                                                    {% if item.data.logout_time %}
+                                                    – {{ item.data.logout_time|date:"d.m.Y H:i:s" }}
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="auth-details">
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">IP адрес:</span>
+                                                    <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
+                                                </div>
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">User-Agent:</span>
+                                                    <span class="auth-value auth-useragent">{{item.data.user_agent|truncatechars:80 }}</span>
+                                                </div>
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">Путь:</span>
+                                                    <span class="auth-value">{{ item.data.path_info }}</span>
+                                                </div>
+                                                {% if not item.is_active and item.data.logout_time %}
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">Длительность:</span>
+                                                    <span class="auth-value">
+                                                        {{ item.data.logout_time|timeuntil:item.data.attempt_time }}
+                                                    </span>
+                                                </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        <div class="auth-top">
-                                            <div class="auth-display">
-                                                {{ history.system }}
+                                        {% else %}
+                                        <div class="auth-item auth-failed">
+                                            <div class="auth-header">
+                                                <span class="auth-status">
+                                                    ✗ Неудачно
+                                                    {% if item.data.failures_since_start > 1 %}
+                                                    ({{ item.data.failures_since_start }} попыток)
+                                                    {% endif %}
+                                                </span>
+                                                <span class="auth-time">{{ item.data.attempt_time|date:"d.m.Y H:i:s" }}</span>
                                             </div>
-                                            <span class="auth-display">|</span>
-                                            <div class="js-auth-location auth-display"
-                                                 data-number="{{ forloop.counter }}">
-                                                {{ history.location }}
+                                            <div class="auth-details">
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">IP адрес:</span>
+                                                    <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
+                                                </div>
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">User-Agent:</span>
+                                                    <span class="auth-value auth-useragent">{{ item.data.user_agent|truncatechars:80 }}</span>
+                                                </div>
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">Путь:</span>
+                                                    <span class="auth-value">{{ item.data.path_info }}</span>
+                                                </div>
+                                                {% if item.data.failures_since_start %}
+                                                <div class="auth-detail">
+                                                    <span class="auth-label">Попыток:</span>
+                                                    <span class="auth-value">{{ item.data.failures_since_start }}</span>
+                                                </div>
+                                                {% endif %}
                                             </div>
                                         </div>
-                                        <div class="auth-bottom">
-                                            <div class="auth-display js-auth-date">
-                                                {{ history.date|date:"Y-m-d_H:i" }}
-                                            </div>
-                                            <span class="auth-display">|</span>
-                                            <div class="auth-display">
-                                                {{ history.browser }}
-                                            </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                        {% else %}
+                                        <div class="auth-empty">
+                                            <p>История авторизаций отсутствует</p>
                                         </div>
+                                        {% endif %}
                                     </div>
-                                    {% endfor %}
                                 </div>
                                 {% if request.user.is_staff %}
                                 <div class="js-swiper-tabs" data-tabs="4" align="center">
@@ -140,10 +201,10 @@
                                                 <div>
                                                     {% if site_in_service == 'true' %}
                                                     <input type="checkbox" id="site_in_service_button" checked="checked"
-                                                           class="toggle-button toggle-button_active">
+                                                        class="toggle-button toggle-button_active">
                                                     {% else %}
                                                     <input type="checkbox" id="site_in_service_button"
-                                                           class="toggle-button">
+                                                        class="toggle-button">
                                                     {% endif %}
                                                     <label for="toggle-button" class="toggle-button_text">Закрыть
                                                         сайт</label>
@@ -156,8 +217,9 @@
                                             <div class="card-body">
                                                 <strong>Прочее</strong>
                                                 <div class="lk_other_admin_card">
-                                                    <a href="{% url 'check_email_template_url' %}" class="btn btn-kolt btn-block">
-                                                        Страница для проверки /nemail шаблонов
+                                                    <a href="{% url 'check_email_template_url' %}"
+                                                        class="btn btn-kolt btn-block">
+                                                        Проверка email шаблонов
                                                     </a>
                                                 </div>
                                             </div>

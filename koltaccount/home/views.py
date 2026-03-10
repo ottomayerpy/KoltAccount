@@ -1,6 +1,7 @@
 import locale
 
 import core.service as core_service
+from axes.models import AccessLog, AccessAttempt
 from core.accounts import service as accounts_service
 from core.accounts.models import Account
 from core.crypto import master_password
@@ -126,10 +127,42 @@ def donation_notification(request):
 
 def lk(request):
     """ Личный кабинет пользователя """
+    
+    # Получаем историю входов из AccessLog
+    login_history = AccessLog.objects.filter(
+        username=request.user.username
+    ).order_by('-attempt_time')[:50]
+    
+    # Получаем неудачные попытки из AccessAttempt
+    failed_attempts = AccessAttempt.objects.filter(
+        username=request.user.username
+    ).order_by('-attempt_time')[:20]
+    
+    # Объединяем и сортируем
+    combined_history = []
+    
+    for log in login_history:
+        combined_history.append({
+            'type': 'log',
+            'data': log,
+            'is_active': log.logout_time is None,
+            'time': log.attempt_time
+        })
+    
+    for attempt in failed_attempts:
+        combined_history.append({
+            'type': 'attempt',
+            'data': attempt,
+            'is_active': False,
+            'time': attempt.attempt_time
+        })
+    
+    # Сортируем по времени
+    combined_history.sort(key=lambda x: x['time'], reverse=True)
+    
     context = get_context({
         "title": "Личный кабинет",
-        # TODO Добавить историю входа из AXES
-        "login_history": None, #LoginHistory.objects.filter(user=request.user).order_by("-date"),
+        "login_history": combined_history[:50],  # Ограничим 50 записями
         "donation": Donation.objects.filter(user=request.user).order_by("-timestamp"),
     })
     return render(request, "lk.html", context)

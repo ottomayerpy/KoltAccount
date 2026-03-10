@@ -1,6 +1,6 @@
 /* Главная страница с таблицей аккаунтов */
-import {setCryptoSettings, enMP, deMP, encrypt, decrypt} from "./kolt_crypto.js";
-import {saveJSONToFile} from "./save_json_to_file.js";
+import { setCryptoSettings, enMP, deMP, encrypt, decrypt } from "./kolt_crypto.js";
+import { saveJSONToFile } from "./save_json_to_file.js";
 
 $(function () {
     let master_password = "", // Хранит мастер пароль для расшифровки данных таблицы
@@ -111,17 +111,48 @@ $(function () {
                         "<td class=\"td-description\" data-id=\"" + account_id + "\">" + description + "</td>" +
                         "<td class=\"td-login td-hide\" data-id=\"" + account_id + "\">" + login + "</td>" +
                         "<td class=\"td-password td-hide\" data-id=\"" + account_id + "\">" + password + "</td>" +
-                        "</tr>"; // Формируем запись для таблицы
+                        "</tr>";
 
-                    // Добавляем в конец таблицы только что созданную запись аккаунта
+                    // Добавляем в конец таблицы
                     $("tbody").append(tr);
+
                     // Обновляем счетчик аккаунтов
                     $("#js-account-counter").text(parseInt($("#js-account-counter").text()) + 1);
 
                     if (!data) {
                         console.log("!data");
-                        // Сортируем таблицу
-                        $("table").trigger("sorton", [[[1, 0]]]);
+                        // Обновляем счетчик аккаунтов
+                        $("#js-account-counter").text(parseInt($("#js-account-counter").text()) + 1);
+
+                        // В новой версии tablesorter 2.32.0 используем update
+                        let $table = $("#Accounts_table");
+
+                        // Принудительно обновляем таблицу
+                        $table.trigger("update");
+
+                        // Небольшая задержка перед сортировкой
+                        setTimeout(function () {
+                            // Сортируем по второму столбцу (индекс 1)
+                            $table.trigger("sorton", [[[1, 0]]]);
+
+                            // Подсветка новой строки
+                            let $newRow = $("tr[data-id='" + account_id + "']");
+                            if ($newRow.length) {
+                                // Прокручиваем к строке
+                                $('html, body').animate({
+                                    scrollTop: $newRow.offset().top - 100
+                                }, 500);
+
+                                // Подсвечиваем первые три ячейки
+                                $newRow.find('td:lt(3)').addClass('highlight-new');
+
+                                // Убираем подсветку через 3 секунды
+                                setTimeout(function () {
+                                    $newRow.find('td:lt(3)').removeClass('highlight-new');
+                                }, 3000);
+                            }
+                        }, 100);
+
                         // Закрываем модальное окно создания аккаунта
                         $("#CreateAccountModal").modal("hide");
                         // Чистим поля
@@ -555,8 +586,8 @@ $(function () {
             swal("Заполните поле \"Старый пароль\"");
         } else if ($("#in-new_password").val() == "") {
             swal("Заполните поле \"Новый пароль\"");
-        // } else if ($("#in-old_password").val() == $("#in-new_password").val()) {
-        //     swal("Старый и новый пароль не могут совпадать");
+            // } else if ($("#in-old_password").val() == $("#in-new_password").val()) {
+            //     swal("Старый и новый пароль не могут совпадать");
         } else if ($("#in-repeat_new_password").val() == "") {
             swal("Заполните поле \"Подтвердите новый пароль\"");
         } else if ($("#in-new_password").val() != $("#in-repeat_new_password").val()) {
@@ -669,15 +700,21 @@ $(function () {
                     }
                 });
 
-                if ($("tr").length > 1) {
-                    // Если таблица не пустая, то конфигурируем
-                    $("#Accounts_table").tablesorter({
-                        sortList: [
-                            // Сортируем по первому столбцу, по алфавиту
-                            [1, 0]
-                        ]
-                    });
-                }
+                // Показываем таблицу
+                $(".account_container").show();
+
+                // Добавлено: инициализация tablesorter после показа таблицы
+                setTimeout(function () {
+                    if ($("tr").length > 1) {
+                        // Если таблица не пустая, то конфигурируем
+                        $("#Accounts_table").tablesorter({
+                            sortList: [
+                                // Сортируем по первому столбцу, по алфавиту
+                                [1, 0]
+                            ]
+                        });
+                    }
+                }, 100);
             }
 
             // Скачиваем иконку для каждого сайта в таблице
@@ -844,7 +881,7 @@ $(function () {
 
     function master_export() {
         /* Мастер экспорт аккаунтов в json файл */
-        var jd = [{"data": "data"}];
+        var jd = [{ "data": "data" }];
         let index = -1;
         let indexitem = 0;
         $('#Accounts_table td').each(function () {
@@ -856,14 +893,14 @@ $(function () {
                 jd[index] = {}
             } else {
                 if (indexitem == 0) {
-                    jd[index] = {...jd[index], site: data}
+                    jd[index] = { ...jd[index], site: data }
                 } else if (indexitem == 1) {
-                    jd[index] = {...jd[index], description: data}
+                    jd[index] = { ...jd[index], description: data }
                 } else if (indexitem == 2) {
-                    jd[index] = {...jd[index], login: decrypt(data, master_password)}
+                    jd[index] = { ...jd[index], login: decrypt(data, master_password) }
                 } else if (indexitem == 3) {
-                    jd[index] = {...jd[index], password: decrypt(data, master_password)}
-                } 
+                    jd[index] = { ...jd[index], password: decrypt(data, master_password) }
+                }
 
                 indexitem += 1;
             }

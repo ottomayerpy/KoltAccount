@@ -1089,6 +1089,22 @@ tbody tr {
     margin: 4px;
 }
 
+/* Подсветка новой записи в таблице */
+.highlight-new {
+    animation: twinkle 1.5s ease-in-out 3;
+}
+
+@keyframes twinkle {
+    0%, 100% { 
+        background-color: transparent;
+        opacity: 1;
+    }
+    50% { 
+        background-color: var(--btn-kolt-bg);
+        opacity: 0.7;
+    }
+}
+
 /* --------------------------------------------------------------------------
    3.6. Карточки
    -------------------------------------------------------------------------- */

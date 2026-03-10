@@ -1,25 +1,25 @@
 /* Базовые функции */
 
 $(function() {
-    window.main_show_preload = function() {
+    window.mainShowPreload = function() {
         /* Показать главный прелоад */
         $('#page-preload').removeClass('preload-done');
     }
 
-    window.main_hide_preload = function() {
+    window.mainHidePreload = function() {
         /* Скрыть главный прелоад */
         $('#page-preload').addClass('preload-done');
     }
 
-    window.preload_show = function() {
+    window.preloadShow = function() {
         /* Показать прелоад */
         $('#page-preload').css('background', 'rgb(0 0 0 / 0.5)');
-        main_show_preload();
+        mainShowPreload();
     }
 
-    window.preload_hide = function() {
+    window.preloadHide = function() {
         /* Скрыть прелоад */
-        main_hide_preload();
+        mainHidePreload();
         setTimeout(function() {
             $('#page-preload').css('background', '#000000');
         }, 500);
@@ -27,12 +27,12 @@ $(function() {
 
     window.onbeforeunload = function() {
         /* Затухание при переходах по ссылкам на сайте */
-        main_show_preload();
+        mainShowPreload();
     }
 
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
-            main_hide_preload();
+            mainHidePreload();
         }
     });
 

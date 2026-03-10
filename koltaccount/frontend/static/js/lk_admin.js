@@ -42,7 +42,7 @@ $(function() {
     });
 
     function site_in_service_switch(switch_obj, toggle_checked) {
-        preload_show();
+        preloadShow();
         $.ajax({
             url: 'site_in_service_switch/',
             type: 'POST',
@@ -66,7 +66,7 @@ $(function() {
                     swal('Ошибка', result['result']);
                 }
 
-                preload_hide();
+                preloadHide();
             }
         });
     }

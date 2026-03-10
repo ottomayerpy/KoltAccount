@@ -949,29 +949,4 @@ $(function () {
 
         saveJSONToFile(jsonData, "KoltAccount dump");
     }
-
-    // Глобальные функции для совместимости с существующим кодом
-    window.main_show_preload = function () {
-        preloadShow();
-    };
-
-    window.main_hide_preload = function () {
-        preloadHide();
-    };
-
-    window.preload_show = function () {
-        preloadShow();
-    };
-
-    window.preload_hide = function () {
-        preloadHide();
-    };
-
-    function preloadShow() {
-        $("#page-preload").removeClass("preload-done");
-    }
-
-    function preloadHide() {
-        $("#page-preload").addClass("preload-done");
-    }
 });

@@ -32,7 +32,7 @@ $(function () {
     });
 
     $("form").on("submit", function () {
-        preload_show();
+        preloadShow();
         let username = $("#id_username").val();
 
         if (!is_form_submit) {
@@ -58,7 +58,7 @@ $(function () {
                         $("form").submit();
                     }
 
-                    preload_hide();
+                    preloadHide();
                 },
                 error: function (jqXHR, text, error) {
                     if (error == "Forbidden") {
@@ -68,7 +68,7 @@ $(function () {
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта."
                         )
-                        preload_hide();
+                        preloadHide();
                     }
                 }
             });

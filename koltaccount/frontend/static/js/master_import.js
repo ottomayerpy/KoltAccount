@@ -38,7 +38,7 @@ function sleep(miliseconds) {
 
 function _create_account(site, description, login, password) {
     /* Добавление нового аккаунта в таблице !ТОЛЬКО ДЛЯ МАСТЕР ИМПОРТА! */
-    preload_show();
+    preloadShow();
 
     $.ajax({
         url: 'create_account/',
@@ -62,7 +62,7 @@ function _create_account(site, description, login, password) {
                 swal('Ошибка', result['result']);
             }
 
-            preload_hide();
+            preloadHide();
         },
         error: function (jqXHR, text, error) {
             if (error == 'Forbidden') {
@@ -72,7 +72,7 @@ function _create_account(site, description, login, password) {
                     ' Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie,' +
                     ' включите их снова, по крайней мере, для этого сайта.'
                 )
-                preload_hide();
+                preloadHide();
             }
         }
     });

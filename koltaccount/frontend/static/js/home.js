@@ -82,13 +82,13 @@ $(function () {
         if (data) {
             site = data.site;
             description = data.description;
-            login = data.login;
-            password = data.password;
+            login = encrypt(data.login, master_password);
+            password = encrypt(data.password, master_password);
         } else {
             site = $("#in-site").val();
             description = $("#in-description").val();
-            login = $("#in-login").val();
-            password = $("#in-password").val();
+            login = encrypt($("#in-login").val(), master_password);
+            password = encrypt($("#in-password").val(), master_password);
         }
 
         $.ajax({
@@ -97,8 +97,8 @@ $(function () {
             data: {
                 site: encrypt(site, master_password),
                 description: encrypt(description, master_password),
-                login: encrypt(login, master_password),
-                password: encrypt(password, master_password),
+                login: login,
+                password: password,
             },
             success: function (result) {
                 let account_id = result["account_id"];

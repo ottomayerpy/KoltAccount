@@ -56,8 +56,6 @@ $(function() {
         } catch {}
     }
 
-    /*
-
     // Для Orange PI
     function requestCpuTemp() {
         $.ajax({
@@ -74,8 +72,6 @@ $(function() {
     });
 
     requestCpuTemp();
-    
-    */
 
     checkCookies();
 });

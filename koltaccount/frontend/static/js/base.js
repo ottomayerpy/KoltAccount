@@ -63,6 +63,9 @@ $(function() {
             type: "GET",
             success: function (result) {
                 $("#cpu_temp").text(result);
+            },
+            error: function () {
+                $("#cpu_temp").text("0°");
             }
         });
     }
@@ -71,7 +74,7 @@ $(function() {
         setInterval(requestCpuTemp, 1000);
     });
 
-    requestCpuTemp();
+    if ($("#cpu_temp").length) requestCpuTemp();
 
     checkCookies();
 });

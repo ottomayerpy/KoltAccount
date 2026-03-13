@@ -1,3 +1,6 @@
+import core.service as core_service
+from django.http import HttpResponseServerError
+
 from .models import SiteSetting
 
 
@@ -12,12 +15,6 @@ def site_in_service_switch(checked: str) -> dict:
 
         setting.save()
 
-        return {
-            "status": "success",
-            "checked": setting.value
-        }
+        return core_service.json_response(setting.value)
     except SiteSetting.DoesNotExist:
-        return {
-            "status": "error",
-            "result": "doesnotexist"
-        }
+        return HttpResponseServerError("Не установлена настройка сайта site_in_service")

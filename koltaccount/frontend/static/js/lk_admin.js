@@ -24,7 +24,10 @@ $(function() {
                 confirmButtonText: button_text,
             },
             function() {
-                site_in_service_switch(switch_obj, is_service);
+                preloadShow();
+                setTimeout(function() {
+                    site_in_service_switch(switch_obj, is_service);
+                }, 300);
             }
         );
     });
@@ -42,7 +45,6 @@ $(function() {
     });
 
     function site_in_service_switch(switch_obj, toggle_checked) {
-        preloadShow();
         $.ajax({
             url: 'site_in_service_switch/',
             type: 'POST',
@@ -50,22 +52,20 @@ $(function() {
                 checked: toggle_checked
             },
             success: function(result) {
-                if (result['status'] == 'success') {
-                    if (result['checked'] == 'true') {
-                        switch_obj.setAttribute("checked", "checked");
-                        $('#site_in_service_button').addClass('toggle-button_active');
-                        $('.logo').addClass('logo-warning').text('Сайт закрыт');
-                    } else {
-                        switch_obj.removeAttribute("checked");
-                        $('#site_in_service_button').removeClass('toggle-button_active');
-                        $('.logo').removeClass('logo-warning').text('KoltAccount');
-                    }
-                } else if (result['result'] == 'doesnotexist') {
-                    swal('Ошибка', 'Настройка site_in_service не найдена');
+                if (result == 'true') {
+                    switch_obj.setAttribute("checked", "checked");
+                    $('#site_in_service_button').addClass('toggle-button_active');
+                    $('.logo').addClass('logo-warning').text('Сайт закрыт');
                 } else {
-                    swal('Ошибка', result['result']);
+                    switch_obj.removeAttribute("checked");
+                    $('#site_in_service_button').removeClass('toggle-button_active');
+                    $('.logo').removeClass('logo-warning').text('KoltAccount');
                 }
-
+            },
+            error: function (jqXHR, text, error) {
+                swal('Ошибка', 'Настройка site_in_service не найдена', 'error');
+            },
+            complete: function() {
                 preloadHide();
             }
         });

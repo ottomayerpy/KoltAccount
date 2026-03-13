@@ -1667,6 +1667,12 @@ body.dark-theme .theme-toggle:hover {
 /* --------------------------------------------------------------------------
    3.18. Разное
    -------------------------------------------------------------------------- */
+pre {
+    color: var(--text-color);
+    background-color: var(--accent-bg);
+    border-color: var(--border-color);
+}
+
 #in-search {
     margin-top: 10px;
 }

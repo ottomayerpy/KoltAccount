@@ -869,6 +869,10 @@ $(function () {
         });
 
     $("#btn_master_import").on("change", async function () {
+        if (masterPassword == "doesnotexist") {
+            swal('Необходимо создать мастер пароль');
+            return
+        }
         preloadShow();
         $("#MasterPasswordModal").modal("hide");
 
@@ -894,6 +898,10 @@ $(function () {
 
     $("#btn_master_export").on("click", function () {
         let oldPassword = $("#in-old_password").val();
+        if (masterPassword == "doesnotexist") {
+            swal('Необходимо создать мастер пароль');
+            return
+        }
         if (oldPassword == "") {
             swal('Введите пароль в поле "Старый пароль"');
         } else if (deMP(enMasterPassword, oldPassword) == "") {

@@ -1549,7 +1549,7 @@ body.dark-theme .theme-toggle:hover {
     padding: 10px 0;
 }
 
-.confirm_email-url {
+.urls_in_text {
     color: var(--colorscheme);
 }
 

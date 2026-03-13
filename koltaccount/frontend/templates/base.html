@@ -222,12 +222,12 @@
     {% if request.user.email %}
     <div class="confirm_email-notification">
         <p>Вам нужно подтвердить почту. Мы уже отправили вам письмо с инструкциями. Если письмо не пришло то нажмите <a
-                href="{% url 'confirm_email_url' %}" class="confirm_email-url">здесь</a> для повторной отправки письма.</p>
+                href="{% url 'confirm_email_url' %}" class="urls_in_text">здесь</a> для повторной отправки письма.</p>
     </div>
     {% else %}
     <div class="confirm_email-notification">
         <p>У вас не указана почта, привязать почту к учетной записи можно <a
-                href="{% url 'email_change_url' %}" class="confirm_email-url">здесь</a>.</p>
+                href="{% url 'email_change_url' %}" class="urls_in_text">здесь</a>.</p>
     </div>
     {% endif %}
     {% endif %}

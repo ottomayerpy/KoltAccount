@@ -5,14 +5,12 @@ $(function() {
         let is_service = 'false',
             button_text = 'Да, открыть!',
             alert_text = 'Сайт будет открыт!',
-            button_color = '#64dd55',
             switch_obj = this;
 
         if (!$(this).attr('checked')) {
             is_service = 'true';
             button_text = 'Да, закрыть.';
             alert_text = 'Сайт будет закрыт на техническое обслуживание!';
-            button_color = '#DD6B55';
         }
 
         swal({
@@ -20,7 +18,6 @@ $(function() {
                 text: alert_text,
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: button_color,
                 confirmButtonText: button_text,
             },
             function() {

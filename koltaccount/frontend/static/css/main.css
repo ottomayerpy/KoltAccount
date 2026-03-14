@@ -825,7 +825,8 @@ tbody tr {
 }
 
 .td-description {
-    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .td-btn {
@@ -837,7 +838,7 @@ tbody tr {
 }
 
 .account_table_th_icon {
-    width: 3%;
+    width: 34px;
     text-align: center;
     font-size: 16px !important;
 }

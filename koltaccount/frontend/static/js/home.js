@@ -730,7 +730,7 @@ $(function () {
 
     $("#AccountModal").on("shown.bs.modal", function (e) {
         /* Событие после открытия модального окна просмотра аккаунта */
-        account_modal_tour();
+        // account_modal_tour(); (Удалено, потом новый сделаем)
     });
 
     $("#EnterKeyModal").on("shown.bs.modal", function () {
@@ -794,7 +794,7 @@ $(function () {
             // Показываем таблицу
             $(".account_container").show();
             // Запускаем тур по главной странице
-            account_table_tour();
+            // account_table_tour(); (Удалено, потом новый сделаем)
         } else {
             // Если модальное окно ввода ключа/мастер пароля было закрыто пользователем, то показываем кнопку загрузить таблицу
             $(".js-reload_enter_key_modal").show();

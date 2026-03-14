@@ -7,7 +7,6 @@
 <script defer type="text/javascript" src="{% static 'js/addons/jquery.tablesorter.min.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/bubbly_animation.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/tour.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/addons/crypto-js.min.js' %}?ver={{ static_version }}"></script>
 <script defer type="module" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
 {% endblock %}
@@ -67,7 +66,7 @@
                 <input id="modal-password" maxlength="254">
             </div>
             <div align="center" class="modal-footer modal-footer-show-account">
-                <div align="center" id="js-tour_show_account_modal_footer_buttons">
+                <div align="center">
                     <button class="btn btn-kolt bubbly-button btn-round btn-main-fix btn-bottom-show-account" id="modal-btn-login">Логин</button>
                     <button class="btn btn-kolt bubbly-button btn-round btn-main-fix btn-bottom-show-account" id="modal-btn-password">Пароль</button>
                 </div>

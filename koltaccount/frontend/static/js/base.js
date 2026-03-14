@@ -62,19 +62,19 @@ $(function() {
             url: "/get_cpu_temp",
             type: "GET",
             success: function (result) {
-                $("#cpu_temp").text(result);
+                $(".cpu_temp").text(result);
             },
             error: function () {
-                $("#cpu_temp").text("0°");
+                $(".cpu_temp").text("0°");
             }
         });
     }
 
-    $("#cpu_temp").on("click", function () {
+    $(".cpu_temp").on("click", function () {
         setInterval(requestCpuTemp, 1000);
     });
 
-    if ($("#cpu_temp").length) requestCpuTemp();
+    if ($(".cpu_temp").length) requestCpuTemp();
 
     checkCookies();
 });

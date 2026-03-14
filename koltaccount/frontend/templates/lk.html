@@ -1,347 +1,286 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}{{ title }}{% endblock %}
-{% block addons_head %}
+{% extends 'base.html' %} {% load static %} {% block title %}{{ title }}{% endblock %} {% block addons_head %}
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
 {% if request.user.is_staff %}
 <script defer type="text/javascript" src="{% static 'js/lk_admin.js' %}?ver={{ static_version }}"></script>
-{% endif %}
-{% endblock %}
-{% block content %}
+{% endif %} {% endblock %} {% block content %}
 <div class="container">
-    <main>
-        <section>
-            <h2 align="center">{{ title }}</h2>
-            <div class="support-content">
-                <aside>
-                    <div class="row lk-row">
-                        <div class="col-md-4 lk-block">
-                            <div align="center">
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="1">Профиль</button>
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История пожертвований</button>
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">История авторизаций</button>
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Темы оформления</button>
-                                {% if request.user.is_staff %}
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="5">Администрирование</button>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-8 lk-block lk-block_info">
-                            <div class="swiper-container">
-                                <div class="js-swiper-tabs" data-tabs="1" align="center">
-                                    <strong>Профиль</strong>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div class="card lk_card">
-                                            <div class="card-body">
-                                                <strong>Ваши данные</strong>
-                                                <p>Здравствуйте, <span>{{ request.user.username }}</span></p>
-                                                <p>Ваш почтовый адрес:
-                                                    <span>
-                                                        {% if request.user.email %}
-                                                        {{ request.user.email }}
-                                                        {% else %}
-                                                        Не указан
-                                                        {% endif %}
-                                                    </span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div class="card lk_card">
-                                            <div class="card-body">
-                                                <strong>Действия</strong>
-                                                <div class="mt-5">
-                                                    <a href="{% url 'email_change_url' %}"
-                                                        class="btn btn-kolt btn-block default">
-                                                        Изменить почту
-                                                    </a>
-                                                </div>
-                                                <div class="mt-5">
-                                                    <a href="{% url 'password_change' %}"
-                                                        class="btn btn-kolt btn-block default">
-                                                        Изменить пароль
-                                                    </a>
-                                                </div>
-                                                <div class="mt-5">
-                                                    <a href="{% url 'master_password_reset_url' %}"
-                                                        class="btn btn-kolt btn-block default">
-                                                        Сбросить мастер пароль
-                                                    </a>
-                                                </div>
-                                                <div class="mt-20">
-                                                    <a href="{% url 'logout' %}" class="btn btn-kolt btn-block default">
-                                                        ‹ Выход ›
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="js-swiper-tabs" data-tabs="2">
-                                    <strong>История пожертвований</strong>
-                                    {% for donate in donation %}
-                                    <div class="js-donate" data-number="{{ forloop.counter }}">
-                                        <input type="hidden" value="{{ donate.data }}">
-                                        <div class="auth-ip">
-                                            User: {{ donate.user }}
-                                        </div>
-                                        <div class="auth-top">
-                                            <div class="auth-display js-donate-notification_type"></div>
-                                            <span class="auth-display">|</span>
-                                            <div class="auth-display js-donate-withdraw_amount"></div>
-                                        </div>
-                                        <div class="auth-bottom">
-                                            <div class="auth-display js-auth-date">
-                                                {{ donate.timestamp|date:"Y-m-d_H:i" }}
-                                            </div>
-                                            <span class="auth-display">|</span>
-                                            <div class="auth-display js-donate-codepro"></div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                <div class="js-swiper-tabs" data-tabs="3">
-                                    <strong>История авторизаций</strong>
-                                    <div class="auth-history-container">
-                                        {% if login_history %}
-                                        {% for item in login_history %}
-                                        {% if item.type == 'log' %}
-                                        <div class="auth-item {% if item.is_active %}auth-active{% else %}auth-completed{% endif %}">
-                                            <div class="auth-header">
-                                                <span class="auth-status">
-                                                    {% if item.is_active %}
-                                                    ● Активен
-                                                    {% else %}
-                                                    ○ Завершен
-                                                    {% endif %}
-                                                </span>
-                                                <span class="auth-time">
-                                                    {{ item.data.attempt_time|date:"d.m.Y H:i:s" }}
-                                                    {% if item.data.logout_time %}
-                                                    – {{ item.data.logout_time|date:"d.m.Y H:i:s" }}
-                                                    {% endif %}
-                                                </span>
-                                            </div>
-                                            <div class="auth-details">
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">IP адрес:</span>
-                                                    <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
-                                                </div>
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">User-Agent:</span>
-                                                    <span class="auth-value auth-useragent">{{item.data.user_agent|truncatechars:80 }}</span>
-                                                </div>
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">Путь:</span>
-                                                    <span class="auth-value">{{ item.data.path_info }}</span>
-                                                </div>
-                                                {% if not item.is_active and item.data.logout_time %}
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">Длительность:</span>
-                                                    <span class="auth-value">
-                                                        {{ item.data.logout_time|timeuntil:item.data.attempt_time }}
-                                                    </span>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        {% else %}
-                                        <div class="auth-item auth-failed">
-                                            <div class="auth-header">
-                                                <span class="auth-status">
-                                                    ✗ Неудачно
-                                                    {% if item.data.failures_since_start > 1 %}
-                                                    ({{ item.data.failures_since_start }} попыток)
-                                                    {% endif %}
-                                                </span>
-                                                <span class="auth-time">{{ item.data.attempt_time|date:"d.m.Y H:i:s" }}</span>
-                                            </div>
-                                            <div class="auth-details">
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">IP адрес:</span>
-                                                    <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
-                                                </div>
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">User-Agent:</span>
-                                                    <span class="auth-value auth-useragent">{{ item.data.user_agent|truncatechars:80 }}</span>
-                                                </div>
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">Путь:</span>
-                                                    <span class="auth-value">{{ item.data.path_info }}</span>
-                                                </div>
-                                                {% if item.data.failures_since_start %}
-                                                <div class="auth-detail">
-                                                    <span class="auth-label">Попыток:</span>
-                                                    <span class="auth-value">{{ item.data.failures_since_start }}</span>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
-                                        {% else %}
-                                        <div class="auth-empty">
-                                            <p>История авторизаций отсутствует</p>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="js-swiper-tabs" data-tabs="4">
-                                    <strong>Темы оформления</strong>
-                                    <div class="theme-tabs">
-                                        <button class="theme-tab active" data-theme-mode="light">Светлая тема</button>
-                                        <button class="theme-tab" data-theme-mode="dark">Темная тема</button>
-                                    </div>
-                                    <div class="theme-grid light-themes active">
-                                        <div class="theme-cards-container">
-                                            <div class="theme-card" data-theme="light-default">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #1E7DE6, #4A90E2);"></div>
-                                                <div class="theme-name">Синяя</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-mint">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #4ECDC4, #45B7AA);"></div>
-                                                <div class="theme-name">Мятная</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-lavender">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #B8A9E6, #9F8FD9);"></div>
-                                                <div class="theme-name">Лавандовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-peach">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FFB6A5, #FF9F8A);"></div>
-                                                <div class="theme-name">Персиковая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-coral">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF6B6B, #E65A5A);"></div>
-                                                <div class="theme-name">Коралловая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-teal">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #2C9A9A, #248080);"></div>
-                                                <div class="theme-name">Морская</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-gold">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FFD93D, #F5C542);"></div>
-                                                <div class="theme-name">Золотистая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-rose">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF9A9E, #FAD0C4);"></div>
-                                                <div class="theme-name">Розовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-lilac">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #C06C84, #6C5B7B);"></div>
-                                                <div class="theme-name">Сиреневая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-turquoise">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #1ABC9C, #16A085);"></div>
-                                                <div class="theme-name">Бирюзовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-lime">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #A3D147, #8CB43C);"></div>
-                                                <div class="theme-name">Лаймовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="light-cornflower">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #6495ED, #557FCA);"></div>
-                                                <div class="theme-name">Васильковая</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="theme-grid dark-themes">
-                                        <div class="theme-cards-container">
-                                            <div class="theme-card" data-theme="dark-default">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #AF64FF, #9D65E5);"></div>
-                                                <div class="theme-name">Фиолетовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-red">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF4D4D, #E63E3E);"></div>
-                                                <div class="theme-name">Красная</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-blue">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #00A0FF, #0090E6);"></div>
-                                                <div class="theme-name">Синяя</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-green">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #00CC88, #00B377);"></div>
-                                                <div class="theme-name">Зеленая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-orange">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF8C42, #E67A2E);"></div>
-                                                <div class="theme-name">Оранжевая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-pink">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF69B4, #E65A9E);"></div>
-                                                <div class="theme-name">Розовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-cyan">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #6ED4FF, #5BB9E0);"></div>
-                                                <div class="theme-name">Голубая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-magenta">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #AA60FF, #8A4FD9);"></div>
-                                                <div class="theme-name">Пурпурная</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-turquoise">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #40E0D0, #36C0B0);"></div>
-                                                <div class="theme-name">Бирюзовая</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-amber">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FFB347, #E69F3E);"></div>
-                                                <div class="theme-name">Янтарная</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-mint">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #00B496, #00A085);"></div>
-                                                <div class="theme-name">Мятная</div>
-                                            </div>
-                                            <div class="theme-card" data-theme="dark-lavender">
-                                                <div class="theme-preview" style="background: linear-gradient(145deg, #967BB6, #826A9E);"></div>
-                                                <div class="theme-name">Лавандовая</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% if request.user.is_staff %}
-                                <div class="js-swiper-tabs" data-tabs="5" align="center">
-                                    <strong>Администрирование</strong>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <strong>Настройки сайта</strong>
-                                                <div>
-                                                    {% if site_in_service == 'true' %}
-                                                    <input type="checkbox" id="site_in_service_button" checked="checked"
-                                                        class="toggle-button toggle-button_active">
-                                                    {% else %}
-                                                    <input type="checkbox" id="site_in_service_button"
-                                                        class="toggle-button">
-                                                    {% endif %}
-                                                    <label for="toggle-button" class="toggle-button_text">Закрыть
-                                                        сайт</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <strong>Прочее</strong>
-                                                <div class="lk_other_admin_card">
-                                                    <a href="{% url 'check_email_template_url' %}"
-                                                        class="btn btn-kolt btn-block">
-                                                        Проверка email шаблонов
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
+    <h2 align="center">{{ title }}</h2>
+    <div class="support-content row">
+        <div class="col-md-4 lk-block">
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="1">Профиль</button>
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История пожертвований</button>
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">История авторизаций</button>
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Темы оформления</button>
+            {% if request.user.is_staff %}
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="5">Администрирование</button>
+            {% endif %}
+        </div>
+        <div class="col-md-8 lk-block">
+            <div class="swiper-container">
+                <div class="js-swiper-tabs" data-tabs="1" align="center">
+                    <strong>Профиль</strong>
+                    <div class="col-xs-12 col-sm-7">
+                        <div class="card">
+                            <div class="card-body">
+                                <strong>Ваши данные</strong>
+                                <p>Здравствуйте, <span>{{ request.user.username }}</span></p>
+                                <p>
+                                    Ваш почтовый адрес:
+                                    <span> {% if request.user.email %} {{ request.user.email }} {% else %} Не указан {% endif %} </span>
+                                </p>
                             </div>
                         </div>
                     </div>
-                </aside>
+                    <div class="col-xs-12 col-sm-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <strong>Действия</strong>
+                                <div class="mt-5">
+                                    <a href="{% url 'email_change_url' %}" class="btn btn-kolt btn-block default"> Изменить почту </a>
+                                </div>
+                                <div class="mt-5">
+                                    <a href="{% url 'password_change' %}" class="btn btn-kolt btn-block default"> Изменить пароль </a>
+                                </div>
+                                <div class="mt-5">
+                                    <a href="{% url 'master_password_reset_url' %}" class="btn btn-kolt btn-block default"> Сбросить мастер пароль </a>
+                                </div>
+                                <div class="mt-20">
+                                    <a href="{% url 'logout' %}" class="btn btn-kolt btn-block default"> ‹ Выход › </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="js-swiper-tabs" data-tabs="2">
+                    <strong>История пожертвований</strong>
+                    {% for donate in donation %}
+                    <div class="js-donate" data-number="{{ forloop.counter }}">
+                        <input type="hidden" value="{{ donate.data }}" />
+                        <div class="auth-ip">User: {{ donate.user }}</div>
+                        <div class="auth-top">
+                            <div class="auth-display js-donate-notification_type"></div>
+                            <span class="auth-display">|</span>
+                            <div class="auth-display js-donate-withdraw_amount"></div>
+                        </div>
+                        <div class="auth-bottom">
+                            <div class="auth-display js-auth-date">{{ donate.timestamp|date:"Y-m-d_H:i" }}</div>
+                            <span class="auth-display">|</span>
+                            <div class="auth-display js-donate-codepro"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="js-swiper-tabs" data-tabs="3">
+                    <strong>История авторизаций</strong>
+                    <div class="auth-history-container">
+                        {% if login_history %} {% for item in login_history %} {% if item.type == 'log' %}
+                        <div class="auth-item {% if item.is_active %}auth-active{% else %}auth-completed{% endif %}">
+                            <div class="auth-header">
+                                <span class="auth-status"> {% if item.is_active %} ● Активен {% else %} ○ Завершен {% endif %} </span>
+                                <span class="auth-time">
+                                    {{ item.data.attempt_time|date:"d.m.Y H:i:s" }} {% if item.data.logout_time %} – {{ item.data.logout_time|date:"d.m.Y H:i:s" }} {% endif %}
+                                </span>
+                            </div>
+                            <div class="auth-details">
+                                <div class="auth-detail">
+                                    <span class="auth-label">IP адрес:</span>
+                                    <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
+                                </div>
+                                <div class="auth-detail">
+                                    <span class="auth-label">User-Agent:</span>
+                                    <span class="auth-value auth-useragent">{{item.data.user_agent|truncatechars:80 }}</span>
+                                </div>
+                                <div class="auth-detail">
+                                    <span class="auth-label">Путь:</span>
+                                    <span class="auth-value">{{ item.data.path_info }}</span>
+                                </div>
+                                {% if not item.is_active and item.data.logout_time %}
+                                <div class="auth-detail">
+                                    <span class="auth-label">Длительность:</span>
+                                    <span class="auth-value"> {{ item.data.logout_time|timeuntil:item.data.attempt_time }} </span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="auth-item auth-failed">
+                            <div class="auth-header">
+                                <span class="auth-status"> ✗ Неудачно {% if item.data.failures_since_start > 1 %} ({{ item.data.failures_since_start }} попыток) {% endif %} </span>
+                                <span class="auth-time">{{ item.data.attempt_time|date:"d.m.Y H:i:s" }}</span>
+                            </div>
+                            <div class="auth-details">
+                                <div class="auth-detail">
+                                    <span class="auth-label">IP адрес:</span>
+                                    <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
+                                </div>
+                                <div class="auth-detail">
+                                    <span class="auth-label">User-Agent:</span>
+                                    <span class="auth-value auth-useragent">{{ item.data.user_agent|truncatechars:80 }}</span>
+                                </div>
+                                <div class="auth-detail">
+                                    <span class="auth-label">Путь:</span>
+                                    <span class="auth-value">{{ item.data.path_info }}</span>
+                                </div>
+                                {% if item.data.failures_since_start %}
+                                <div class="auth-detail">
+                                    <span class="auth-label">Попыток:</span>
+                                    <span class="auth-value">{{ item.data.failures_since_start }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %} {% endfor %} {% else %}
+                        <div class="auth-empty">
+                            <p>История авторизаций отсутствует</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="js-swiper-tabs" data-tabs="4">
+                    <strong>Темы оформления</strong>
+                    <div class="theme-tabs">
+                        <button class="theme-tab active" data-theme-mode="light">Светлая тема</button>
+                        <button class="theme-tab" data-theme-mode="dark">Темная тема</button>
+                    </div>
+                    <div class="theme-grid light-themes active">
+                        <div class="theme-cards-container">
+                            <div class="theme-card" data-theme="light-default">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #1e7de6, #4a90e2)"></div>
+                                <div class="theme-name">Синяя</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-mint">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #4ecdc4, #45b7aa)"></div>
+                                <div class="theme-name">Мятная</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-lavender">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #b8a9e6, #9f8fd9)"></div>
+                                <div class="theme-name">Лавандовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-peach">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ffb6a5, #ff9f8a)"></div>
+                                <div class="theme-name">Персиковая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-coral">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ff6b6b, #e65a5a)"></div>
+                                <div class="theme-name">Коралловая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-teal">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #2c9a9a, #248080)"></div>
+                                <div class="theme-name">Морская</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-gold">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ffd93d, #f5c542)"></div>
+                                <div class="theme-name">Золотистая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-rose">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ff9a9e, #fad0c4)"></div>
+                                <div class="theme-name">Розовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-lilac">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #c06c84, #6c5b7b)"></div>
+                                <div class="theme-name">Сиреневая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-turquoise">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #1abc9c, #16a085)"></div>
+                                <div class="theme-name">Бирюзовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-lime">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #a3d147, #8cb43c)"></div>
+                                <div class="theme-name">Лаймовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="light-cornflower">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #6495ed, #557fca)"></div>
+                                <div class="theme-name">Васильковая</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="theme-grid dark-themes">
+                        <div class="theme-cards-container">
+                            <div class="theme-card" data-theme="dark-default">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #af64ff, #9d65e5)"></div>
+                                <div class="theme-name">Фиолетовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-red">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ff4d4d, #e63e3e)"></div>
+                                <div class="theme-name">Красная</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-blue">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #00a0ff, #0090e6)"></div>
+                                <div class="theme-name">Синяя</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-green">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #00cc88, #00b377)"></div>
+                                <div class="theme-name">Зеленая</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-orange">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ff8c42, #e67a2e)"></div>
+                                <div class="theme-name">Оранжевая</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-pink">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ff69b4, #e65a9e)"></div>
+                                <div class="theme-name">Розовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-cyan">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #6ed4ff, #5bb9e0)"></div>
+                                <div class="theme-name">Голубая</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-magenta">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #aa60ff, #8a4fd9)"></div>
+                                <div class="theme-name">Пурпурная</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-turquoise">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #40e0d0, #36c0b0)"></div>
+                                <div class="theme-name">Бирюзовая</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-amber">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #ffb347, #e69f3e)"></div>
+                                <div class="theme-name">Янтарная</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-mint">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #00b496, #00a085)"></div>
+                                <div class="theme-name">Мятная</div>
+                            </div>
+                            <div class="theme-card" data-theme="dark-lavender">
+                                <div class="theme-preview" style="background: linear-gradient(145deg, #967bb6, #826a9e)"></div>
+                                <div class="theme-name">Лавандовая</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if request.user.is_staff %}
+                <div class="js-swiper-tabs" data-tabs="5" align="center">
+                    <strong>Администрирование</strong>
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <strong>Настройки сайта</strong>
+                                <div>
+                                    {% if site_in_service == 'true' %}
+                                    <input type="checkbox" id="site_in_service_button" checked="checked" class="toggle-button toggle-button_active" />
+                                    {% else %}
+                                    <input type="checkbox" id="site_in_service_button" class="toggle-button" />
+                                    {% endif %}
+                                    <label for="toggle-button" class="toggle-button_text">Закрыть сайт</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <strong>Прочее</strong>
+                                <div class="lk_other_admin_card">
+                                    <a href="{% url 'check_email_template_url' %}" class="btn btn-kolt btn-block"> Проверка email шаблонов </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
-        </section>
-        <div class="horizontal-bottom-line"></div>
-    </main>
+        </div>
+    </div>
+    <div class="horizontal-bottom-line"></div>
 </div>
-<input type="hidden" id="form_message" value="{{ form_message }}">
+<input type="hidden" id="form_message" value="{{ form_message }}" />
 {% endblock %}

@@ -29,7 +29,7 @@
    2.2. Типографика
    ========================================================================== */
 p, h1, h2, h4, h5, strong, label, td, th, button, a,
-.auth, .popover-title, .popover-content, .logo, .simple-tabs {
+.auth, .popover-title, .popover-content, .logo, .cpu_temp, .simple-tabs {
     font-family: Comfortaa;
     color: var(--text-color);
 }
@@ -107,7 +107,7 @@ a:focus, a:hover {
     gap: 20px;
 }
 
-.logo {
+.logo, .cpu_temp {
     font-family: Comfortaa;
     text-shadow: var(--logo-shadow) 0 0 10px;
     font-size: 28px;
@@ -920,11 +920,7 @@ tbody tr {
     width: 250px;
 }
 
-.lk_card {
-    width: 280px;
-}
-
-.lk_card p span {
+.card-body p span {
     font-weight: bold;
 }
 
@@ -941,7 +937,8 @@ tbody tr {
 }
 
 .modal-title {
-    margin: 7px 0 0 20px;
+    margin: 7px 0 0 7px;
+    font-size: 16px;
 }
 
 .modal-header-create-account {
@@ -964,8 +961,7 @@ tbody tr {
 }
 
 .modal-body-master-password {
-    height: 232px;
-    padding: 0 15px;
+    padding: 15px;
 }
 
 .modal-body-master-password #password_info {
@@ -1411,7 +1407,7 @@ pre {
     border-radius: 5px;
     margin: 5px;
     text-align: center;
-    width: calc(100% - 60px);
+    width: calc(100% - 10px);
     border: 1px solid var(--card-border);
     transition: border-color 0.3s ease;
     padding: 8px 0;
@@ -1471,15 +1467,6 @@ pre {
     margin: 5px;
 }
 
-.lk-block_info {
-    margin-right: -15px;
-}
-
-.lk-row {
-    margin-left: -20px;
-    margin-right: 0px;
-}
-
 /* ===== Элементы авторизации в ЛК (из lk.css) ===== */
 .auth {
     margin: 6px 0 0;
@@ -1525,7 +1512,7 @@ pre {
     display: inline-block;
     width: 40px;
     height: 19px;
-    margin: 0;
+    margin-top: 5px;
     vertical-align: top;
     background: var(--input-bg);
     border: 1px solid var(--border-color);

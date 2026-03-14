@@ -78,7 +78,6 @@ $(function () {
     }
 
     $("#btn_master_password_modal").on("click", function () {
-        $(".modal-body-master-password").css("height", "615px");
         $("#pesonal-crypto-settings").css("display", "block");
     });
 

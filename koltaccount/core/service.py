@@ -32,7 +32,7 @@ def json_response(data: dict = None, status=200) -> JsonResponse:
     return JsonResponse(
         data=data,
         status=status,
-        safe=not isinstance(data, list),
+        safe=isinstance(data, dict),
         json_dumps_params={
             "ensure_ascii": False
         }

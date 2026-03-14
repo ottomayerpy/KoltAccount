@@ -18,10 +18,10 @@
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-kolt btn-round">Мастер пароль</button>
     </div>
     <input class="form-control" placeholder="Поиск" type="text" id="in-search" maxlength="254">
-    <table id="Accounts_table" class="tablesorter tablesorter-blue table-hover">
+    <table id="Accounts_table" class="main_table tablesorter tablesorter-blue">
         <thead>
             <tr>
-                <th class="account_table_th_icon"><div id="js-account-counter">{{ accounts.count }}</div></th>
+                <th class="account_table_th_icon" id="js-account-counter" data-sorter="false">{{ accounts.count }}</th>
                 <th>Сайт</th>
                 <th>Описание</th>
             </tr>
@@ -50,7 +50,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header modal-header-create-account">
-                <button type="button" class="btn btn-danger btn-round btn-main-fix modal-header-create-account_delete_button" data-site="" data-id="" id="modal-btn-account_delete">Удалить</button>
+                <button type="button" class="btn btn-delete btn-round" data-site="" data-id="" id="modal-btn-account_delete">Удалить</button>
                 <button class="btn btn-kolt btn-round btn-main-fix" id="modal-btn-save">Сохранить</button>
                 <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>

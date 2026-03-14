@@ -14,7 +14,6 @@
 .tablesorter-dark th,
 .tablesorter-dark td {
 	border: #2b2b2b 1px solid;
-	border-width: 0 1px 1px 0;
 	padding: 4px;
 }
 
@@ -34,7 +33,6 @@
 	background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
 	background-repeat: no-repeat;
 	background-position: center right;
-	padding: 4px 18px 4px 4px;
 	cursor: pointer;
 }
 .tablesorter-dark .headerSortUp,
@@ -75,7 +73,7 @@
 
 /* hovered row colors */
 .tablesorter-dark tbody > tr:hover > td {
-	background-color: #333;
+	background-color: var(--table-hover);
 }
 
 /* Zebra Widget */

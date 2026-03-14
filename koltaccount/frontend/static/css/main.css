@@ -446,15 +446,7 @@ a:focus, a:hover {
 .btn-kolt {
     background-color: var(--btn-kolt-bg);
     color: var(--btn-kolt-text);
-    border: 1px solid var(--btn-kolt-border);
-    
-    /* Базовые стили */
     padding: 8px 16px;
-    border-radius: 6px;
-    /* font-family: inherit; */
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
@@ -470,6 +462,28 @@ a:focus, a:hover {
     color: var(--btn-kolt-text-active);
     transform: translateY(1px);
     box-shadow: 0 2px 4px var(--btn-kolt-shadow);
+}
+
+.btn-delete {
+    background-color: var(--btn-delete-bg);
+    color: var(--btn-delete-text);
+    padding: 8px 16px;
+    width: 102px;
+    transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+    background-color: var(--btn-delete-hover);
+    color: var(--btn-delete-text-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--btn-delete-shadow);
+}
+
+.btn-delete:active {
+    background-color: var(--btn-delete-active);
+    color: var(--btn-delete-text-active);
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px var(--btn-delete-shadow);
 }
 
 .btn-reshow_modal {
@@ -614,7 +628,7 @@ a:focus, a:hover {
 .bubbly-button:active {
     transform: scale(.9);
     background-color: var(--colorschemehover);
-    box-shadow: 0 2px 25px rgba(46, 109, 164, .5);
+    box-shadow: 0 2px 25px var(--shadow-box-bubbly-button);
 }
 
 .bubbly-button.animate:before {
@@ -788,16 +802,17 @@ input[type=number] {
 /* ==========================================================================
    3.7. Таблицы
    ========================================================================== */
+.main_table {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
 tr {
     cursor: pointer;
 }
 
 tbody tr {
     height: 40px;
-}
-
-.table-hover tbody tr:hover > td {
-    background-color: var(--table-hover);
 }
 
 #Accounts_table {
@@ -822,12 +837,13 @@ tbody tr {
 }
 
 .account_table_th_icon {
-    display: contents;
+    width: 3%;
+    text-align: center;
     font-size: 16px !important;
 }
 
 .account_table_th_icon div {
-    margin: 4px;
+    margin: -1px;
 }
 
 /* Подсветка новой записи в таблице */
@@ -931,10 +947,6 @@ tbody tr {
 .modal-header-create-account {
     height: 50px;
     padding: 7px;
-}
-
-.modal-header-create-account_delete_button {
-    width: 100px !important;
 }
 
 .modal-body-create-account {

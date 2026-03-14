@@ -148,8 +148,8 @@ $(function () {
                     $("tbody").append(newRow);
 
                     // Обновляем счетчик аккаунтов
-                    $("#js-account-counter").text(
-                        parseInt($("#js-account-counter").text()) + 1,
+                    $("#js-account-counter div").text(
+                        parseInt($("#js-account-counter div").text()) + 1,
                     );
 
                     sortTable();

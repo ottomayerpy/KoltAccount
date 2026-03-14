@@ -76,6 +76,16 @@
     --btn-close-hover-color: #d32f2f;
     --btn-close-shadow: 0 2px 5px rgba(0,0,0,0.1);
 
+    /* Кнопка удаления */
+    --btn-delete-bg: #b35f5f;
+    --btn-delete-hover: #9e4f4f;
+    --btn-delete-active: #7e3f3f;
+    --btn-delete-text: #ffffff;
+    --btn-delete-text-hover: #ffffff;
+    --btn-delete-text-active: #ffffff;
+    --btn-delete-shadow: rgba(179, 95, 95, 0.4);
+    --btn-delete-border: transparent;
+
     /* Шапка */
     --header-bg: #ffffff;
     --header-border: #e0e0e0;
@@ -108,6 +118,7 @@ body.light-default {
     --logo-shadow: rgb(50, 148, 227);
     --shadow-box-bubbly-button: rgb(77, 122, 190);
     --header-link-hover-bg: rgba(30, 125, 230, 0.1);
+    --table-hover: rgb(225, 235, 250);
 }
 
 /* Светлая - Мятная */
@@ -124,6 +135,7 @@ body.light-mint {
     --logo-shadow: rgb(69, 183, 170);
     --shadow-box-bubbly-button: rgb(62, 164, 157);
     --header-link-hover-bg: rgba(78, 205, 196, 0.1);
+    --table-hover: rgb(225, 245, 240);
 }
 
 /* Светлая - Лавандовая */
@@ -140,6 +152,7 @@ body.light-lavender {
     --logo-shadow: rgb(159, 143, 217);
     --shadow-box-bubbly-button: rgb(147, 135, 184);
     --header-link-hover-bg: rgba(184, 169, 230, 0.1);
+    --table-hover: rgb(240, 235, 250);
 }
 
 /* Светлая - Персиковая */
@@ -156,6 +169,7 @@ body.light-peach {
     --logo-shadow: rgb(255, 159, 138);
     --shadow-box-bubbly-button: rgb(242, 156, 138);
     --header-link-hover-bg: rgba(255, 182, 165, 0.1);
+    --table-hover: rgb(255, 240, 235);
 }
 
 /* Светлая - Коралловая */
@@ -172,6 +186,7 @@ body.light-coral {
     --logo-shadow: rgb(230, 90, 90);
     --shadow-box-bubbly-button: rgb(230, 90, 90);
     --header-link-hover-bg: rgba(255, 107, 107, 0.1);
+    --table-hover: rgb(255, 235, 235);
 }
 
 /* Светлая - Морская */
@@ -188,6 +203,7 @@ body.light-teal {
     --logo-shadow: rgb(36, 128, 128);
     --shadow-box-bubbly-button: rgb(35, 123, 123);
     --header-link-hover-bg: rgba(44, 154, 154, 0.1);
+    --table-hover: rgb(225, 245, 245);
 }
 
 /* Светлая - Золотистая */
@@ -204,6 +220,7 @@ body.light-gold {
     --logo-shadow: rgb(245, 197, 66);
     --shadow-box-bubbly-button: rgb(230, 195, 55);
     --header-link-hover-bg: rgba(255, 217, 61, 0.1);
+    --table-hover: rgb(255, 250, 225);
 }
 
 /* Светлая - Розовая */
@@ -220,6 +237,7 @@ body.light-rose {
     --logo-shadow: rgb(250, 208, 196);
     --shadow-box-bubbly-button: rgb(230, 139, 142);
     --header-link-hover-bg: rgba(255, 154, 158, 0.1);
+    --table-hover: rgb(255, 240, 240);
 }
 
 /* Светлая - Сиреневая */
@@ -236,6 +254,7 @@ body.light-lilac {
     --logo-shadow: rgb(108, 91, 123);
     --shadow-box-bubbly-button: rgb(173, 97, 119);
     --header-link-hover-bg: rgba(192, 108, 132, 0.1);
+    --table-hover: rgb(245, 235, 240);
 }
 
 /* Светлая - Бирюзовая */
@@ -252,6 +271,7 @@ body.light-turquoise {
     --logo-shadow: rgb(22, 160, 133);
     --shadow-box-bubbly-button: rgb(21, 150, 125);
     --header-link-hover-bg: rgba(26, 188, 156, 0.1);
+    --table-hover: rgb(225, 250, 240);
 }
 
 /* Светлая - Лаймовая */
@@ -268,6 +288,7 @@ body.light-lime {
     --logo-shadow: rgb(140, 180, 60);
     --shadow-box-bubbly-button: rgb(140, 180, 60);
     --header-link-hover-bg: rgba(163, 209, 71, 0.1);
+    --table-hover: rgb(240, 250, 220);
 }
 
 /* Светлая - Васильковая */
@@ -284,6 +305,7 @@ body.light-cornflower {
     --logo-shadow: rgb(85, 127, 202);
     --shadow-box-bubbly-button: rgb(85, 127, 202);
     --header-link-hover-bg: rgba(100, 149, 237, 0.1);
+    --table-hover: rgb(230, 240, 255);
 }
 
 /* --------------------------------------------------------------------------
@@ -359,6 +381,7 @@ body.dark-default {
     --logo-shadow: rgb(157, 101, 229);
     --shadow-box-bubbly-button: rgb(128, 77, 190);
     --header-link-hover-bg: rgba(175, 100, 255, 0.15);
+    --table-hover: rgb(55, 45, 65);
 }
 
 /* Темная - Красная */
@@ -375,6 +398,7 @@ body.dark-red {
     --logo-shadow: rgb(230, 62, 62);
     --shadow-box-bubbly-button: rgb(204, 55, 55);
     --header-link-hover-bg: rgba(255, 77, 77, 0.15);
+    --table-hover: rgb(65, 45, 45);
 }
 
 /* Темная - Синяя */
@@ -391,6 +415,7 @@ body.dark-blue {
     --logo-shadow: rgb(0, 144, 230);
     --shadow-box-bubbly-button: rgb(0, 128, 204);
     --header-link-hover-bg: rgba(0, 160, 255, 0.15);
+    --table-hover: rgb(45, 55, 70);
 }
 
 /* Темная - Зеленая */
@@ -407,6 +432,7 @@ body.dark-green {
     --logo-shadow: rgb(0, 179, 119);
     --shadow-box-bubbly-button: rgb(0, 153, 102);
     --header-link-hover-bg: rgba(0, 204, 136, 0.15);
+    --table-hover: rgb(45, 65, 55);
 }
 
 /* Темная - Оранжевая */
@@ -423,6 +449,7 @@ body.dark-orange {
     --logo-shadow: rgb(230, 122, 46);
     --shadow-box-bubbly-button: rgb(204, 108, 41);
     --header-link-hover-bg: rgba(255, 140, 66, 0.15);
+    --table-hover: rgb(70, 55, 45);
 }
 
 /* Темная - Розовая */
@@ -439,6 +466,7 @@ body.dark-pink {
     --logo-shadow: rgb(230, 90, 158);
     --shadow-box-bubbly-button: rgb(204, 80, 140);
     --header-link-hover-bg: rgba(255, 105, 180, 0.15);
+    --table-hover: rgb(70, 45, 60);
 }
 
 /* Темная - Голубая */
@@ -455,6 +483,7 @@ body.dark-cyan {
     --logo-shadow: rgb(91, 185, 224);
     --shadow-box-bubbly-button: rgb(73, 148, 179);
     --header-link-hover-bg: rgba(110, 212, 255, 0.15);
+    --table-hover: rgb(45, 60, 70);
 }
 
 /* Темная - Пурпурная */
@@ -471,6 +500,7 @@ body.dark-magenta {
     --logo-shadow: rgb(138, 79, 217);
     --shadow-box-bubbly-button: rgb(119, 68, 186);
     --header-link-hover-bg: rgba(170, 96, 255, 0.15);
+    --table-hover: rgb(55, 45, 70);
 }
 
 /* Темная - Бирюзовая */
@@ -487,6 +517,7 @@ body.dark-turquoise {
     --logo-shadow: rgb(54, 192, 176);
     --shadow-box-bubbly-button: rgb(43, 153, 142);
     --header-link-hover-bg: rgba(64, 224, 208, 0.15);
+    --table-hover: rgb(45, 70, 65);
 }
 
 /* Темная - Янтарная */
@@ -503,6 +534,7 @@ body.dark-amber {
     --logo-shadow: rgb(230, 159, 62);
     --shadow-box-bubbly-button: rgb(204, 141, 55);
     --header-link-hover-bg: rgba(255, 179, 71, 0.15);
+    --table-hover: rgb(70, 60, 45);
 }
 
 /* Темная - Мятная */
@@ -519,6 +551,7 @@ body.dark-mint {
     --logo-shadow: rgb(0, 160, 133);
     --shadow-box-bubbly-button: rgb(0, 140, 117);
     --header-link-hover-bg: rgba(0, 180, 150, 0.15);
+    --table-hover: rgb(45, 65, 60);
 }
 
 /* Темная - Лавандовая */
@@ -535,4 +568,5 @@ body.dark-lavender {
     --logo-shadow: rgb(130, 106, 158);
     --shadow-box-bubbly-button: rgb(110, 90, 134);
     --header-link-hover-bg: rgba(150, 123, 182, 0.15);
+    --table-hover: rgb(55, 50, 65);
 }

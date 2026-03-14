@@ -332,8 +332,7 @@ def site_in_service_switch(request):
     """ Закрыть сайт на техническое обслуживание """
     if request.user.is_staff:
         checked = request.POST.get("checked", None)
-        answer = site_settings_service.site_in_service_switch(checked)
-        return core_service.json_response(answer)
+        return site_settings_service.site_in_service_switch(checked)
     return HttpResponseForbidden(render(request, "403.html"))
 
 

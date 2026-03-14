@@ -79,25 +79,32 @@ $(function() {
 
     // Функция загрузки сохраненной темы
     function loadSavedTheme() {
-        // Получаем сохраненные темы для каждого режима
-        const lightTheme = localStorage.getItem('lightTheme') || 'light-default';
-        const darkTheme = localStorage.getItem('darkTheme') || 'dark-default';
-        const currentTheme = localStorage.getItem('currentTheme');
+        // Получаем сохраненные темы
+        let lightTheme = localStorage.getItem('lightTheme');
+        let darkTheme = localStorage.getItem('darkTheme');
+        let currentTheme = localStorage.getItem('currentTheme');
+        
+        // Если нет сохраненных тем - первый визит
+        if (!lightTheme && !darkTheme && !currentTheme) {
+            // Устанавливаем темную тему с фиолетовой схемой по умолчанию
+            lightTheme = 'light-default';
+            darkTheme = 'dark-default';
+            currentTheme = 'dark-default';
+            
+            // Сохраняем настройки
+            localStorage.setItem('lightTheme', lightTheme);
+            localStorage.setItem('darkTheme', darkTheme);
+            localStorage.setItem('currentTheme', currentTheme);
+        } else {
+            // Используем сохраненные значения или подставляем стандартные
+            lightTheme = lightTheme || 'light-default';
+            darkTheme = darkTheme || 'dark-default';
+            currentTheme = currentTheme || darkTheme; // Если есть только darkTheme, используем его
+        }
         
         // Определяем, какой режим был активен последним
-        let activeMode = 'light';
-        let themeToApply = lightTheme;
-        
-        if (currentTheme) {
-            // Если есть текущая тема, определяем режим по ней
-            activeMode = currentTheme.startsWith('light') ? 'light' : 'dark';
-            themeToApply = currentTheme;
-        } else {
-            // Если нет текущей темы, используем светлую по умолчанию
-            themeToApply = 'light-default';
-            localStorage.setItem('lightTheme', 'light-default');
-            localStorage.setItem('currentTheme', 'light-default');
-        }
+        let activeMode = currentTheme.startsWith('light') ? 'light' : 'dark';
+        let themeToApply = currentTheme;
         
         // Применяем тему
         applyColorScheme(themeToApply, activeMode);
@@ -192,7 +199,7 @@ $(function() {
         $(`.theme-card[data-theme="${themeToApply}"]`).addClass('active');
     });
 
-    // Обработчик выбора цветовой схемы (без уведомления)
+    // Обработчик выбора цветовой схемы
     $(document).on('click', '.theme-card', function() {
         const themeClass = $(this).data('theme');
         const mode = themeClass.startsWith('light') ? 'light' : 'dark';
@@ -214,8 +221,6 @@ $(function() {
         // Показываем соответствующую сетку
         $('.theme-grid').removeClass('active');
         $(`.${mode}-themes`).addClass('active');
-        
-        // Уведомление УБРАНО!
     });
 
     // ==========================================================================

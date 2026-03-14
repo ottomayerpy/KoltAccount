@@ -1,0 +1,538 @@
+/* ==========================================================================
+   COLOR-THEMES.CSS - Все цветовые схемы для светлой и темной темы
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   БАЗОВАЯ СВЕТЛАЯ ТЕМА
+   -------------------------------------------------------------------------- */
+:root {
+    /* Цветовая схема */
+    --colorscheme: rgb(30, 125, 230);
+    --colorschemehover: rgb(25, 134, 197);
+
+    /* Фоны */
+    --body-bg: rgb(255, 255, 255);
+    --accent-bg: rgb(240, 240, 240);
+    --header-bg: rgb(248, 249, 250);
+    --card-bg: rgb(255, 255, 255);
+    --block-bg: rgb(240, 240, 240);
+    --modal-bg: rgb(255, 255, 255);
+    --input-bg: rgb(255, 255, 255);
+    --cookie-bg: rgb(255, 255, 255);
+    --lk-block: rgb(241, 241, 241);
+    --support-content-bg: rgb(242, 242, 242);
+
+    /* Текст */
+    --text-color: rgb(51, 51, 51);
+    --input-text: rgb(51, 51, 51);
+    --footer-link: rgb(79, 89, 89);
+
+    /* Границы */
+    --border-color: rgb(204, 204, 204);
+    --card-border: rgba(0, 0, 0, .125);
+
+    /* Ссылки */
+    --link-color: rgb(72, 170, 255);
+    --link-border-color: rgb(71, 164, 247);
+    --link-hover-color: rgb(31, 144, 243);
+    --link-hover-border-color: rgb(26, 134, 228);
+    --link-active-color: rgb(6, 122, 224);
+    --link-active-border-color: rgb(6, 107, 196);
+
+    /* Логотип */
+    --logo-color: rgb(116, 169, 255);
+    --logo-shadow: rgb(50, 148, 227);
+    --header-logo-hover: #333;
+
+    /* Скроллбар */
+    --scrollbar-track: rgb(50, 49, 46);
+    --scrollbar-thumb: rgb(217, 217, 217);
+
+    /* Таблицы */
+    --table-hover: rgb(236, 238, 239);
+
+    /* Статусы */
+    --error-color: rgb(173, 38, 38);
+    --success-color: rgb(51, 206, 59);
+
+    /* Эффекты */
+    --shadow-box-bubbly-button: rgb(77, 122, 190);
+    --simple-tabs-border-hover: rgba(58, 58, 58, 0.425);
+
+    /* Кнопки действий */
+    --btn-kolt-bg: rgb(30, 125, 230);
+    --btn-kolt-hover: rgb(24, 100, 200);
+    --btn-kolt-active: rgb(18, 80, 160);
+    --btn-kolt-text: #ffffff;
+    --btn-kolt-text-hover: #ffffff;
+    --btn-kolt-text-active: #ffffff;
+    --btn-kolt-shadow: rgba(30, 125, 230, 0.3);
+    --btn-kolt-border: transparent;
+
+    /* Кнопка закрытия */
+    --btn-close-bg: #f0f0f0;
+    --btn-close-color: #555;
+    --btn-close-hover-bg: #e4e4e4;
+    --btn-close-hover-color: #d32f2f;
+    --btn-close-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+    /* Шапка */
+    --header-bg: #ffffff;
+    --header-border: #e0e0e0;
+    --header-shadow: rgba(0, 0, 0, 0.05);
+    --header-link: var(--text-color);
+    --header-link-hover-bg: rgba(30, 125, 230, 0.1);
+    --dropdown-bg: var(--header-bg);
+    --dropdown-border: #e0e0e0;
+    --dropdown-shadow: rgba(0, 0, 0, 0.1);
+    --dropdown-link: #333;
+    --dropdown-link-hover-bg: #f5f5f5;
+    --mobile-nav-bg: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   СВЕТЛЫЕ ЦВЕТОВЫЕ СХЕМЫ
+   -------------------------------------------------------------------------- */
+
+/* Светлая - Синяя (оригинал) */
+body.light-default {
+    --colorscheme: rgb(30, 125, 230);
+    --colorschemehover: rgb(25, 134, 197);
+    --btn-kolt-bg: rgb(30, 125, 230);
+    --btn-kolt-hover: rgb(24, 100, 200);
+    --btn-kolt-active: rgb(18, 80, 160);
+    --btn-kolt-shadow: rgba(30, 125, 230, 0.3);
+    --link-color: rgb(72, 170, 255);
+    --link-hover-color: rgb(31, 144, 243);
+    --logo-color: rgb(116, 169, 255);
+    --logo-shadow: rgb(50, 148, 227);
+    --shadow-box-bubbly-button: rgb(77, 122, 190);
+    --header-link-hover-bg: rgba(30, 125, 230, 0.1);
+}
+
+/* Светлая - Мятная */
+body.light-mint {
+    --colorscheme: rgb(78, 205, 196);
+    --colorschemehover: rgb(69, 183, 170);
+    --btn-kolt-bg: rgb(78, 205, 196);
+    --btn-kolt-hover: rgb(62, 174, 166);
+    --btn-kolt-active: rgb(50, 139, 133);
+    --btn-kolt-shadow: rgba(78, 205, 196, 0.3);
+    --link-color: rgb(94, 180, 173);
+    --link-hover-color: rgb(78, 205, 196);
+    --logo-color: rgb(78, 205, 196);
+    --logo-shadow: rgb(69, 183, 170);
+    --shadow-box-bubbly-button: rgb(62, 164, 157);
+    --header-link-hover-bg: rgba(78, 205, 196, 0.1);
+}
+
+/* Светлая - Лавандовая */
+body.light-lavender {
+    --colorscheme: rgb(184, 169, 230);
+    --colorschemehover: rgb(159, 143, 217);
+    --btn-kolt-bg: rgb(184, 169, 230);
+    --btn-kolt-hover: rgb(147, 135, 184);
+    --btn-kolt-active: rgb(118, 108, 147);
+    --btn-kolt-shadow: rgba(184, 169, 230, 0.3);
+    --link-color: rgb(159, 143, 217);
+    --link-hover-color: rgb(184, 169, 230);
+    --logo-color: rgb(184, 169, 230);
+    --logo-shadow: rgb(159, 143, 217);
+    --shadow-box-bubbly-button: rgb(147, 135, 184);
+    --header-link-hover-bg: rgba(184, 169, 230, 0.1);
+}
+
+/* Светлая - Персиковая */
+body.light-peach {
+    --colorscheme: rgb(255, 182, 165);
+    --colorschemehover: rgb(255, 159, 138);
+    --btn-kolt-bg: rgb(255, 182, 165);
+    --btn-kolt-hover: rgb(242, 156, 138);
+    --btn-kolt-active: rgb(204, 131, 116);
+    --btn-kolt-shadow: rgba(255, 182, 165, 0.3);
+    --link-color: rgb(255, 159, 138);
+    --link-hover-color: rgb(255, 182, 165);
+    --logo-color: rgb(255, 182, 165);
+    --logo-shadow: rgb(255, 159, 138);
+    --shadow-box-bubbly-button: rgb(242, 156, 138);
+    --header-link-hover-bg: rgba(255, 182, 165, 0.1);
+}
+
+/* Светлая - Коралловая */
+body.light-coral {
+    --colorscheme: rgb(255, 107, 107);
+    --colorschemehover: rgb(230, 90, 90);
+    --btn-kolt-bg: rgb(255, 107, 107);
+    --btn-kolt-hover: rgb(230, 90, 90);
+    --btn-kolt-active: rgb(204, 80, 80);
+    --btn-kolt-shadow: rgba(255, 107, 107, 0.3);
+    --link-color: rgb(230, 90, 90);
+    --link-hover-color: rgb(255, 107, 107);
+    --logo-color: rgb(255, 107, 107);
+    --logo-shadow: rgb(230, 90, 90);
+    --shadow-box-bubbly-button: rgb(230, 90, 90);
+    --header-link-hover-bg: rgba(255, 107, 107, 0.1);
+}
+
+/* Светлая - Морская */
+body.light-teal {
+    --colorscheme: rgb(44, 154, 154);
+    --colorschemehover: rgb(36, 128, 128);
+    --btn-kolt-bg: rgb(44, 154, 154);
+    --btn-kolt-hover: rgb(35, 123, 123);
+    --btn-kolt-active: rgb(28, 98, 98);
+    --btn-kolt-shadow: rgba(44, 154, 154, 0.3);
+    --link-color: rgb(70, 184, 184);
+    --link-hover-color: rgb(44, 154, 154);
+    --logo-color: rgb(44, 154, 154);
+    --logo-shadow: rgb(36, 128, 128);
+    --shadow-box-bubbly-button: rgb(35, 123, 123);
+    --header-link-hover-bg: rgba(44, 154, 154, 0.1);
+}
+
+/* Светлая - Золотистая */
+body.light-gold {
+    --colorscheme: rgb(255, 217, 61);
+    --colorschemehover: rgb(245, 197, 66);
+    --btn-kolt-bg: rgb(255, 217, 61);
+    --btn-kolt-hover: rgb(230, 195, 55);
+    --btn-kolt-active: rgb(204, 173, 49);
+    --btn-kolt-shadow: rgba(255, 217, 61, 0.3);
+    --link-color: rgb(245, 197, 66);
+    --link-hover-color: rgb(255, 217, 61);
+    --logo-color: rgb(255, 217, 61);
+    --logo-shadow: rgb(245, 197, 66);
+    --shadow-box-bubbly-button: rgb(230, 195, 55);
+    --header-link-hover-bg: rgba(255, 217, 61, 0.1);
+}
+
+/* Светлая - Розовая */
+body.light-rose {
+    --colorscheme: rgb(255, 154, 158);
+    --colorschemehover: rgb(250, 208, 196);
+    --btn-kolt-bg: rgb(255, 154, 158);
+    --btn-kolt-hover: rgb(230, 139, 142);
+    --btn-kolt-active: rgb(204, 123, 126);
+    --btn-kolt-shadow: rgba(255, 154, 158, 0.3);
+    --link-color: rgb(250, 208, 196);
+    --link-hover-color: rgb(255, 154, 158);
+    --logo-color: rgb(255, 154, 158);
+    --logo-shadow: rgb(250, 208, 196);
+    --shadow-box-bubbly-button: rgb(230, 139, 142);
+    --header-link-hover-bg: rgba(255, 154, 158, 0.1);
+}
+
+/* Светлая - Сиреневая */
+body.light-lilac {
+    --colorscheme: rgb(192, 108, 132);
+    --colorschemehover: rgb(108, 91, 123);
+    --btn-kolt-bg: rgb(192, 108, 132);
+    --btn-kolt-hover: rgb(173, 97, 119);
+    --btn-kolt-active: rgb(153, 86, 105);
+    --btn-kolt-shadow: rgba(192, 108, 132, 0.3);
+    --link-color: rgb(108, 91, 123);
+    --link-hover-color: rgb(192, 108, 132);
+    --logo-color: rgb(192, 108, 132);
+    --logo-shadow: rgb(108, 91, 123);
+    --shadow-box-bubbly-button: rgb(173, 97, 119);
+    --header-link-hover-bg: rgba(192, 108, 132, 0.1);
+}
+
+/* Светлая - Бирюзовая */
+body.light-turquoise {
+    --colorscheme: rgb(26, 188, 156);
+    --colorschemehover: rgb(22, 160, 133);
+    --btn-kolt-bg: rgb(26, 188, 156);
+    --btn-kolt-hover: rgb(21, 150, 125);
+    --btn-kolt-active: rgb(17, 120, 100);
+    --btn-kolt-shadow: rgba(26, 188, 156, 0.3);
+    --link-color: rgb(22, 160, 133);
+    --link-hover-color: rgb(26, 188, 156);
+    --logo-color: rgb(26, 188, 156);
+    --logo-shadow: rgb(22, 160, 133);
+    --shadow-box-bubbly-button: rgb(21, 150, 125);
+    --header-link-hover-bg: rgba(26, 188, 156, 0.1);
+}
+
+/* Светлая - Лаймовая */
+body.light-lime {
+    --colorscheme: rgb(163, 209, 71);
+    --colorschemehover: rgb(140, 180, 60);
+    --btn-kolt-bg: rgb(163, 209, 71);
+    --btn-kolt-hover: rgb(140, 180, 60);
+    --btn-kolt-active: rgb(117, 150, 50);
+    --btn-kolt-shadow: rgba(163, 209, 71, 0.3);
+    --link-color: rgb(180, 220, 100);
+    --link-hover-color: rgb(163, 209, 71);
+    --logo-color: rgb(163, 209, 71);
+    --logo-shadow: rgb(140, 180, 60);
+    --shadow-box-bubbly-button: rgb(140, 180, 60);
+    --header-link-hover-bg: rgba(163, 209, 71, 0.1);
+}
+
+/* Светлая - Васильковая */
+body.light-cornflower {
+    --colorscheme: rgb(100, 149, 237);
+    --colorschemehover: rgb(85, 127, 202);
+    --btn-kolt-bg: rgb(100, 149, 237);
+    --btn-kolt-hover: rgb(85, 127, 202);
+    --btn-kolt-active: rgb(70, 105, 168);
+    --btn-kolt-shadow: rgba(100, 149, 237, 0.3);
+    --link-color: rgb(120, 170, 250);
+    --link-hover-color: rgb(100, 149, 237);
+    --logo-color: rgb(100, 149, 237);
+    --logo-shadow: rgb(85, 127, 202);
+    --shadow-box-bubbly-button: rgb(85, 127, 202);
+    --header-link-hover-bg: rgba(100, 149, 237, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   БАЗОВАЯ ТЕМНАЯ ТЕМА
+   -------------------------------------------------------------------------- */
+body.dark-theme {
+    /* Фоны */
+    --body-bg: rgb(26, 26, 26);
+    --accent-bg: rgb(45, 45, 45);
+    --header-bg: rgb(36, 36, 36);
+    --card-bg: rgb(35, 35, 35);
+    --block-bg: rgb(30, 30, 30);
+    --modal-bg: rgb(45, 45, 45);
+    --input-bg: rgb(51, 51, 51);
+    --cookie-bg: rgb(45, 45, 45);
+    --navbar: rgb(34, 34, 34);
+    --support-content-bg: rgb(43, 43, 43);
+
+    /* Текст */
+    --text-color: rgb(224, 224, 224);
+    --input-text: rgb(255, 255, 255);
+    --footer-link: rgb(153, 153, 153);
+
+    /* Границы */
+    --border-color: rgb(64, 64, 64);
+    --card-border: rgba(218, 218, 218, 0.125);
+
+    /* Скроллбар */
+    --scrollbar-track: rgb(45, 45, 45);
+    --scrollbar-thumb: rgb(102, 102, 102);
+
+    /* Таблицы */
+    --table-hover: rgb(61, 61, 61);
+
+    /* Логотип */
+    --header-logo-hover: #ffffff;
+
+    /* Шапка */
+    --header-bg: #1a1a1a;
+    --header-border: #333;
+    --header-shadow: rgba(0, 0, 0, 0.3);
+    --header-link: var(--text-color);
+    --dropdown-bg: var(--header-bg);
+    --dropdown-border: #444;
+    --dropdown-shadow: rgba(0, 0, 0, 0.5);
+    --dropdown-link: #ffffff;
+    --dropdown-link-hover-bg: #3d3d3d;
+    --mobile-nav-bg: #1a1a1a;
+
+    /* Кнопка закрытия */
+    --btn-close-bg: #2d2d2d;
+    --btn-close-color: #aaa;
+    --btn-close-hover-bg: #3d3d3d;
+    --btn-close-hover-color: #ff5252;
+    --btn-close-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* --------------------------------------------------------------------------
+   ТЕМНЫЕ ЦВЕТОВЫЕ СХЕМЫ
+   -------------------------------------------------------------------------- */
+
+/* Темная - Фиолетовая (оригинал) */
+body.dark-default {
+    --colorscheme: rgb(175, 100, 255);
+    --colorschemehover: rgb(157, 101, 229);
+    --btn-kolt-bg: rgb(175, 100, 255);
+    --btn-kolt-hover: rgb(155, 75, 235);
+    --btn-kolt-active: rgb(130, 55, 215);
+    --btn-kolt-shadow: rgba(175, 100, 255, 0.4);
+    --link-color: rgb(187, 134, 252);
+    --link-hover-color: rgb(167, 97, 252);
+    --logo-color: rgb(187, 134, 252);
+    --logo-shadow: rgb(157, 101, 229);
+    --shadow-box-bubbly-button: rgb(128, 77, 190);
+    --header-link-hover-bg: rgba(175, 100, 255, 0.15);
+}
+
+/* Темная - Красная */
+body.dark-red {
+    --colorscheme: rgb(255, 77, 77);
+    --colorschemehover: rgb(230, 62, 62);
+    --btn-kolt-bg: rgb(255, 77, 77);
+    --btn-kolt-hover: rgb(230, 62, 62);
+    --btn-kolt-active: rgb(204, 55, 55);
+    --btn-kolt-shadow: rgba(255, 77, 77, 0.4);
+    --link-color: rgb(255, 102, 102);
+    --link-hover-color: rgb(255, 77, 77);
+    --logo-color: rgb(255, 77, 77);
+    --logo-shadow: rgb(230, 62, 62);
+    --shadow-box-bubbly-button: rgb(204, 55, 55);
+    --header-link-hover-bg: rgba(255, 77, 77, 0.15);
+}
+
+/* Темная - Синяя */
+body.dark-blue {
+    --colorscheme: rgb(0, 160, 255);
+    --colorschemehover: rgb(0, 144, 230);
+    --btn-kolt-bg: rgb(0, 160, 255);
+    --btn-kolt-hover: rgb(0, 144, 230);
+    --btn-kolt-active: rgb(0, 128, 204);
+    --btn-kolt-shadow: rgba(0, 160, 255, 0.4);
+    --link-color: rgb(77, 184, 255);
+    --link-hover-color: rgb(0, 160, 255);
+    --logo-color: rgb(0, 160, 255);
+    --logo-shadow: rgb(0, 144, 230);
+    --shadow-box-bubbly-button: rgb(0, 128, 204);
+    --header-link-hover-bg: rgba(0, 160, 255, 0.15);
+}
+
+/* Темная - Зеленая */
+body.dark-green {
+    --colorscheme: rgb(0, 204, 136);
+    --colorschemehover: rgb(0, 179, 119);
+    --btn-kolt-bg: rgb(0, 204, 136);
+    --btn-kolt-hover: rgb(0, 179, 119);
+    --btn-kolt-active: rgb(0, 153, 102);
+    --btn-kolt-shadow: rgba(0, 204, 136, 0.4);
+    --link-color: rgb(51, 217, 159);
+    --link-hover-color: rgb(0, 204, 136);
+    --logo-color: rgb(0, 204, 136);
+    --logo-shadow: rgb(0, 179, 119);
+    --shadow-box-bubbly-button: rgb(0, 153, 102);
+    --header-link-hover-bg: rgba(0, 204, 136, 0.15);
+}
+
+/* Темная - Оранжевая */
+body.dark-orange {
+    --colorscheme: rgb(255, 140, 66);
+    --colorschemehover: rgb(230, 122, 46);
+    --btn-kolt-bg: rgb(255, 140, 66);
+    --btn-kolt-hover: rgb(230, 122, 46);
+    --btn-kolt-active: rgb(204, 108, 41);
+    --btn-kolt-shadow: rgba(255, 140, 66, 0.4);
+    --link-color: rgb(255, 163, 102);
+    --link-hover-color: rgb(255, 140, 66);
+    --logo-color: rgb(255, 140, 66);
+    --logo-shadow: rgb(230, 122, 46);
+    --shadow-box-bubbly-button: rgb(204, 108, 41);
+    --header-link-hover-bg: rgba(255, 140, 66, 0.15);
+}
+
+/* Темная - Розовая */
+body.dark-pink {
+    --colorscheme: rgb(255, 105, 180);
+    --colorschemehover: rgb(230, 90, 158);
+    --btn-kolt-bg: rgb(255, 105, 180);
+    --btn-kolt-hover: rgb(230, 90, 158);
+    --btn-kolt-active: rgb(204, 80, 140);
+    --btn-kolt-shadow: rgba(255, 105, 180, 0.4);
+    --link-color: rgb(255, 128, 191);
+    --link-hover-color: rgb(255, 105, 180);
+    --logo-color: rgb(255, 105, 180);
+    --logo-shadow: rgb(230, 90, 158);
+    --shadow-box-bubbly-button: rgb(204, 80, 140);
+    --header-link-hover-bg: rgba(255, 105, 180, 0.15);
+}
+
+/* Темная - Голубая */
+body.dark-cyan {
+    --colorscheme: rgb(110, 212, 255);
+    --colorschemehover: rgb(91, 185, 224);
+    --btn-kolt-bg: rgb(110, 212, 255);
+    --btn-kolt-hover: rgb(91, 185, 224);
+    --btn-kolt-active: rgb(73, 148, 179);
+    --btn-kolt-shadow: rgba(110, 212, 255, 0.4);
+    --link-color: rgb(138, 221, 255);
+    --link-hover-color: rgb(110, 212, 255);
+    --logo-color: rgb(110, 212, 255);
+    --logo-shadow: rgb(91, 185, 224);
+    --shadow-box-bubbly-button: rgb(73, 148, 179);
+    --header-link-hover-bg: rgba(110, 212, 255, 0.15);
+}
+
+/* Темная - Пурпурная */
+body.dark-magenta {
+    --colorscheme: rgb(170, 96, 255);
+    --colorschemehover: rgb(138, 79, 217);
+    --btn-kolt-bg: rgb(170, 96, 255);
+    --btn-kolt-hover: rgb(138, 79, 217);
+    --btn-kolt-active: rgb(119, 68, 186);
+    --btn-kolt-shadow: rgba(170, 96, 255, 0.4);
+    --link-color: rgb(187, 128, 255);
+    --link-hover-color: rgb(170, 96, 255);
+    --logo-color: rgb(170, 96, 255);
+    --logo-shadow: rgb(138, 79, 217);
+    --shadow-box-bubbly-button: rgb(119, 68, 186);
+    --header-link-hover-bg: rgba(170, 96, 255, 0.15);
+}
+
+/* Темная - Бирюзовая */
+body.dark-turquoise {
+    --colorscheme: rgb(64, 224, 208);
+    --colorschemehover: rgb(54, 192, 176);
+    --btn-kolt-bg: rgb(64, 224, 208);
+    --btn-kolt-hover: rgb(54, 192, 176);
+    --btn-kolt-active: rgb(43, 153, 142);
+    --btn-kolt-shadow: rgba(64, 224, 208, 0.4);
+    --link-color: rgb(115, 232, 219);
+    --link-hover-color: rgb(64, 224, 208);
+    --logo-color: rgb(64, 224, 208);
+    --logo-shadow: rgb(54, 192, 176);
+    --shadow-box-bubbly-button: rgb(43, 153, 142);
+    --header-link-hover-bg: rgba(64, 224, 208, 0.15);
+}
+
+/* Темная - Янтарная */
+body.dark-amber {
+    --colorscheme: rgb(255, 179, 71);
+    --colorschemehover: rgb(230, 159, 62);
+    --btn-kolt-bg: rgb(255, 179, 71);
+    --btn-kolt-hover: rgb(230, 159, 62);
+    --btn-kolt-active: rgb(204, 141, 55);
+    --btn-kolt-shadow: rgba(255, 179, 71, 0.4);
+    --link-color: rgb(255, 194, 109);
+    --link-hover-color: rgb(255, 179, 71);
+    --logo-color: rgb(255, 179, 71);
+    --logo-shadow: rgb(230, 159, 62);
+    --shadow-box-bubbly-button: rgb(204, 141, 55);
+    --header-link-hover-bg: rgba(255, 179, 71, 0.15);
+}
+
+/* Темная - Мятная */
+body.dark-mint {
+    --colorscheme: rgb(0, 180, 150);
+    --colorschemehover: rgb(0, 160, 133);
+    --btn-kolt-bg: rgb(0, 180, 150);
+    --btn-kolt-hover: rgb(0, 160, 133);
+    --btn-kolt-active: rgb(0, 140, 117);
+    --btn-kolt-shadow: rgba(0, 180, 150, 0.4);
+    --link-color: rgb(51, 204, 178);
+    --link-hover-color: rgb(0, 180, 150);
+    --logo-color: rgb(0, 180, 150);
+    --logo-shadow: rgb(0, 160, 133);
+    --shadow-box-bubbly-button: rgb(0, 140, 117);
+    --header-link-hover-bg: rgba(0, 180, 150, 0.15);
+}
+
+/* Темная - Лавандовая */
+body.dark-lavender {
+    --colorscheme: rgb(150, 123, 182);
+    --colorschemehover: rgb(130, 106, 158);
+    --btn-kolt-bg: rgb(150, 123, 182);
+    --btn-kolt-hover: rgb(130, 106, 158);
+    --btn-kolt-active: rgb(110, 90, 134);
+    --btn-kolt-shadow: rgba(150, 123, 182, 0.4);
+    --link-color: rgb(170, 145, 200);
+    --link-hover-color: rgb(150, 123, 182);
+    --logo-color: rgb(150, 123, 182);
+    --logo-shadow: rgb(130, 106, 158);
+    --shadow-box-bubbly-button: rgb(110, 90, 134);
+    --header-link-hover-bg: rgba(150, 123, 182, 0.15);
+}

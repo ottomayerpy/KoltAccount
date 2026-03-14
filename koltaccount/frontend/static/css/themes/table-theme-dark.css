@@ -1,5 +1,5 @@
 /*************
-  Dark Theme
+  Dark Theme. Темная тема для главной таблицы.
  *************/
 .tablesorter-dark {
 	width: 100%;
@@ -23,7 +23,7 @@
 .tablesorter-dark thead td {
 	font: bold 12px/20px Arial, Sans-serif;
 	color: #fff;
-	background-color: #1a1a1a;
+	background-color: var(--colorscheme);
 	text-shadow: 0 1px 0 rgba(204, 204, 204, 0.7);
 }
 .tablesorter-dark thead th {
@@ -40,7 +40,7 @@
 .tablesorter-dark .headerSortUp,
 .tablesorter-dark .tablesorter-headerSortUp,
 .tablesorter-dark .tablesorter-headerAsc {
-	background-color: #333;
+	background-color: var(--colorscheme);
 	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
 }
 .tablesorter-dark .headerSortDown,

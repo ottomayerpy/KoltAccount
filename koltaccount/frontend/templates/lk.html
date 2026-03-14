@@ -3,7 +3,6 @@
 {% block title %}{{ title }}{% endblock %}
 {% block addons_head %}
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/lk.js' %}?ver={{ static_version }}"></script>
 {% if request.user.is_staff %}
 <script defer type="text/javascript" src="{% static 'js/lk_admin.js' %}?ver={{ static_version }}"></script>
 {% endif %}
@@ -19,13 +18,11 @@
                         <div class="col-md-4 lk-block">
                             <div align="center">
                                 <button class="simple-tabs" data-nav-tab="true" data-tabs-id="1">Профиль</button>
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История пожертвований
-                                </button>
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">История авторизаций
-                                </button>
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История пожертвований</button>
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">История авторизаций</button>
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Темы оформления</button>
                                 {% if request.user.is_staff %}
-                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Администрирование
-                                </button>
+                                <button class="simple-tabs" data-nav-tab="true" data-tabs-id="5">Администрирование</button>
                                 {% endif %}
                             </div>
                         </div>
@@ -110,8 +107,7 @@
                                         {% if login_history %}
                                         {% for item in login_history %}
                                         {% if item.type == 'log' %}
-                                        <div
-                                            class="auth-item {% if item.is_active %}auth-active{% else %}auth-completed{% endif %}">
+                                        <div class="auth-item {% if item.is_active %}auth-active{% else %}auth-completed{% endif %}">
                                             <div class="auth-header">
                                                 <span class="auth-status">
                                                     {% if item.is_active %}
@@ -191,8 +187,119 @@
                                         {% endif %}
                                     </div>
                                 </div>
+                                <div class="js-swiper-tabs" data-tabs="4">
+                                    <strong>Темы оформления</strong>
+                                    <div class="theme-tabs">
+                                        <button class="theme-tab active" data-theme-mode="light">Светлая тема</button>
+                                        <button class="theme-tab" data-theme-mode="dark">Темная тема</button>
+                                    </div>
+                                    <div class="theme-grid light-themes active">
+                                        <div class="theme-cards-container">
+                                            <div class="theme-card" data-theme="light-default">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #1E7DE6, #4A90E2);"></div>
+                                                <div class="theme-name">Синяя</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-mint">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #4ECDC4, #45B7AA);"></div>
+                                                <div class="theme-name">Мятная</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-lavender">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #B8A9E6, #9F8FD9);"></div>
+                                                <div class="theme-name">Лавандовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-peach">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FFB6A5, #FF9F8A);"></div>
+                                                <div class="theme-name">Персиковая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-coral">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF6B6B, #E65A5A);"></div>
+                                                <div class="theme-name">Коралловая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-teal">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #2C9A9A, #248080);"></div>
+                                                <div class="theme-name">Морская</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-gold">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FFD93D, #F5C542);"></div>
+                                                <div class="theme-name">Золотистая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-rose">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF9A9E, #FAD0C4);"></div>
+                                                <div class="theme-name">Розовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-lilac">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #C06C84, #6C5B7B);"></div>
+                                                <div class="theme-name">Сиреневая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-turquoise">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #1ABC9C, #16A085);"></div>
+                                                <div class="theme-name">Бирюзовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-lime">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #A3D147, #8CB43C);"></div>
+                                                <div class="theme-name">Лаймовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="light-cornflower">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #6495ED, #557FCA);"></div>
+                                                <div class="theme-name">Васильковая</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="theme-grid dark-themes">
+                                        <div class="theme-cards-container">
+                                            <div class="theme-card" data-theme="dark-default">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #AF64FF, #9D65E5);"></div>
+                                                <div class="theme-name">Фиолетовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-red">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF4D4D, #E63E3E);"></div>
+                                                <div class="theme-name">Красная</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-blue">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #00A0FF, #0090E6);"></div>
+                                                <div class="theme-name">Синяя</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-green">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #00CC88, #00B377);"></div>
+                                                <div class="theme-name">Зеленая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-orange">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF8C42, #E67A2E);"></div>
+                                                <div class="theme-name">Оранжевая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-pink">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FF69B4, #E65A9E);"></div>
+                                                <div class="theme-name">Розовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-cyan">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #6ED4FF, #5BB9E0);"></div>
+                                                <div class="theme-name">Голубая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-magenta">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #AA60FF, #8A4FD9);"></div>
+                                                <div class="theme-name">Пурпурная</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-turquoise">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #40E0D0, #36C0B0);"></div>
+                                                <div class="theme-name">Бирюзовая</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-amber">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #FFB347, #E69F3E);"></div>
+                                                <div class="theme-name">Янтарная</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-mint">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #00B496, #00A085);"></div>
+                                                <div class="theme-name">Мятная</div>
+                                            </div>
+                                            <div class="theme-card" data-theme="dark-lavender">
+                                                <div class="theme-preview" style="background: linear-gradient(145deg, #967BB6, #826A9E);"></div>
+                                                <div class="theme-name">Лавандовая</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 {% if request.user.is_staff %}
-                                <div class="js-swiper-tabs" data-tabs="4" align="center">
+                                <div class="js-swiper-tabs" data-tabs="5" align="center">
                                     <strong>Администрирование</strong>
                                     <div class="col-xs-12 col-sm-6">
                                         <div class="card">

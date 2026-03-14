@@ -44,7 +44,7 @@
 .tablesorter-dark .headerSortDown,
 .tablesorter-dark .tablesorter-headerSortDown,
 .tablesorter-dark .tablesorter-headerDesc {
-	background-color: #2b2b2b;
+	background-color: var(--colorscheme);
 	background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
 }
 .tablesorter-dark thead .sorter-false {

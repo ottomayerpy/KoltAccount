@@ -44,7 +44,7 @@
 .tablesorter-blue .headerSortDown,
 .tablesorter-blue .tablesorter-headerSortDown,
 .tablesorter-blue .tablesorter-headerDesc {
-	background-color: #8cb3d9;
+	background-color: var(--colorscheme);
 	background-image: url(/frontend/static/img/gif/desc.gif);
 }
 .tablesorter-blue thead .sorter-false {

@@ -1672,7 +1672,7 @@ pre {
     }
 }
 
-.auth-item {
+.swiper-tabs.active {
     animation: authItemAppear 0.3s ease-out;
 }
 

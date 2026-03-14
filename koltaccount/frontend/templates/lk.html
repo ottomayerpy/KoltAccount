@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-8 lk-block">
             <div class="swiper-container">
-                <div class="js-swiper-tabs" data-tabs="1" align="center">
+                <div class="swiper-tabs" data-tabs="1" align="center">
                     <strong>Профиль</strong>
                     <div class="col-xs-12 col-sm-7">
                         <div class="card">
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="js-swiper-tabs" data-tabs="2">
+                <div class="swiper-tabs" data-tabs="2">
                     <strong>История пожертвований</strong>
                     {% for donate in donation %}
                     <div class="js-donate" data-number="{{ forloop.counter }}">
@@ -70,7 +70,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                <div class="js-swiper-tabs" data-tabs="3">
+                <div class="swiper-tabs" data-tabs="3">
                     <strong>История авторизаций</strong>
                     <div class="auth-history-container">
                         {% if login_history %} {% for item in login_history %} {% if item.type == 'log' %}
@@ -136,7 +136,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="js-swiper-tabs" data-tabs="4">
+                <div class="swiper-tabs" data-tabs="4">
                     <strong>Темы оформления</strong>
                     <div class="theme-tabs">
                         <button class="theme-tab active" data-theme-mode="light">Светлая тема</button>
@@ -248,7 +248,7 @@
                     </div>
                 </div>
                 {% if request.user.is_staff %}
-                <div class="js-swiper-tabs" data-tabs="5" align="center">
+                <div class="swiper-tabs" data-tabs="5" align="center">
                     <strong>Администрирование</strong>
                     <div class="col-xs-12 col-sm-6">
                         <div class="card">

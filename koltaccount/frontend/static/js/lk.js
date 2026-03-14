@@ -164,7 +164,7 @@ $(function() {
     }
 
     // Активируем раздел
-    $('.js-swiper-tabs[data-tabs="' + tab + '"]').addClass('active');
+    $('.swiper-tabs[data-tabs="' + tab + '"]').addClass('active');
     
     // Если активный раздел - темы (id=4), обновляем отображение
     if (tab === '4') {

@@ -51,7 +51,7 @@ $(function () {
                     $("#in-old_password")
                         .attr("disabled", "disabled")
                         .css("display", "none");
-                    $('label[for="in-old_password"]').css("display", "none");
+                    $("label[for=\"in-old_password\"]").css("display", "none");
                     $("#pesonal-crypto-settings").css("display", "block");
                     $(".modal-body-master-password").css("height", "560px");
                     $("#btn-send_master_password").text("Создать");
@@ -70,6 +70,7 @@ $(function () {
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
+                        "error"
                     );
                     preloadHide();
                 }
@@ -113,33 +114,33 @@ $(function () {
 
                 if (result["status"] == "success") {
                     let newRow =
-                        '<tr data-toggle="modal" data-target="#AccountModal" data-id="' +
+                        "<tr data-toggle=\"modal\" data-target=\"#AccountModal\" data-id=\"" +
                         accountId +
-                        '">' +
-                        '<td class="td-favicon"><img data-id="' +
+                        "\">" +
+                        "<td class=\"td-favicon\"><img data-id=\"" +
                         accountId +
-                        '" class="favicon-sites" height="16" width="16" alt="icon" ' +
-                        'src="https://favicon.yandex.net/favicon/' +
+                        "\" class=\"favicon-sites\" height=\"16\" width=\"16\" alt=\"icon\" " +
+                        "src=\"https://favicon.yandex.net/favicon/" +
                         site +
-                        '"></td>' +
-                        '<td class="td-site" data-id="' +
+                        "\"></td>" +
+                        "<td class=\"td-site\" data-id=\"" +
                         accountId +
-                        '">' +
+                        "\">" +
                         site +
                         "</td>" +
-                        '<td class="td-description" data-id="' +
+                        "<td class=\"td-description\" data-id=\"" +
                         accountId +
-                        '">' +
+                        "\">" +
                         description +
                         "</td>" +
-                        '<td class="td-login td-hide" data-id="' +
+                        "<td class=\"td-login td-hide\" data-id=\"" +
                         accountId +
-                        '">' +
+                        "\">" +
                         login +
                         "</td>" +
-                        '<td class="td-password td-hide" data-id="' +
+                        "<td class=\"td-password td-hide\" data-id=\"" +
                         accountId +
-                        '">' +
+                        "\">" +
                         password +
                         "</td>" +
                         "</tr>";
@@ -166,12 +167,12 @@ $(function () {
                     }
                 } else if (result["status"] == "error") {
                     if (result["message"] == "accountlimitreached") {
-                        swal("Ошибка", "Достигнут лимит в 200 аккаунтов");
+                        swal("Ошибка", "Достигнут лимит в 200 аккаунтов", "warning");
                     } else {
-                        swal("Ошибка", result["message"]);
+                        swal("Ошибка", result["message"], "error");
                     }
                 } else {
-                    swal("Ошибка", result["result"]);
+                    swal("Ошибка", result["result"], "error");
                 }
 
                 preloadHide();
@@ -183,6 +184,7 @@ $(function () {
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
+                        "error"
                     );
                     preloadHide();
                 }
@@ -192,7 +194,7 @@ $(function () {
 
     function highlightRow(accountId) {
         setTimeout(function () {
-            let $newRow = $("tr[data-id='" + accountId + "']");
+            let $newRow = $("tr[data-id=\"" + accountId + "\"]");
             if ($newRow.length) {
                 $("html, body").animate(
                     {
@@ -223,7 +225,7 @@ $(function () {
             success: function (result) {
                 if (result["status"] == "success") {
                     // Скрываем запись из таблицы
-                    $('tr[data-id="' + accountId + '"]').hide();
+                    $("tr[data-id=\"" + accountId + "\"]").hide();
                     // Обновляем счетчик аккаунтов
                     $("#js-account-counter").text(
                         parseInt($("#js-account-counter").text()) - 1,
@@ -232,9 +234,9 @@ $(function () {
                     $("#AccountModal").modal("hide");
                 } else {
                     if (result["result"] == "doesnotexist") {
-                        swal("Ошибка", "Аккаунт не найден");
+                        swal("Ошибка", "Аккаунт не найден", "warning");
                     } else {
-                        swal("Ошибка", result["result"]);
+                        swal("Ошибка", result["result"], "error");
                     }
                 }
 
@@ -247,6 +249,7 @@ $(function () {
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
+                        "warning"
                     );
                     preloadHide();
                 }
@@ -286,7 +289,7 @@ $(function () {
             success: function (result) {
                 if (result["status"] == "success") {
                     // Ищем в таблице аккаунт который изменяли
-                    let tr = $('tr[data-id="' + accountId + '"]');
+                    let tr = $("tr[data-id=\"" + accountId + "\"]");
                     // Обновляем значения в таблице
                     tr.find(".td-favicon")
                         .find("img")
@@ -314,9 +317,9 @@ $(function () {
                     $("#AccountModal").modal("hide");
                 } else {
                     if (result["result"] == "doesnotexist") {
-                        swal("Ошибка", "Аккаунт не найден");
+                        swal("Ошибка", "Аккаунт не найден", "warning");
                     } else {
-                        swal("Ошибка", result["result"]);
+                        swal("Ошибка", result["result"], "error");
                     }
                 }
 
@@ -331,6 +334,7 @@ $(function () {
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
+                        "error"
                     );
                     preloadHide();
                 }
@@ -423,7 +427,7 @@ $(function () {
                     if (result["status"] == "success") {
                         reloadPage();
                     } else {
-                        swal("Ошибка", result["result"]);
+                        swal("Ошибка", result["result"], "error");
                     }
                 },
                 error: function (jqXHR, text, error) {
@@ -433,6 +437,7 @@ $(function () {
                             "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                                 " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                                 " включите их снова, по крайней мере, для этого сайта.",
+                            "error"
                         );
                         preloadHide();
                     }
@@ -510,7 +515,7 @@ $(function () {
                 isAllowCopy = true;
             }
         } else {
-            swal("Ошибка", "Не правильный пароль");
+            swal("Ошибка", "Не правильный пароль", "warning");
         }
     }
 
@@ -532,13 +537,13 @@ $(function () {
     $("#btn-send_account").on("click", function () {
         /* Событие нажатия на кнопку "Добавить" в модальном окне добавления нового аккаунта */
         if ($("#in-site").val() == "") {
-            swal('Заполните поле "Сайт"');
+            swal("Заполните поле \"Сайт\"", "", "info");
         } else if ($("#in-description").val() == "") {
-            swal('Заполните поле "Описание"');
+            swal("Заполните поле \"Описание\"", "", "info");
         } else if ($("#in-login").val() == "") {
-            swal('Заполните поле "Логин"');
+            swal("Заполните поле \"Логин\"", "", "info");
         } else if ($("#in-password").val() == "") {
-            swal('Заполните поле "Пароль"');
+            swal("Заполните поле \"Пароль\"", "", "info");
         } else {
             createAccount();
         }
@@ -633,25 +638,25 @@ $(function () {
             ($("#in-old_password").val() != "" &&
                 $("#in-old_password").attr("disabled"))
         ) {
-            swal('Заполните поле "Старый пароль"');
+            swal("Заполните поле \"Старый пароль\"", "", "info");
         } else if ($("#in-new_password").val() == "") {
-            swal('Заполните поле "Новый пароль"');
+            swal("Заполните поле \"Новый пароль\"", "", "info");
         } else if ($("#in-repeat_new_password").val() == "") {
-            swal('Заполните поле "Подтвердите новый пароль"');
+            swal("Заполните поле \"Подтвердите новый пароль\"", "", "info");
         } else if (
             $("#in-new_password").val() != $("#in-repeat_new_password").val()
         ) {
-            swal("Пароли не совпадают");
+            swal("Пароли не совпадают", "", "warning");
         } else if (
             !Boolean($("#in-old_password").attr("disabled")) &&
             deMP(enMasterPassword, $("#in-old_password").val()) == ""
         ) {
-            swal("Не правильный старый пароль");
+            swal("Не правильный старый пароль", "", "Warning");
         } else if (
             $("#in-iterations").val() < 57 &&
             $("#in-iterations").val() > 7999
         ) {
-            swal("Не допустимый диапазон итераций");
+            swal("Не допустимый диапазон итераций", "", "Warning");
         } else if (isNewPasswordValid && isRepeatPasswordValid) {
             changeOrCreateMasterPassword($("#in-repeat_new_password").val());
         }
@@ -690,9 +695,9 @@ $(function () {
     $("#modal-btn-save").on("click", function () {
         /* Событие нажатия кнопки "Сохранить" в модальном окне просмотра аккаунта */
         if ($("#modal-site").val() == "") {
-            swal('Заполните поле "Сайт"');
+            swal("Заполните поле \"Сайт\"", "", "info");
         } else if ($("#modal-description").val() == "") {
-            swal('Заполните поле "Описание"');
+            swal("Заполните поле \"Описание\"", "", "info");
         } else {
             changeInfoAccount();
         }
@@ -711,12 +716,12 @@ $(function () {
     $("#AccountModal").on("show.bs.modal", function (e) {
         /* Событие перед открытием модального окна просмотра аккаунта */
         let accountId = $(e.relatedTarget).attr("data-id"),
-            site = $('.td-site[data-id="' + accountId + '"]').text(),
+            site = $(".td-site[data-id=\"" + accountId + "\"]").text(),
             description = $(
-                '.td-description[data-id="' + accountId + '"]',
+                ".td-description[data-id=\"" + accountId + "\"]",
             ).text(),
-            login = $('.td-login[data-id="' + accountId + '"]').text(),
-            password = $('.td-password[data-id="' + accountId + '"]').text();
+            login = $(".td-login[data-id=\"" + accountId + "\"]").text(),
+            password = $(".td-password[data-id=\"" + accountId + "\"]").text();
 
         // Заполняем модальное окно
         $("#modal-site").val(site);
@@ -780,9 +785,9 @@ $(function () {
                     "src",
                     "https://favicon.yandex.net/favicon/" +
                         $(
-                            '.td-site[data-id="' +
+                            ".td-site[data-id=\"" +
                                 $(this).attr("data-id") +
-                                '"]',
+                                "\"]",
                         ).text(),
                 );
             });
@@ -869,7 +874,7 @@ $(function () {
 
     $("#btn_master_import").on("change", async function () {
         if (masterPassword == "doesnotexist") {
-            swal('Необходимо создать мастер пароль');
+            swal("Необходимо создать мастер пароль", "", "info");
             return
         }
         preloadShow();
@@ -898,13 +903,13 @@ $(function () {
     $("#btn_master_export").on("click", function () {
         let oldPassword = $("#in-old_password").val();
         if (masterPassword == "doesnotexist") {
-            swal('Необходимо создать мастер пароль');
+            swal("Необходимо создать мастер пароль", "", "info");
             return
         }
         if (oldPassword == "") {
-            swal('Введите пароль в поле "Старый пароль"');
+            swal("Введите пароль в поле \"Старый пароль\"", "", "info");
         } else if (deMP(enMasterPassword, oldPassword) == "") {
-            swal("Не правильный пароль");
+            swal("Не правильный пароль", "", "warning");
         } else {
             exportAccounts();
         }

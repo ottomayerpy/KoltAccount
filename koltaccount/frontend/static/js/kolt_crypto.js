@@ -14,7 +14,7 @@ function encrypt_Pbkdf2HmacSha256(password, salt = null) {
     if (salt == null) {
         salt = CryptoJS.lib.WordArray.random(CS.SALT.size / CS.SALT.division);
         return {
-            'key': CryptoJS.PBKDF2(
+            "key": CryptoJS.PBKDF2(
                 hmac,
                 salt,
                 {
@@ -23,7 +23,7 @@ function encrypt_Pbkdf2HmacSha256(password, salt = null) {
                     hasher: CryptoJS.algo.SHA256
                 }
             ).toString(),
-            'salt': salt
+            "salt": salt
         };
     } else {
         return CryptoJS.PBKDF2(
@@ -48,8 +48,8 @@ function enMP(password) {
     const encrypted = encrypt(msg, master_password_key, salt);
 
     return {
-        'result': encrypted,
-        'key': master_password_key
+        "result": encrypted,
+        "key": master_password_key
     }
 }
 
@@ -64,7 +64,7 @@ function deMP(transitmessage, password) {
 
     const decrypted = decrypt(encrypted, key);
 
-    if (decrypted != '') {
+    if (decrypted != "") {
         return key;
     }
     return decrypted;
@@ -115,11 +115,11 @@ function decrypt(str, key) {
             mode: CryptoJS.mode[CS.CRYPT_STR_AES.mode]
         }).toString(CryptoJS.enc.Utf8);
     } catch (e) {
-        if (e.message == 'Malformed UTF-8 data') {
+        if (e.message == "Malformed UTF-8 data") {
             // Если были искажены данные
-            return '';
+            return "";
         } else {
-            swal('Ошибка', 'Дешифрование данных не удалось');
+            swal("Ошибка", "Дешифрование данных не удалось", "error");
             throw e;
         }
     }

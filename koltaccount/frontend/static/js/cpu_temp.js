@@ -2,47 +2,47 @@
 $(document).ready(function() {
     
     // Сохранение пути к CPU температуре
-    $('.btn-save-cpu-temp').on('click', function() {
+    $(".btn-save-cpu-temp").on("click", function() {
         const $button = $(this);
-        const $input = $('#cpu_temp_path_input');
-        const $messageDiv = $('.cpu-temp-message');
+        const $input = $("#cpu_temp_path_input");
+        const $messageDiv = $(".cpu-temp-message");
         const path = $input.val().trim();
-        const url = $button.data('url');
+        const url = $button.data("url");
         
         // Валидация
         if (!path) {
-            swal('Ошибка', 'Введите путь к датчику температуры', 'error');
+            swal("Ошибка", "Введите путь к датчику температуры", "warning");
             $input.focus();
             return;
         }
         
         // Блокируем кнопку
-        $button.prop('disabled', true).text('Сохранение...');
-        $messageDiv.removeClass('success error').empty();
+        $button.prop("disabled", true).text("Сохранение...");
+        $messageDiv.removeClass("success error").empty();
 
         $.ajax({
             url: url,
-            type: 'POST',
-            contentType: 'application/json',
+            type: "POST",
+            contentType: "application/json",
             data: JSON.stringify({
                 cpu_temp_path: path
             }),
             success: function(response) {
-                swal("Путь успешно сохранен!", '', 'success');
+                swal("Путь успешно сохранен!", "", "success");
             },
             error: function(xhr) {
-                const errorMsg = xhr.responseJSON?.error || 'Ошибка при сохранении';
-                swal("Ошибка", errorMsg, 'error');
+                const errorMsg = xhr.responseJSON?.error || "Ошибка при сохранении";
+                swal("Ошибка", errorMsg, "error");
             },
             complete: function() {
-                $button.prop('disabled', false).text('Сохранить путь');
+                $button.prop("disabled", false).text("Сохранить путь");
             }
         });
     });
     
     // Сохранение по Enter
-    $('#cpu_temp_path_input').on('keypress', function(e) {
-        if (e.which === 13) $('.btn-save-cpu-temp').click();
+    $("#cpu_temp_path_input").on("keypress", function(e) {
+        if (e.which === 13) $(".btn-save-cpu-temp").click();
     });
 
     // Для Orange PI

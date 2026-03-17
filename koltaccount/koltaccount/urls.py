@@ -1,11 +1,13 @@
-#from django.conf.urls.static import static
-from django.contrib import admin
+from core.admin import admin_site
 from django.urls import include, path
 
-#from koltaccount import settings
-
 urlpatterns = [
-    path('', include('home.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('admin/', admin.site.urls),
-] #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("", include("home.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("admin/", admin_site.urls),
+]
+
+# Production. collectstatic.
+# from django.conf.urls.static import static
+# from koltaccount import settings --- from django.conf import settings
+# urlpatterns = [...] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

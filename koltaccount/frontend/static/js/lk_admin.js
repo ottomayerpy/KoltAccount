@@ -5,7 +5,7 @@ $(function() {
         let is_service = 'false',
             button_text = 'Да, открыть!',
             alert_text = 'Сайт будет открыт!',
-            switch_obj = this;
+            toggle_obj = this;
 
         if (!$(this).attr('checked')) {
             is_service = 'true';
@@ -23,7 +23,7 @@ $(function() {
             function() {
                 preloadShow();
                 setTimeout(function() {
-                    site_in_service_switch(switch_obj, is_service);
+                    site_in_service_toggle(toggle_obj, is_service);
                 }, 300);
             }
         );
@@ -41,20 +41,20 @@ $(function() {
         }
     });
 
-    function site_in_service_switch(switch_obj, toggle_checked) {
+    function site_in_service_toggle(toggle_obj, toggle_checked) {
         $.ajax({
-            url: 'site_in_service_switch/',
+            url: 'site_in_service_toggle/',
             type: 'POST',
             data: {
                 checked: toggle_checked
             },
             success: function(result) {
-                if (result == 'true') {
-                    switch_obj.setAttribute("checked", "checked");
+                if (result) {
+                    toggle_obj.setAttribute("checked", "checked");
                     $('#site_in_service_button').addClass('toggle-button_active');
                     $('.logo').addClass('logo-warning').text('Сайт закрыт');
                 } else {
-                    switch_obj.removeAttribute("checked");
+                    toggle_obj.removeAttribute("checked");
                     $('#site_in_service_button').removeClass('toggle-button_active');
                     $('.logo').removeClass('logo-warning').text('KoltAccount');
                 }

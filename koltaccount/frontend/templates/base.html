@@ -124,7 +124,7 @@
     <header class="site-header">
         <div class="header-container">
             <div class="header-left">
-                {% if request.user.is_staff and site_in_service == 'true' %}
+                {% if request.user.is_staff and site_in_service %}
                 <a class="logo logo-warning" href="{% url 'home_url' %}">Сайт закрыт</a>
                 {% else %}
                 <a class="logo" href="{% url 'home_url' %}">KoltAccount</a>

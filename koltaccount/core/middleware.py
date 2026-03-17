@@ -18,8 +18,7 @@ class BaseViewMiddleware:
         if not request.user.is_staff:
             if request.path.startswith("/admin"):
                 return HttpResponseForbidden(render(request, "403.html"))
-            site_in_service = SiteSetting.objects.filter(name="site_in_service").first()
-            if site_in_service.value == "true":
+            if SiteSetting.get_bool("site_in_service"):
                 context = {
                     "title": "Сайт закрыт на техническое обслуживание",
                     "static_version": STATIC_VERSION,

@@ -12,7 +12,6 @@ from core.email_service import activate_email as act_email
 from core.email_service import hiding_email, send_email
 from core.logger_service import get_logs
 from core.middleware import is_ajax
-from core.site_settings import service as site_settings_service
 from core.site_settings.models import SiteSetting
 from core.token_generator import account_activation_token
 from django.contrib.auth import authenticate, login
@@ -63,8 +62,7 @@ def check_email_template(request):
 
 
 def get_cpu_temp(_) -> HttpResponse:
-    cpu_temp = SiteSetting.objects.filter(name="cpu_temp_path").first()
-    cpu_temp_path = cpu_temp.value if cpu_temp else False
+    cpu_temp_path = SiteSetting.get_str('cpu_temp_path')
     if cpu_temp_path:
         with open(cpu_temp_path) as f:
             temp = round(int(f.read()) / 1000, 1)
@@ -73,10 +71,8 @@ def get_cpu_temp(_) -> HttpResponse:
 
 
 def get_context(context: dict) -> dict:
-    site_in_service = SiteSetting.objects.filter(name="site_in_service").first()
-
     base_context = {
-        "site_in_service": site_in_service.value if site_in_service else False,
+        "site_in_service": SiteSetting.get_bool('site_in_service'),
         "static_version": STATIC_VERSION
     }
 
@@ -328,11 +324,11 @@ def master_password_reset(request):
 
 
 @is_ajax
-def site_in_service_switch(request):
+def site_in_service_toggle(request):
     """ Закрыть сайт на техническое обслуживание """
     if request.user.is_staff:
-        checked = request.POST.get("checked", None)
-        return site_settings_service.site_in_service_switch(checked)
+        new_value, created = SiteSetting.toggle("site_in_service")
+        return core_service.json_response(new_value)
     return HttpResponseForbidden(render(request, "403.html"))
 
 

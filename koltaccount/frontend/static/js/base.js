@@ -56,25 +56,5 @@ $(function() {
         } catch {}
     }
 
-    // Для Orange PI
-    function requestCpuTemp() {
-        $.ajax({
-            url: "/get_cpu_temp",
-            type: "GET",
-            success: function (result) {
-                $(".cpu_temp").text(result);
-            },
-            error: function () {
-                $(".cpu_temp").text("0°");
-            }
-        });
-    }
-
-    $(".cpu_temp").on("click", function () {
-        setInterval(requestCpuTemp, 1000);
-    });
-
-    if ($(".cpu_temp").length) requestCpuTemp();
-
     checkCookies();
 });

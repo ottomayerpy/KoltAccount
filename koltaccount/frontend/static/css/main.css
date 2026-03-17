@@ -1548,6 +1548,33 @@ pre {
     background-color: var(--btn-kolt-bg);
 }
 
+.setting-item {
+    margin-bottom: 10px;
+}
+
+.cpu-temp-input {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+.cpu-temp-actions {
+    margin-bottom: 10px;
+}
+
+.btn-save-cpu-temp {
+    width: 100%;
+    padding: 10px;
+}
+
+.cpu-temp-message {
+    font-size: 14px;
+    min-height: 20px;
+    margin-top: 5px;
+}
+
 /* ==========================================================================
    3.20. История авторизаций (django-axes)
    ========================================================================== */

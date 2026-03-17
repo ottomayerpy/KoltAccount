@@ -1,9 +1,12 @@
+import json
 import locale
+import os
 
 import core.service as core_service
-from axes.models import AccessLog, AccessAttempt
+from axes.models import AccessAttempt, AccessLog
 from core.accounts import service as accounts_service
 from core.accounts.models import Account
+from core.baseapp.models import UserModel
 from core.crypto import master_password
 from core.crypto.models import MasterPassword
 from core.donation import yandex_donations
@@ -14,16 +17,19 @@ from core.logger_service import get_logs
 from core.middleware import is_ajax
 from core.site_settings.models import SiteSetting
 from core.token_generator import account_activation_token
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
-from core.baseapp.models import UserModel
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.models import Site
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseServerError
+from django.http import (HttpResponse, HttpResponseForbidden,
+                         HttpResponseServerError, JsonResponse)
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
+
 from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,
                                   YANDEX_MONEY_DEFAULT_SUM,
                                   YANDEX_MONEY_WALLET_NUMBER)
@@ -61,18 +67,51 @@ def check_email_template(request):
     return render(request, templates[0], context)
 
 
-def get_cpu_temp(_) -> HttpResponse:
-    cpu_temp_path = SiteSetting.get_str('cpu_temp_path')
+@staff_member_required
+def get_cpu_temp(request) -> HttpResponse:
+    cpu_temp_path = SiteSetting.get_str("cpu_temp_path")
     if cpu_temp_path:
+        if not os.path.exists(cpu_temp_path):
+            return HttpResponseServerError("Нет такого файла который указан в cpu_temp_path")
         with open(cpu_temp_path) as f:
             temp = round(int(f.read()) / 1000, 1)
             return HttpResponse(f"{temp}°")
     return HttpResponseServerError("Не установлена настройка сайта cpu_temp_path")
 
 
+@staff_member_required
+@require_POST
+def save_cpu_temp_path(request):
+    """
+    Сохраняет путь к датчику температуры CPU
+    """
+    try:
+        data = json.loads(request.body)
+        path = data.get("cpu_temp_path", "").strip()
+
+        if not path:
+            return JsonResponse({
+                "error": "Путь не может быть пустым"
+            }, status=400)
+
+        # Сохраняем настройку
+        SiteSetting.set("cpu_temp_path", path, "Путь к датчику температуры CPU")
+
+        return core_service.json_response(path)
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "error": "Неверный формат данных"
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            "error": str(e)
+        }, status=500)
+
+
 def get_context(context: dict) -> dict:
     base_context = {
-        "site_in_service": SiteSetting.get_bool('site_in_service'),
+        "site_in_service": SiteSetting.get_bool("site_in_service"),
         "static_version": STATIC_VERSION
     }
 
@@ -127,39 +166,40 @@ def lk(request):
     # Получаем историю входов из AccessLog
     login_history = AccessLog.objects.filter(
         username=request.user.username
-    ).order_by('-attempt_time')[:50]
+    ).order_by("-attempt_time")[:50]
 
     # Получаем неудачные попытки из AccessAttempt
     failed_attempts = AccessAttempt.objects.filter(
         username=request.user.username
-    ).order_by('-attempt_time')[:20]
+    ).order_by("-attempt_time")[:20]
 
     # Объединяем и сортируем
     combined_history = []
 
     for log in login_history:
         combined_history.append({
-            'type': 'log',
-            'data': log,
-            'is_active': log.logout_time is None,
-            'time': log.attempt_time
+            "type": "log",
+            "data": log,
+            "is_active": log.logout_time is None,
+            "time": log.attempt_time
         })
 
     for attempt in failed_attempts:
         combined_history.append({
-            'type': 'attempt',
-            'data': attempt,
-            'is_active': False,
-            'time': attempt.attempt_time
+            "type": "attempt",
+            "data": attempt,
+            "is_active": False,
+            "time": attempt.attempt_time
         })
 
     # Сортируем по времени
-    combined_history.sort(key=lambda x: x['time'], reverse=True)
+    combined_history.sort(key=lambda x: x["time"], reverse=True)
 
     context = get_context({
         "title": "Личный кабинет",
         "login_history": combined_history[:50],  # Ограничим 50 записями
         "donation": Donation.objects.filter(user=request.user).order_by("-timestamp"),
+        "cpu_temp_path": SiteSetting.get_str("cpu_temp_path"),
     })
     return render(request, "lk.html", context)
 

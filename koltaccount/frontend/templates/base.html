@@ -106,6 +106,9 @@
     <script defer src="{% static 'js/scrollup.js' %}?ver={{ static_version }}"></script>
     <script defer src="{% static 'js/header.js' %}?ver={{ static_version }}"></script>
     <script defer type="text/javascript" src="{% static 'js/lk.js' %}?ver={{ static_version }}"></script>
+    {% if request.user.is_staff %}
+    <script defer type="text/javascript" src="{% static 'js/cpu_temp.js' %}?ver={{ static_version }}"></script>
+    {% endif %}
     <title>{% block title %}{% endblock %}</title>
     {% block addons_head %}{% endblock %}
     {% block noscript %}

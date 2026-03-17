@@ -250,27 +250,53 @@
                 {% if request.user.is_staff %}
                 <div class="swiper-tabs" data-tabs="5" align="center">
                     <strong>Администрирование</strong>
+
+                    <!-- Настройки сайта -->
                     <div class="col-xs-12 col-sm-6">
                         <div class="card">
                             <div class="card-body">
                                 <strong>Настройки сайта</strong>
-                                <div>
+
+                                <!-- Toggle для site_in_service -->
+                                <div class="setting-item">
                                     {% if site_in_service %}
                                     <input type="checkbox" id="site_in_service_button" checked="checked" class="toggle-button toggle-button_active" />
                                     {% else %}
                                     <input type="checkbox" id="site_in_service_button" class="toggle-button" />
                                     {% endif %}
-                                    <label for="toggle-button" class="toggle-button_text">Закрыть сайт</label>
+                                    <label for="site_in_service_button" class="toggle-button_text">Закрыть сайт</label>
+                                </div>
+
+                                <!-- Поле для cpu_temp_path -->
+                                <div class="setting-item" style="margin-top: 15px">
+                                    <label for="cpu_temp_path_input" class="form-label">
+                                        <strong>Путь к датчику CPU температуры:</strong>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="cpu_temp_path_input"
+                                        name="cpu_temp_path"
+                                        value="{{ cpu_temp_path|default:'/sys/class/thermal/thermal_zone0/temp' }}"
+                                        class="form-control cpu-temp-input"
+                                        placeholder="/sys/class/thermal/thermal_zone0/temp"
+                                        autocomplete="off"
+                                    />
+                                    <div class="cpu-temp-actions">
+                                        <button type="button" class="btn btn-kolt btn-save-cpu-temp" data-url="{% url 'save_cpu_temp_path' %}">Сохранить путь</button>
+                                    </div>
+                                    <div class="cpu-temp-message"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Прочее -->
                     <div class="col-xs-12 col-sm-6">
                         <div class="card">
                             <div class="card-body">
                                 <strong>Прочее</strong>
                                 <div class="lk_other_admin_card">
-                                    <a href="{% url 'check_email_template_url' %}" class="btn btn-kolt btn-block"> Проверка email шаблонов </a>
+                                    <a href="{% url 'check_email_template_url' %}" class="btn btn-kolt btn-block">Проверка email шаблонов</a>
                                 </div>
                             </div>
                         </div>

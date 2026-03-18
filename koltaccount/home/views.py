@@ -14,16 +14,19 @@ from core.email_service import activate_email as act_email
 from core.email_service import hiding_email, send_email
 from core.logger_service import get_logs
 from core.middleware import is_ajax
-from core.service import (check_if_password_correct, check_username_db,
-                          json_response)
+from core.service import check_if_password_correct, check_username_db, json_response
 from core.site_settings.models import SiteSetting
 from core.token_generator import account_activation_token
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.models import Site
-from django.http import (HttpResponse, HttpResponseForbidden,
-                         HttpResponseServerError, JsonResponse)
+from django.http import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseServerError,
+    JsonResponse,
+)
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -31,13 +34,22 @@ from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
-from koltaccount.settings import (CANDIES_LIMIT, SITE_PROTOCOL, STATIC_VERSION,
-                                  SUPPORT_EMAIL, YANDEX_MONEY_DEFAULT_SUM,
-                                  YANDEX_MONEY_WALLET_NUMBER)
+from koltaccount.settings import (
+    CANDIES_LIMIT,
+    SITE_PROTOCOL,
+    STATIC_VERSION,
+    SUPPORT_EMAIL,
+    YANDEX_MONEY_DEFAULT_SUM,
+    YANDEX_MONEY_WALLET_NUMBER,
+)
 
-from .forms import (EmailChangeForm, KoltAuthenticationForm,
-                    KoltPasswordResetForm, MasterPasswordResetForm,
-                    RegisterForm)
+from .forms import (
+    EmailChangeForm,
+    KoltAuthenticationForm,
+    KoltPasswordResetForm,
+    MasterPasswordResetForm,
+    RegisterForm,
+)
 
 # Русская локализация для даты
 locale.setlocale(locale.LC_ALL, "")
@@ -434,22 +446,31 @@ def delete_candy(request):
 
 
 @is_ajax
-def change_info_account(request):
-    """Изменяет информацию об аккаунте"""
-    site = request.POST.get("site", None)
-    description = request.POST.get("description", None)
-    new_login = request.POST.get("new_login", None)
-    new_password = request.POST.get("new_password", None)
-    account_id = request.POST.get("account_id", None)
+def change_candy(request):
+    """Изменяет конфетку"""
+    candy_id = request.POST.get("candy_id")
 
-    answer = accounts_service.change_info_account(
-        site=site,
-        description=description,
-        new_login=new_login,
-        new_password=new_password,
-        account_id=account_id,
-    )
-    return json_response(answer)
+    if not candy_id:
+        return json_response({"result": "missing_candy_id"}, 400)
+
+    try:
+        candy = Account.objects.get(id=candy_id)
+    except Account.DoesNotExist:
+        return json_response({"result": "doesnotexist"}, 404)
+
+    # Обновляем только переданные поля
+    if site := request.POST.get("site"):
+        candy.site = site
+    if description := request.POST.get("description"):
+        candy.description = description
+    if new_login := request.POST.get("new_login"):
+        candy.login = new_login
+    if new_password := request.POST.get("new_password"):
+        candy.password = new_password
+
+    candy.save()
+
+    return HttpResponse(status=204)
 
 
 @is_ajax

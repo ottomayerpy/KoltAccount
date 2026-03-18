@@ -9,36 +9,6 @@ from koltaccount.settings import CANDIES_LIMIT
 from .models import Account
 
 
-def change_info_account(site: str, description: str, new_login: str,
-                        new_password: str, account_id: int) -> dict:
-    """ Изменяет информацию аккаунта """
-    try:
-        account = Account.objects.get(id=account_id)
-        account.site = site
-        account.description = description
-
-        if new_login == "":
-            account.login = account.login
-        else:
-            account.login = new_login
-
-        if new_password == "":
-            account.password = account.password
-        else:
-            account.password = new_password
-
-        account.save()
-
-        return {
-            "status": "success"
-        }
-    except Account.DoesNotExist:
-        return {
-            "status": "error",
-            "result": "doesnotexist"
-        }
-
-
 def import_accounts(user, accounts):
     """Массовый импорт аккаунтов"""
 

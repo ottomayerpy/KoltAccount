@@ -72,23 +72,14 @@ $(function () {
         $("#pesonal-crypto-settings").css("display", "block");
     });
 
-    function createCandy(data) {
+    function createCandy() {
         /* Добавление новой конфетки */
         preloadShow();
 
-        let site, description, login, password;
-
-        if (data) {
-            site = data.site;
-            description = data.description;
-            login = encrypt(data.login, masterPassword);
-            password = encrypt(data.password, masterPassword);
-        } else {
-            site = $("#in-site").val();
-            description = $("#in-description").val();
-            login = encrypt($("#in-login").val(), masterPassword);
+        let site = $("#in-site").val(),
+            description = $("#in-description").val(),
+            login = encrypt($("#in-login").val(), masterPassword),
             password = encrypt($("#in-password").val(), masterPassword);
-        }
 
         $.ajax({
             url: "create_candy/",
@@ -133,8 +124,8 @@ $(function () {
                 });
             },
             // TODO: Добавить обработку ошибок из View
-            error: function (jqXHR, text, error) {
-                if (error == "Forbidden") {
+            error: function (jqXHR) {
+                if (jqXHR.status === 403) {
                     swal(
                         "Ошибка 403",
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
@@ -143,7 +134,8 @@ $(function () {
                         "warning",
                     );
                 } else {
-                    swal("Ошибка", error, "error");
+                    let result = jqXHR.responseJSON;
+                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
                 }
             },
             complete: function () {
@@ -237,8 +229,8 @@ $(function () {
                 });
             },
             // TODO: Добавить обработку ошибок из View
-            error: function (jqXHR, text, error) {
-                if (error == "Forbidden") {
+            error: function (jqXHR) {
+                if (jqXHR.status === 403) {
                     swal(
                         "Ошибка 403",
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
@@ -247,7 +239,8 @@ $(function () {
                         "warning",
                     );
                 } else {
-                    swal("Ошибка", error, "error");
+                    let result = jqXHR.responseJSON;
+                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
                 }
             },
             complete: function () {
@@ -256,84 +249,82 @@ $(function () {
         });
     }
 
-    function changeInfoAccount() {
+    function changeCandy() {
         /* Изменение информации аккаунта */
         preloadShow();
 
+        // Получаем данные из формы
         let site = $("#modal-site").val(),
             description = $("#modal-description").val(),
             newLogin = $("#modal-new_login").val(),
             newPassword = $("#modal-new_password").val(),
-            accountId = $("#modal-btn-account_delete").attr("data-id");
+            candyId = $("#modal-btn-account_delete").attr("data-id");
 
+        // Шифруем логин и пароль если они были изменены
         if (newLogin != "") {
-            // Если был введен новый логин, то шифруем его
             newLogin = encrypt(newLogin, masterPassword);
         }
         if (newPassword != "") {
-            // Если был введен новый пароль, то шифруем его
             newPassword = encrypt(newPassword, masterPassword);
         }
 
         $.ajax({
-            url: "change_info_account/",
+            url: "change_candy/",
             type: "POST",
             data: {
-                site: encrypt(site, masterPassword),
-                description: encrypt(description, masterPassword),
+                site: encrypt(site, masterPassword), // Сайт всегда шифруем
+                description: encrypt(description, masterPassword), // Описание всегда шифруем
                 new_login: newLogin,
                 new_password: newPassword,
-                account_id: accountId,
+                candy_id: candyId,
             },
-            success: function (result) {
-                if (result["status"] == "success") {
-                    // Ищем в таблице аккаунт который изменяли
-                    let tr = $('tr[data-id="' + accountId + '"]');
-                    // Обновляем значения в таблице
-                    tr.find(".td-favicon")
-                        .find("img")
-                        .attr("src", "https://favicon.yandex.net/favicon/" + site);
-                    tr.find(".td-site").text(site);
-                    tr.find(".td-description").text(description);
-                    if (newLogin != "") {
-                        // Если был введен логин, обновляем его в таблице
-                        tr.find(".td-login").text(newLogin);
-                        // Чистим поле ввода логина
-                        $("#modal-new_login").val("");
-                    }
-                    if (newPassword != "") {
-                        // Если был введен пароль, обновляем его в таблице
-                        tr.find(".td-password").text(newPassword);
-                        // Чистим поле ввода пароля
-                        $("#modal-new_password").val("");
-                    }
-                    // Сортируем таблицу
-                    $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
-                    // Скрываем модальное окно просмотра аккаунта
-                    $("#AccountModal").modal("hide");
-                } else {
-                    if (result["result"] == "doesnotexist") {
-                        swal("Ошибка", "Аккаунт не найден", "warning");
-                    } else {
-                        swal("Ошибка", result["result"], "error");
-                    }
+            success: function () {
+                // Находим строку с измененной конфеткой
+                let tr = $(`tr[data-id="${candyId}"]`);
+
+                // Обновляем favicon
+                tr.find(".td-favicon img").attr("src", "https://favicon.yandex.net/favicon/" + site);
+                // Обновляем название сайта и описание
+                tr.find(".td-site").text(site);
+                tr.find(".td-description").text(description);
+
+                // Если логин был изменен - обновляем и очищаем поле
+                if (newLogin != "") {
+                    tr.find(".td-login").text(newLogin);
+                    $("#modal-new_login").val("");
                 }
 
-                highlightRow(accountId);
+                // Если пароль был изменен - обновляем и очищаем поле
+                if (newPassword != "") {
+                    tr.find(".td-password").text(newPassword);
+                    $("#modal-new_password").val(""); // Не обязательно, но оставим
+                }
 
-                preloadHide();
+                // Сортируем таблицу по первому столбцу
+                $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
+                // Закрываем модальное окно
+                $("#AccountModal").modal("hide");
+
+                // Подсвечиваем измененную строку
+                highlightRow(candyId);
             },
-            error: function (jqXHR, text, error) {
-                if (error == "Forbidden") {
+            // TODO: Добавить обработку ошибок из View
+            error: function (jqXHR) {
+                if (jqXHR.status === 403) {
                     swal(
                         "Ошибка 403",
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
-                        "error",
+                        "warning",
                     );
-                    preloadHide();
+                } else {
+                    let result = jqXHR.responseJSON;
+                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
                 }
+            },
+            complete: function () {
+                preloadHide();
             },
         });
     }
@@ -668,7 +659,7 @@ $(function () {
         } else if ($("#modal-description").val() == "") {
             swal('Заполните поле "Описание"', "", "info");
         } else {
-            changeInfoAccount();
+            changeCandy();
         }
     });
 

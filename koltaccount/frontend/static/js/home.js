@@ -809,6 +809,7 @@ $(function () {
         });
 
     $("#btn_master_import").on("change", async function () {
+        // Проверяем наличие мастер-пароля
         if (masterPassword == "doesnotexist") {
             swal("Необходимо создать мастер пароль", "", "info");
             return;
@@ -817,24 +818,27 @@ $(function () {
         preloadShow();
         $("#MasterPasswordModal").modal("hide");
 
+        // Читаем выбранный файл
         const reader = new FileReader();
         reader.readAsText(this.files[0]);
-
         await new Promise((resolve) => (reader.onload = resolve));
 
         try {
-            const accounts = JSON.parse(reader.result);
+            // Парсим JSON
+            const candies = JSON.parse(reader.result);
 
-            // Шифруем логины и пароли для отображения в таблице
-            const accountsForTable = accounts.map((account) => ({
+            // TODO: Добавить валидацию данных из файла (проверить наличие всех полей и их типы)
+
+            // Шифруем данные для отображения в таблице
+            const candiesForTable = candies.map((account) => ({
                 site: account.site,
                 description: account.description,
                 login: encrypt(account.login, masterPassword),
                 password: encrypt(account.password, masterPassword),
             }));
 
-            // Шифруем сайты и описания для отправки на сервер
-            const accountsForServer = accountsForTable.map((account) => ({
+            // Шифруем данные для отправки на сервер
+            const candiesForServer = candiesForTable.map((account) => ({
                 site: encrypt(account.site, masterPassword),
                 description: encrypt(account.description, masterPassword),
                 login: account.login,
@@ -842,50 +846,53 @@ $(function () {
             }));
 
             $.ajax({
-                url: "import_accounts/",
+                url: "import_candies/",
                 type: "POST",
                 data: {
-                    accounts: JSON.stringify(accountsForServer),
+                    candies: JSON.stringify(candiesForServer),
                 },
                 success: function (result) {
-                    // 4. Добавляем в таблицу
-                    addImportedAccountsToTable(result.imported, accountsForTable);
+                    // Добавляем импортированные конфетки в таблицу
+                    addImportedCandiesToTable(result.imported, candiesForTable);
 
                     // Обновляем счетчик
                     const currentCount = parseInt($("#js-account-counter div").text());
                     $("#js-account-counter div").text(currentCount + result.success_count);
 
+                    // Формируем сообщение о результате
                     let message = `Импортировано: ${result.success_count} из ${result.total}`;
                     if (result.error_count > 0) {
                         message += `\nОшибок: ${result.error_count}`;
                         console.error("Ошибки импорта:", result.errors);
                     }
 
+                    // Показываем результат
                     swal(result.error_count > 0 ? "Импорт завершен с ошибками" : "Импорт успешно завершен", message, result.error_count > 0 ? "warning" : "success");
 
                     // Сортируем таблицу
                     $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
                 },
-                error: function (jqXHR, text, error) {
-                    if (error === "Unprocessable Content") {
-                        swal("Превышен лимит", "Достигнут лимит аккаунтов", "warning");
-                    } else if (error === "Bad Request") {
+                error: function (jqXHR) {
+                    if (jqXHR.status === 422) {
+                        swal("Превышен лимит", "Достигнут лимит на добавление записей", "warning");
+                    } else if (jqXHR.status === 400) {
                         swal("Ошибка", "Неверный формат JSON файла", "error");
-                    } else if (error == "Forbidden") {
+                    } else if (jqXHR.status === 403) {
                         swal(
-                            "Ошибка",
+                            "Ошибка 403",
                             "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                                 " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                                 " включите их снова, по крайней мере, для этого сайта.",
-                            "error",
+                            "warning",
                         );
                     } else {
-                        swal("Ошибка", error, "error");
+                        let result = jqXHR.responseJSON;
+                        swal("Ошибка", result?.result || "Что-то пошло не так", "error");
                     }
                 },
                 complete: function () {
                     preloadHide();
-                    $("#btn_master_import").val("");
+                    $("#btn_master_import").val(""); // Очищаем input file
                 },
             });
         } catch (e) {
@@ -895,13 +902,13 @@ $(function () {
         }
     });
 
-    function addImportedAccountsToTable(importedAccountsIds, accountsForTable) {
+    function addImportedCandiesToTable(importedCandiesIds, candiesForTable) {
         let $table = $("#Accounts_table");
         let $tbody = $table.children("tbody").first();
         let fragment = document.createDocumentFragment();
 
-        importedAccountsIds.forEach((importedAccountId) => {
-            let tableData = accountsForTable[importedAccountId.index];
+        importedCandiesIds.forEach((importedAccountId) => {
+            let tableData = candiesForTable[importedAccountId.index];
 
             let $row = createNewRowElement(importedAccountId.id, tableData.site, tableData.description, tableData.login, tableData.password);
             fragment.appendChild($row[0]);

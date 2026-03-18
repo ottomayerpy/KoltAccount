@@ -3,7 +3,6 @@ import locale
 import os
 
 from axes.models import AccessAttempt, AccessLog
-from core.accounts import service as accounts_service
 from core.accounts.models import Account
 from core.baseapp.models import UserModel
 from core.crypto import master_password
@@ -423,10 +422,46 @@ def create_candy(request):
 
 @require_POST
 @is_ajax
-def import_accounts(request):
-    """Массовый импорт аккаунтов"""
-    return accounts_service.import_accounts(
-        request.user, request.POST.get("accounts", "{}")
+def import_candies(request):
+    """Массовый импорт конфеток"""
+    try:
+        data = json.loads(request.POST.get("candies", "{}"))
+    except json.JSONDecodeError:
+        return json_response({"result": "invalid_json"}, 400)
+
+    if not isinstance(data, list):
+        return json_response({"result": "invalid_format"}, 400)
+
+    # Проверка лимита
+    current_count = Account.objects.filter(user=request.user).count()
+    if current_count + len(data) > CANDIES_LIMIT:
+        return json_response({"result": "limit_reached"}, 422)
+
+    imported = []
+    errors = []
+
+    for idx, item in enumerate(data):
+        try:
+            candy = Account.objects.create(
+                user=request.user,
+                site=item.get("site"),
+                description=item.get("description", ""),
+                login=item.get("login"),
+                password=item.get("password"),
+            )
+            imported.append({"index": idx, "id": candy.id})
+        except Exception as e:
+            errors.append({"index": idx, "error": str(e)})
+
+    return json_response(
+        {
+            "imported": imported,
+            "errors": errors,
+            "total": len(data),
+            "success_count": len(imported),
+            "error_count": len(errors),
+        },
+        207 if errors else 201,
     )
 
 

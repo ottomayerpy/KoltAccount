@@ -3,50 +3,10 @@ import json
 from django.http import HttpResponse
 
 import core.service as core_service
-from core.baseapp.models import UserModel
 
-from koltaccount.settings import ACCOUNT_LIMIT
+from koltaccount.settings import CANDIES_LIMIT
 
 from .models import Account
-
-
-def create_account(site: str, description: str,
-                   login: str, password: str, user: UserModel) -> dict:
-    """ Создает новый аккаунт """
-    if Account.objects.count() >= 200:
-        return {
-            "status": "error",
-            "message": "accountlimitreached"
-        }
-
-    account = Account.objects.create(
-        user=user,
-        site=site,
-        description=description,
-        login=login,
-        password=password
-    )
-
-    return {
-        "status": "success",
-        "account_id": account.id
-    }
-
-
-def delete_account(account_id: int) -> dict:
-    """ Удаляет аккаунт """
-    try:
-        account = Account.objects.get(id=account_id)
-        account.delete()
-
-        return {
-            "status": "success"
-        }
-    except Account.DoesNotExist:
-        return {
-            "status": "error",
-            "result": "doesnotexist"
-        }
 
 
 def change_info_account(site: str, description: str, new_login: str,
@@ -88,7 +48,7 @@ def import_accounts(user, accounts):
         return HttpResponse("Неверный формат данных", status=400)
 
     current_count = Account.objects.filter(user=user).count()
-    if current_count + len(data) > ACCOUNT_LIMIT:
+    if current_count + len(data) > CANDIES_LIMIT:
         return HttpResponse("Достигнут лимит аккаунтов", status=422)
 
     imported_accounts = []

@@ -20,9 +20,9 @@ urlpatterns = [
 
     path('lk/site_in_service_toggle/', views.site_in_service_toggle),
     path('donation_notification/', views.donation_notification),
-    path('create_account/', views.create_account),
+    path('create_candy/', views.create_candy),
     path('import_accounts/', views.import_accounts, name='import_accounts_url'),
-    path('delete_account/', views.delete_account),
+    path('delete_candy/', views.delete_candy),
     path('change_info_account/', views.change_info_account),
     path('get_master_password/', views.get_master_password),
     path('change_or_create_master_password/',

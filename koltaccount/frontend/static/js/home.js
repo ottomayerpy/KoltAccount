@@ -82,8 +82,8 @@ $(function () {
         $("#pesonal-crypto-settings").css("display", "block");
     });
 
-    function createAccount(data) {
-        /* Добавление нового аккаунта в таблице */
+    function createCandy(data) {
+        /* Добавление новой конфетки */
         preloadShow();
 
         let site, description, login, password;
@@ -101,7 +101,7 @@ $(function () {
         }
 
         $.ajax({
-            url: "create_account/",
+            url: "create_candy/",
             type: "POST",
             data: {
                 site: encrypt(site, masterPassword),
@@ -110,41 +110,36 @@ $(function () {
                 password: password,
             },
             success: function (result) {
-                let accountId = result["account_id"];
+                // Получаем ID новой конфетки из ответа сервера
+                let candyId = result["candy_id"];
+                // Создаем DOM элемент новой строки
+                let $newRow = createNewRowElement(candyId, site, description, login, password);
 
-                if (result["status"] == "success") {
-                    // Создаем новую строку
-                    let $newRow = createNewRowElement(accountId, site, description, login, password);
-                    let $table = $("#Accounts_table");
-                    // Добавляем строку в DOM
-                    $table.children("tbody").first().append($newRow);
-                    // Обновляем кеш tablesorter и сортируем
+                // Скрываем строку перед добавлением в таблицу
+                $newRow.hide();
+
+                // Добавляем строку в таблицу
+                let $table = $("#Accounts_table");
+                $table.children("tbody").first().append($newRow);
+
+                // Закрываем модальное окно создания
+                $("#CreateAccountModal").modal("hide");
+
+                // Плавно показываем новую строку
+                $newRow.fadeIn(150, function() {
+                    // Обновляем tablesorter и добавляем сортировку
                     $table.trigger("update", [true, function() {
-                        // Обновляем счетчик аккаунтов
-                        const accountCount = parseInt($("#js-account-counter div").text());
-                        $("#js-account-counter div").text(accountCount + 1);
-                        // Закрываем модалку
-                        $("#CreateAccountModal").modal("hide");
-                        // Чистим поля модалки (логин и пароль всегда чистятся после закрытия модалки)
+                        // Увеличиваем счетчик конфеток
+                        const candyCount = parseInt($("#js-account-counter div").text());
+                        $("#js-account-counter div").text(candyCount + 1);
+                        // Очищаем поля ввода (логин и пароль очищаются всегда при закрытии модалки)
                         $("#in-site, #in-description").val("");
-                        // Подсвечиваем новую строку
-                        highlightRow(accountId);
-
-                        preloadHide();
+                        // Подсвечиваем только что добавленную строку
+                        highlightRow(candyId);
                     }]);
-                    
-                } else if (result["status"] == "error") {
-                    if (result["message"] == "accountlimitreached") {
-                        swal("Ошибка", "Достигнут лимит в 200 аккаунтов", "warning");
-                    } else {
-                        swal("Ошибка", result["message"], "error");
-                    }
-                    preloadHide();
-                } else {
-                    swal("Ошибка", result["result"], "error");
-                    preloadHide();
-                }
+                });
             },
+            // TODO: Добавить обработку ошибок из View
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
                     swal(
@@ -152,25 +147,29 @@ $(function () {
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
-                        "error"
+                        "warning"
                     );
+                } else {
+                    swal("Ошибка", error, "error");
                 }
-                preloadHide();
             },
+            complete: function() {
+                preloadHide();
+            }
         });
     }
 
-    function createNewRowElement(accountId, site, description, login, password) {
+    function createNewRowElement(candyId, site, description, login, password) {
         /* Вспомогательная функция для создания элемента строки */
         return $("<tr>", {
             "data-toggle": "modal",
             "data-target": "#AccountModal",
-            "data-id": accountId,
+            "data-id": candyId,
             "role": "row"
         }).append(
             $("<td>", { class: "td-favicon" }).append(
                 $("<img>", {
-                    "data-id": accountId,
+                    "data-id": candyId,
                     class: "favicon-sites",
                     height: "16",
                     width: "16",
@@ -180,30 +179,30 @@ $(function () {
             ),
             $("<td>", { 
                 class: "td-site", 
-                "data-id": accountId,
+                "data-id": candyId,
                 text: site 
             }),
             $("<td>", { 
                 class: "td-description", 
-                "data-id": accountId,
+                "data-id": candyId,
                 text: description 
             }),
             $("<td>", { 
                 class: "td-login td-hide", 
-                "data-id": accountId,
+                "data-id": candyId,
                 text: login 
             }),
             $("<td>", { 
                 class: "td-password td-hide", 
-                "data-id": accountId,
+                "data-id": candyId,
                 text: password 
             })
         );
     }
 
-    function highlightRow(accountId) {
+    function highlightRow(candyId) {
         setTimeout(function () {
-            let $newRow = $("tr[data-id=\"" + accountId + "\"]");
+            let $newRow = $("tr[data-id=\"" + candyId + "\"]");
             if ($newRow.length) {
                 $("html, body").animate(
                     {
@@ -221,36 +220,30 @@ $(function () {
         }, 100);
     }
 
-    function deleteAccount(accountId) {
-        /* Удаление аккаунта */
+    function deleteCandy(candyId) {
+        /* Удалить конфетку */
         preloadShow();
 
         $.ajax({
-            url: "delete_account/",
+            url: "delete_candy/",
             type: "POST",
             data: {
-                account_id: accountId,
+                candy_id: candyId,
             },
-            success: function (result) {
-                if (result["status"] == "success") {
-                    // Скрываем запись из таблицы
-                    $("tr[data-id=\"" + accountId + "\"]").hide();
-                    // Обновляем счетчик аккаунтов
-                    $("#js-account-counter").text(
-                        parseInt($("#js-account-counter").text()) - 1,
-                    );
-                    // Закрываем модальное окно удаления аккаунта
-                    $("#AccountModal").modal("hide");
-                } else {
-                    if (result["result"] == "doesnotexist") {
-                        swal("Ошибка", "Аккаунт не найден", "warning");
-                    } else {
-                        swal("Ошибка", result["result"], "error");
-                    }
-                }
+            success: function () {
+                // Закрываем модальное окно удаления
+                $("#AccountModal").modal("hide");
 
-                preloadHide();
+                // Плавно скрываем удаляемую строку
+                $(`tr[data-id="${candyId}"]`).fadeOut(150, function() {
+                    // После завершения анимации удаляем строку из DOM
+                    $(this).remove();
+                    // Уменьшаем счетчик конфеток
+                    const currentCount = parseInt($("#js-account-counter").text()) || 0;
+                    $("#js-account-counter").text(currentCount - 1);
+                });
             },
+            // TODO: Добавить обработку ошибок из View
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
                     swal(
@@ -260,9 +253,13 @@ $(function () {
                             " включите их снова, по крайней мере, для этого сайта.",
                         "warning"
                     );
-                    preloadHide();
+                } else {
+                    swal("Ошибка", error, "error");
                 }
             },
+            complete: function() {
+                preloadHide();
+            }
         });
     }
 
@@ -554,7 +551,7 @@ $(function () {
         } else if ($("#in-password").val() == "") {
             swal("Заполните поле \"Пароль\"", "", "info");
         } else {
-            createAccount();
+            createCandy();
         }
     });
 
@@ -696,7 +693,7 @@ $(function () {
             },
             function () {
                 // Если была нажата кнопка "Да, удалить это!", то удаляем аккаунт
-                deleteAccount($("#modal-btn-account_delete").attr("data-id"));
+                deleteCandy($("#modal-btn-account_delete").attr("data-id"));
             },
         );
     });

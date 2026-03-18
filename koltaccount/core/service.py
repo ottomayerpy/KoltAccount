@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from core.baseapp.models import UserModel
 
 
-def check_username(request) -> dict:
+def check_username_db(request) -> dict:
     """ Проверяет существование имени в БД """
     username = request.POST.get("username", None)
     user = UserModel.objects.filter(username=username).exists()

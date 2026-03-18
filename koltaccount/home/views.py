@@ -2,7 +2,7 @@ import json
 import locale
 import os
 
-import core.service as core_service
+from core.service import json_response, check_if_password_correct, check_username_db
 from axes.models import AccessAttempt, AccessLog
 from core.accounts import service as accounts_service
 from core.accounts.models import Account
@@ -30,8 +30,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
 
-from koltaccount.settings import (SITE_PROTOCOL, STATIC_VERSION, SUPPORT_EMAIL,
-                                  YANDEX_MONEY_DEFAULT_SUM,
+from koltaccount.settings import (CANDIES_LIMIT, SITE_PROTOCOL, STATIC_VERSION,
+                                  SUPPORT_EMAIL, YANDEX_MONEY_DEFAULT_SUM,
                                   YANDEX_MONEY_WALLET_NUMBER)
 
 from .forms import (EmailChangeForm, KoltAuthenticationForm,
@@ -97,7 +97,7 @@ def save_cpu_temp_path(request):
         # Сохраняем настройку
         SiteSetting.set("cpu_temp_path", path, "Путь к датчику температуры CPU")
 
-        return core_service.json_response(path)
+        return json_response(path)
 
     except json.JSONDecodeError:
         return JsonResponse({
@@ -368,27 +368,30 @@ def site_in_service_toggle(request):
     """ Закрыть сайт на техническое обслуживание """
     if request.user.is_staff:
         new_value, created = SiteSetting.toggle("site_in_service")
-        return core_service.json_response(new_value)
+        return json_response(new_value)
     return HttpResponseForbidden(render(request, "403.html"))
 
 
 @is_ajax
-def create_account(request):
-    """ Создает аккаунт """
+def create_candy(request):
+    """ Создает конфетку """
+    site, login, password = request.POST.get("site"), request.POST.get("login"), request.POST.get("password")
 
-    site = request.POST.get("site", None)
-    description = request.POST.get("description", None)
-    _login = request.POST.get("login", None)
-    password = request.POST.get("password", None)
+    if not all([site, login, password]):
+        return json_response({"result": "missing_fields"}, 400)
 
-    answer = accounts_service.create_account(
+    if Account.objects.filter(user=request.user).count() >= CANDIES_LIMIT:
+        return json_response({"result": "limit_reached"}, 400)
+
+    candy = Account.objects.create(
+        user=request.user,
         site=site,
-        description=description,
-        login=_login,
+        login=login,
         password=password,
-        user=request.user
+        description=request.POST.get("description", "")
     )
-    return core_service.json_response(answer)
+
+    return json_response({"candy_id": candy.id}, 201)
 
 
 @require_POST
@@ -398,12 +401,19 @@ def import_accounts(request):
     return accounts_service.import_accounts(request.user, request.POST.get("accounts", "{}"))
 
 
+@require_POST
 @is_ajax
-def delete_account(request):
-    """ Удаляет аккаунт """
-    account_id = request.POST.get("account_id", None)
-    answer = accounts_service.delete_account(account_id)
-    return core_service.json_response(answer)
+def delete_candy(request):
+    """ Удаляет конфетку """
+    candy_id = request.POST.get("candy_id")
+
+    if not candy_id:
+        return json_response({"result": "missing_candy_id"}, 400)
+
+    if not Account.objects.filter(id=candy_id).delete()[0]:
+        return json_response({"result": "doesnotexist"}, 404)
+
+    return HttpResponse(status=204)
 
 
 @is_ajax
@@ -422,7 +432,7 @@ def change_info_account(request):
         new_password=new_password,
         account_id=account_id
     )
-    return core_service.json_response(answer)
+    return json_response(answer)
 
 
 @is_ajax
@@ -444,20 +454,20 @@ def change_or_create_master_password(request):
         new_crypto_settings=new_crypto_settings,
         user=request.user
     )
-    return core_service.json_response(answer)
+    return json_response(answer)
 
 
 @is_ajax
 def check_username(request):
     """ Проверяет существование имени в БД """
-    return core_service.json_response(core_service.check_username(request))
+    return json_response(check_username_db(request))
 
 
 @is_ajax
 def get_master_password(request):
     """ Возвращает мастер пароль """
     answer = master_password.get_master_password(user=request.user)
-    return core_service.json_response(answer)
+    return json_response(answer)
 
 
 def kolt_login(request):
@@ -518,7 +528,7 @@ class RegisterView(TemplateView):
             password1 = request.POST.get("password1")
             password2 = request.POST.get("password2")
 
-            answer = core_service.check_if_password_correct(password1, password2)
+            answer = check_if_password_correct(password1, password2)
             if answer is None:
                 try:
                     user = UserModel.objects.create_user(

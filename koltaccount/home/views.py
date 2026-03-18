@@ -2,7 +2,6 @@ import json
 import locale
 import os
 
-from core.service import json_response, check_if_password_correct, check_username_db
 from axes.models import AccessAttempt, AccessLog
 from core.accounts import service as accounts_service
 from core.accounts.models import Account
@@ -15,6 +14,8 @@ from core.email_service import activate_email as act_email
 from core.email_service import hiding_email, send_email
 from core.logger_service import get_logs
 from core.middleware import is_ajax
+from core.service import (check_if_password_correct, check_username_db,
+                          json_response)
 from core.site_settings.models import SiteSetting
 from core.token_generator import account_activation_token
 from django.contrib.admin.views.decorators import staff_member_required
@@ -43,7 +44,7 @@ locale.setlocale(locale.LC_ALL, "")
 
 
 def check_email_template(request):
-    """ Текстирование шаблона для почты """
+    """Текстирование шаблона для почты"""
     if not request.user.is_staff:
         return HttpResponseForbidden(render(request, "403.html"))
 
@@ -53,7 +54,7 @@ def check_email_template(request):
         "domain": "koltaccount.ru",
         "uid": "MQ%5B0-9A-Za-z_%5",
         "token": "-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%",
-        "email": hiding_email(request.user.email)
+        "email": hiding_email(request.user.email),
     }
 
     # Шаблоны
@@ -61,7 +62,7 @@ def check_email_template(request):
         "email/registration_email_confirm_email.html",
         "email/email_change_notification_to_old_email.html",
         "email/email_change_email.html",
-        "email/notification_ip_info_completed_requests_to_admin.html"
+        "email/notification_ip_info_completed_requests_to_admin.html",
     ]
 
     return render(request, templates[0], context)
@@ -72,7 +73,9 @@ def get_cpu_temp(request) -> HttpResponse:
     cpu_temp_path = SiteSetting.get_str("cpu_temp_path")
     if cpu_temp_path:
         if not os.path.exists(cpu_temp_path):
-            return HttpResponseServerError("Нет такого файла который указан в cpu_temp_path")
+            return HttpResponseServerError(
+                "Нет такого файла который указан в cpu_temp_path"
+            )
         with open(cpu_temp_path) as f:
             temp = round(int(f.read()) / 1000, 1)
             return HttpResponse(f"{temp}°")
@@ -90,9 +93,7 @@ def save_cpu_temp_path(request):
         path = data.get("cpu_temp_path", "").strip()
 
         if not path:
-            return JsonResponse({
-                "error": "Путь не может быть пустым"
-            }, status=400)
+            return JsonResponse({"error": "Путь не может быть пустым"}, status=400)
 
         # Сохраняем настройку
         SiteSetting.set("cpu_temp_path", path, "Путь к датчику температуры CPU")
@@ -100,19 +101,15 @@ def save_cpu_temp_path(request):
         return json_response(path)
 
     except json.JSONDecodeError:
-        return JsonResponse({
-            "error": "Неверный формат данных"
-        }, status=400)
+        return JsonResponse({"error": "Неверный формат данных"}, status=400)
     except Exception as e:
-        return JsonResponse({
-            "error": str(e)
-        }, status=500)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 def get_context(context: dict) -> dict:
     base_context = {
         "site_in_service": SiteSetting.get_bool("site_in_service"),
-        "static_version": STATIC_VERSION
+        "static_version": STATIC_VERSION,
     }
 
     if context:
@@ -121,24 +118,26 @@ def get_context(context: dict) -> dict:
 
 
 def index(request):
-    """ Главная страница """
+    """Главная страница"""
     context = get_context({"title": "KoltAccount"})
 
     if not request.user.is_authenticated:
-        context.update({
-            "title": "Менеджер паролей KoltAccount: хранение аккаунтов в облаке"
-        })
+        context.update(
+            {"title": "Менеджер паролей KoltAccount: хранение аккаунтов в облаке"}
+        )
         return render(request, "landing.html", context)
 
-    context.update({
-        "accounts": Account.objects.filter(user=request.user),
-    })
+    context.update(
+        {
+            "accounts": Account.objects.filter(user=request.user),
+        }
+    )
 
     return render(request, "home.html", context)
 
 
 def logs(request):
-    """ Страница с отображением последних логов """
+    """Страница с отображением последних логов"""
     if not request.user.is_staff:
         return HttpResponseForbidden(render(request, "403.html"))
     context = get_context({"title": "Логи", "logs": get_logs()})
@@ -146,13 +145,13 @@ def logs(request):
 
 
 def noscript(request):
-    """ Страница отображаемая если пользователь отключит javascript """
+    """Страница отображаемая если пользователь отключит javascript"""
     context = get_context({"title": "Включите javascript!"})
     return render(request, "noscript.html", context)
 
 
 def donation_notification(request):
-    """ Уведомление о получении пожертвования """
+    """Уведомление о получении пожертвования"""
     if request.method == "POST":
         if yandex_donations.create_donation(request.POST.dict()):
             return HttpResponse()
@@ -161,12 +160,12 @@ def donation_notification(request):
 
 
 def lk(request):
-    """ Личный кабинет пользователя """
+    """Личный кабинет пользователя"""
 
     # Получаем историю входов из AccessLog
-    login_history = AccessLog.objects.filter(
-        username=request.user.username
-    ).order_by("-attempt_time")[:50]
+    login_history = AccessLog.objects.filter(username=request.user.username).order_by(
+        "-attempt_time"
+    )[:50]
 
     # Получаем неудачные попытки из AccessAttempt
     failed_attempts = AccessAttempt.objects.filter(
@@ -177,30 +176,38 @@ def lk(request):
     combined_history = []
 
     for log in login_history:
-        combined_history.append({
-            "type": "log",
-            "data": log,
-            "is_active": log.logout_time is None,
-            "time": log.attempt_time
-        })
+        combined_history.append(
+            {
+                "type": "log",
+                "data": log,
+                "is_active": log.logout_time is None,
+                "time": log.attempt_time,
+            }
+        )
 
     for attempt in failed_attempts:
-        combined_history.append({
-            "type": "attempt",
-            "data": attempt,
-            "is_active": False,
-            "time": attempt.attempt_time
-        })
+        combined_history.append(
+            {
+                "type": "attempt",
+                "data": attempt,
+                "is_active": False,
+                "time": attempt.attempt_time,
+            }
+        )
 
     # Сортируем по времени
     combined_history.sort(key=lambda x: x["time"], reverse=True)
 
-    context = get_context({
-        "title": "Личный кабинет",
-        "login_history": combined_history[:50],  # Ограничим 50 записями
-        "donation": Donation.objects.filter(user=request.user).order_by("-timestamp"),
-        "cpu_temp_path": SiteSetting.get_str("cpu_temp_path"),
-    })
+    context = get_context(
+        {
+            "title": "Личный кабинет",
+            "login_history": combined_history[:50],  # Ограничим 50 записями
+            "donation": Donation.objects.filter(user=request.user).order_by(
+                "-timestamp"
+            ),
+            "cpu_temp_path": SiteSetting.get_str("cpu_temp_path"),
+        }
+    )
     return render(request, "lk.html", context)
 
 
@@ -210,11 +217,13 @@ def support(request):
 
 
 def donation(request):
-    context = get_context({
-        "title": "Пожертвования",
-        "wallet_number": YANDEX_MONEY_WALLET_NUMBER,
-        "default_sum": YANDEX_MONEY_DEFAULT_SUM
-    })
+    context = get_context(
+        {
+            "title": "Пожертвования",
+            "wallet_number": YANDEX_MONEY_WALLET_NUMBER,
+            "default_sum": YANDEX_MONEY_DEFAULT_SUM,
+        }
+    )
     return render(request, "support/donation.html", context)
 
 
@@ -225,13 +234,15 @@ def protection(request):
 
 def privacy(request):
     current_site = Site.objects.get_current()
-    context = get_context({
-        "title": "Политика конфиденциальности",
-        "face": "Колтман Никита Николаевич",
-        "protocol": f"{SITE_PROTOCOL}://",
-        "domain": current_site.domain,
-        "email": SUPPORT_EMAIL
-    })
+    context = get_context(
+        {
+            "title": "Политика конфиденциальности",
+            "face": "Колтман Никита Николаевич",
+            "protocol": f"{SITE_PROTOCOL}://",
+            "domain": current_site.domain,
+            "email": SUPPORT_EMAIL,
+        }
+    )
     return render(request, "support/privacy.html", context)
 
 
@@ -241,7 +252,7 @@ def terms(request):
 
 
 def email_change(request):
-    """ Изменить адрес электронной почты """
+    """Изменить адрес электронной почты"""
     context = get_context({"title": "Изменить почтовый адрес", "form": EmailChangeForm})
 
     if request.method == "POST":
@@ -254,9 +265,9 @@ def email_change(request):
             template="email/email_change_email.html",
             context={
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                "token": account_activation_token.make_token(user)
+                "token": account_activation_token.make_token(user),
             },
-            email=email
+            email=email,
         )
         send_email(
             user=user,
@@ -265,8 +276,8 @@ def email_change(request):
             context={
                 "email": hiding_email(email),
                 "username": user.username,
-                "domain": current_site.domain
-            }
+                "domain": current_site.domain,
+            },
         )
         user.email = email
         user.is_active_email = False
@@ -276,29 +287,31 @@ def email_change(request):
 
 
 def email_change_done(request):
-    """ Страница которая говорит о том что письмо с
-    инструкциями по изменению почтового адреса отправлено """
-    context = get_context({"title": "Письмо с инструкциями по изменению почтового адреса отправлено"})
+    """Страница которая говорит о том что письмо с
+    инструкциями по изменению почтового адреса отправлено"""
+    context = get_context(
+        {"title": "Письмо с инструкциями по изменению почтового адреса отправлено"}
+    )
     return render(request, "email/email_change_done.html", context)
 
 
 def email_change_complete(request):
-    """ Страница которая говорит о том что
-    изменение адреса почты завершено """
+    """Страница которая говорит о том что
+    изменение адреса почты завершено"""
     context = get_context({"title": "Изменение адреса почты завершено"})
     return render(request, "email/email_change_complete.html", context)
 
 
 def confirm_email_done(request):
-    """ Страница которая говорит о том что
-    отправленно письмо подтверждения почты после регистрации """
+    """Страница которая говорит о том что
+    отправленно письмо подтверждения почты после регистрации"""
     context = get_context({"title": "Письмо отправленно"})
     return render(request, "email/confirm_email_done.html", context)
 
 
 def confirm_email_complete(request):
-    """ Страница которая говорит о том что
-    пользователь успешно подтвердили почту после регистрации """
+    """Страница которая говорит о том что
+    пользователь успешно подтвердили почту после регистрации"""
     valid = False
 
     if "valid" in request.session:
@@ -310,8 +323,8 @@ def confirm_email_complete(request):
 
 
 def confirm_email(request):
-    """ Отправка письма о подтверждении
-    почты после регистрации """
+    """Отправка письма о подтверждении
+    почты после регистрации"""
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
     send_email(
@@ -320,14 +333,14 @@ def confirm_email(request):
         template="email/registration_email_confirm_email.html",
         context={
             "uid": urlsafe_base64_encode(force_bytes(request.user.pk)),
-            "token": account_activation_token.make_token(request.user)
-        }
+            "token": account_activation_token.make_token(request.user),
+        },
     )
     return redirect(reverse("confirm_email_done_url"))
 
 
 def activate_email(request, uidb64, token):
-    """ Активация почты """
+    """Активация почты"""
     if not request.user.is_authenticated:
         return redirect(reverse("kolt_login"))
 
@@ -337,35 +350,33 @@ def activate_email(request, uidb64, token):
 
 
 def master_password_reset(request):
-    """ Сброс мастер пароля """
+    """Сброс мастер пароля"""
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
 
-    context = get_context({
-        "title": "Сброс мастер пароля",
-        "form": MasterPasswordResetForm,
-        "form_message": "None",
-        "master_password": False
-    })
+    context = get_context(
+        {
+            "title": "Сброс мастер пароля",
+            "form": MasterPasswordResetForm,
+            "form_message": "None",
+            "master_password": False,
+        }
+    )
 
     if MasterPassword.objects.filter(user=request.user).exists():
-        context.update({
-            "master_password": True
-        })
+        context.update({"master_password": True})
 
     if request.method == "POST":
         if master_password.master_password_reset(request) is not None:
             return redirect(reverse("home_url"))
 
-        context.update({
-            "form_message": "Password is not valid"
-        })
+        context.update({"form_message": "Password is not valid"})
     return render(request, "registration/master_password_reset.html", context)
 
 
 @is_ajax
 def site_in_service_toggle(request):
-    """ Закрыть сайт на техническое обслуживание """
+    """Закрыть сайт на техническое обслуживание"""
     if request.user.is_staff:
         new_value, created = SiteSetting.toggle("site_in_service")
         return json_response(new_value)
@@ -374,8 +385,12 @@ def site_in_service_toggle(request):
 
 @is_ajax
 def create_candy(request):
-    """ Создает конфетку """
-    site, login, password = request.POST.get("site"), request.POST.get("login"), request.POST.get("password")
+    """Создает конфетку"""
+    site, login, password = (
+        request.POST.get("site"),
+        request.POST.get("login"),
+        request.POST.get("password"),
+    )
 
     if not all([site, login, password]):
         return json_response({"result": "missing_fields"}, 400)
@@ -388,7 +403,7 @@ def create_candy(request):
         site=site,
         login=login,
         password=password,
-        description=request.POST.get("description", "")
+        description=request.POST.get("description", ""),
     )
 
     return json_response({"candy_id": candy.id}, 201)
@@ -398,13 +413,15 @@ def create_candy(request):
 @is_ajax
 def import_accounts(request):
     """Массовый импорт аккаунтов"""
-    return accounts_service.import_accounts(request.user, request.POST.get("accounts", "{}"))
+    return accounts_service.import_accounts(
+        request.user, request.POST.get("accounts", "{}")
+    )
 
 
 @require_POST
 @is_ajax
 def delete_candy(request):
-    """ Удаляет конфетку """
+    """Удаляет конфетку"""
     candy_id = request.POST.get("candy_id")
 
     if not candy_id:
@@ -418,7 +435,7 @@ def delete_candy(request):
 
 @is_ajax
 def change_info_account(request):
-    """ Изменяет информацию об аккаунте """
+    """Изменяет информацию об аккаунте"""
     site = request.POST.get("site", None)
     description = request.POST.get("description", None)
     new_login = request.POST.get("new_login", None)
@@ -430,14 +447,14 @@ def change_info_account(request):
         description=description,
         new_login=new_login,
         new_password=new_password,
-        account_id=account_id
+        account_id=account_id,
     )
     return json_response(answer)
 
 
 @is_ajax
 def change_or_create_master_password(request):
-    """ Изменяет мастер пароль """
+    """Изменяет мастер пароль"""
     sites = request.POST.get("sites", None)
     descriptions = request.POST.get("descriptions", None)
     logins = request.POST.get("logins", None)
@@ -452,34 +469,32 @@ def change_or_create_master_password(request):
         passwords=passwords,
         new_master_password=new_master_password,
         new_crypto_settings=new_crypto_settings,
-        user=request.user
+        user=request.user,
     )
     return json_response(answer)
 
 
 @is_ajax
 def check_username(request):
-    """ Проверяет существование имени в БД """
+    """Проверяет существование имени в БД"""
     return json_response(check_username_db(request))
 
 
 @is_ajax
 def get_master_password(request):
-    """ Возвращает мастер пароль """
+    """Возвращает мастер пароль"""
     answer = master_password.get_master_password(user=request.user)
     return json_response(answer)
 
 
 def kolt_login(request):
-    """ Авторизация пользователей """
+    """Авторизация пользователей"""
     if request.user.is_authenticated:
         return redirect(reverse("home_url"))
 
-    context = get_context({
-        "title": "Авторизация",
-        "form": KoltAuthenticationForm,
-        "form_message": "None"
-    })
+    context = get_context(
+        {"title": "Авторизация", "form": KoltAuthenticationForm, "form_message": "None"}
+    )
 
     if request.method == "POST":
         username = request.POST.get("username", None)
@@ -497,30 +512,27 @@ def kolt_login(request):
             # nlh_thread.join(1.0)
             return redirect(reverse("home_url"))
 
-        context.update({
-            "form_message": "Login error"
-        })
+        context.update({"form_message": "Login error"})
     return render(request, "registration/login.html", context)
 
 
 class KoltPasswordResetView(PasswordResetView):
-    """ Переопределение формы сброса пароля для представления """
+    """Переопределение формы сброса пароля для представления"""
+
     form_class = KoltPasswordResetForm
 
 
 class RegisterView(TemplateView):
-    """ Регистрация пользователей """
+    """Регистрация пользователей"""
 
     def dispatch(self, request, *args, **kwargs):
-        """ Регистрация """
+        """Регистрация"""
         if request.user.is_authenticated:
             return redirect(reverse("home_url"))
 
-        context = get_context({
-            "title": "Регистрация",
-            "form": RegisterForm,
-            "form_message": "None"
-        })
+        context = get_context(
+            {"title": "Регистрация", "form": RegisterForm, "form_message": "None"}
+        )
 
         if request.method == "POST":
             username = request.POST.get("username")
@@ -532,9 +544,7 @@ class RegisterView(TemplateView):
             if answer is None:
                 try:
                     user = UserModel.objects.create_user(
-                        username=username,
-                        email=email,
-                        password=password1
+                        username=username, email=email, password=password1
                     )
 
                     send_email(
@@ -544,24 +554,24 @@ class RegisterView(TemplateView):
                         template="email/registration_email_confirm_email.html",
                         context={
                             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                            "token": account_activation_token.make_token(user)
-                        }
+                            "token": account_activation_token.make_token(user),
+                        },
                     )
 
                     return redirect(reverse("kolt_login"))
                 except Exception as err:
                     if str(err) == "UNIQUE constraint failed: auth_user.username":
-                        context.update({
-                            "form_message": "username error",
-                            "username": username,
-                            "email": email
-                        })
+                        context.update(
+                            {
+                                "form_message": "username error",
+                                "username": username,
+                                "email": email,
+                            }
+                        )
                     else:
                         raise
             else:
-                context.update({
-                    "form_message": answer,
-                    "username": username,
-                    "email": email
-                })
+                context.update(
+                    {"form_message": answer, "username": username, "email": email}
+                )
         return render(request, "registration/register.html", context)

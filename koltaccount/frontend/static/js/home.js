@@ -113,69 +113,37 @@ $(function () {
                 let accountId = result["account_id"];
 
                 if (result["status"] == "success") {
-                    let newRow =
-                        "<tr data-toggle=\"modal\" data-target=\"#AccountModal\" data-id=\"" +
-                        accountId +
-                        "\">" +
-                        "<td class=\"td-favicon\"><img data-id=\"" +
-                        accountId +
-                        "\" class=\"favicon-sites\" height=\"16\" width=\"16\" alt=\"icon\" " +
-                        "src=\"https://favicon.yandex.net/favicon/" +
-                        site +
-                        "\"></td>" +
-                        "<td class=\"td-site\" data-id=\"" +
-                        accountId +
-                        "\">" +
-                        site +
-                        "</td>" +
-                        "<td class=\"td-description\" data-id=\"" +
-                        accountId +
-                        "\">" +
-                        description +
-                        "</td>" +
-                        "<td class=\"td-login td-hide\" data-id=\"" +
-                        accountId +
-                        "\">" +
-                        login +
-                        "</td>" +
-                        "<td class=\"td-password td-hide\" data-id=\"" +
-                        accountId +
-                        "\">" +
-                        password +
-                        "</td>" +
-                        "</tr>";
-
-                    $("tbody").append(newRow);
-
-                    // Обновляем счетчик аккаунтов
-                    $("#js-account-counter div").text(
-                        parseInt($("#js-account-counter div").text()) + 1,
-                    );
-
-                    sortTable();
-
-                    if (!data) {
-                        // Закрываем модальное окно
+                    // Создаем новую строку
+                    let $newRow = createNewRowElement(accountId, site, description, login, password);
+                    let $table = $("#Accounts_table");
+                    // Добавляем строку в DOM
+                    $table.children("tbody").first().append($newRow);
+                    // Обновляем кеш tablesorter и сортируем
+                    $table.trigger("update", [true, function() {
+                        // Обновляем счетчик аккаунтов
+                        const accountCount = parseInt($("#js-account-counter div").text());
+                        $("#js-account-counter div").text(accountCount + 1);
+                        // Закрываем модалку
                         $("#CreateAccountModal").modal("hide");
-
-                        // Подсветка новой строки
+                        // Чистим поля модалки (логин и пароль всегда чистятся после закрытия модалки)
+                        $("#in-site, #in-description").val("");
+                        // Подсвечиваем новую строку
                         highlightRow(accountId);
 
-                        // Чистим поля
-                        $("#in-site").val("");
-                        $("#in-description").val("");
-                    }
+                        preloadHide();
+                    }]);
+                    
                 } else if (result["status"] == "error") {
                     if (result["message"] == "accountlimitreached") {
                         swal("Ошибка", "Достигнут лимит в 200 аккаунтов", "warning");
                     } else {
                         swal("Ошибка", result["message"], "error");
                     }
+                    preloadHide();
                 } else {
                     swal("Ошибка", result["result"], "error");
+                    preloadHide();
                 }
-
-                preloadHide();
             },
             error: function (jqXHR, text, error) {
                 if (error == "Forbidden") {
@@ -186,10 +154,51 @@ $(function () {
                             " включите их снова, по крайней мере, для этого сайта.",
                         "error"
                     );
-                    preloadHide();
                 }
+                preloadHide();
             },
         });
+    }
+
+    function createNewRowElement(accountId, site, description, login, password) {
+        /* Вспомогательная функция для создания элемента строки */
+        return $("<tr>", {
+            "data-toggle": "modal",
+            "data-target": "#AccountModal",
+            "data-id": accountId,
+            "role": "row"
+        }).append(
+            $("<td>", { class: "td-favicon" }).append(
+                $("<img>", {
+                    "data-id": accountId,
+                    class: "favicon-sites",
+                    height: "16",
+                    width: "16",
+                    alt: "icon",
+                    src: "https://favicon.yandex.net/favicon/" + site
+                })
+            ),
+            $("<td>", { 
+                class: "td-site", 
+                "data-id": accountId,
+                text: site 
+            }),
+            $("<td>", { 
+                class: "td-description", 
+                "data-id": accountId,
+                text: description 
+            }),
+            $("<td>", { 
+                class: "td-login td-hide", 
+                "data-id": accountId,
+                text: login 
+            }),
+            $("<td>", { 
+                class: "td-password td-hide", 
+                "data-id": accountId,
+                text: password 
+            })
+        );
     }
 
     function highlightRow(accountId) {
@@ -312,7 +321,7 @@ $(function () {
                         $("#modal-new_password").val("");
                     }
                     // Сортируем таблицу
-                    sortTable();
+                    $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
                     // Скрываем модальное окно просмотра аккаунта
                     $("#AccountModal").modal("hide");
                 } else {
@@ -767,17 +776,9 @@ $(function () {
                         td.innerHTML = decrypt(td.innerHTML, masterPassword);
                     }
                 });
-
-                // Конфигурируем сортировку
-                $("#Accounts_table").tablesorter({
-                    sortList: [
-                        // Сортируем по первому столбцу, по алфавиту
-                        [1, 0],
-                    ],
-                });
-                // Сортируем еще раз
-                sortTable();
             }
+
+            configureTable();
 
             // Скачиваем иконку для каждого сайта в таблице
             $(".favicon-sites").each(function () {
@@ -875,8 +876,9 @@ $(function () {
     $("#btn_master_import").on("change", async function () {
         if (masterPassword == "doesnotexist") {
             swal("Необходимо создать мастер пароль", "", "info");
-            return
+            return;
         }
+
         preloadShow();
         $("#MasterPasswordModal").modal("hide");
 
@@ -885,20 +887,113 @@ $(function () {
 
         await new Promise((resolve) => (reader.onload = resolve));
 
-        const data = JSON.parse(reader.result);
-        for (let i in data) {
-            createAccount({
-                site: data[i]["site"],
-                description: data[i]["description"],
-                login: data[i]["login"],
-                password: data[i]["password"],
-            });
-            await new Promise((r) => setTimeout(r, 0));
-        }
+        try {
+            const accounts = JSON.parse(reader.result);
 
-        sortTable();
-        preloadHide();
+            // Шифруем логины и пароли для отображения в таблице
+            const accountsForTable = accounts.map(account => ({
+                site: account.site,
+                description: account.description,
+                login: encrypt(account.login, masterPassword),
+                password: encrypt(account.password, masterPassword)
+            }));
+
+            // Шифруем сайты и описания для отправки на сервер
+            const accountsForServer = accountsForTable.map(account => ({
+                site: encrypt(account.site, masterPassword),
+                description: encrypt(account.description, masterPassword),
+                login: account.login,
+                password: account.password
+            }));
+
+            $.ajax({
+                url: "import_accounts/",
+                type: "POST",
+                data: {
+                    accounts: JSON.stringify(accountsForServer)
+                },
+                success: function (result) {
+                    // 4. Добавляем в таблицу
+                    addImportedAccountsToTable(result.imported, accountsForTable);
+
+                    // Обновляем счетчик
+                    const currentCount = parseInt($("#js-account-counter div").text());
+                    $("#js-account-counter div").text(currentCount + result.success_count);
+
+                    let message = `Импортировано: ${result.success_count} из ${result.total}`;
+                    if (result.error_count > 0) {
+                        message += `\nОшибок: ${result.error_count}`;
+                        console.error("Ошибки импорта:", result.errors);
+                    }
+
+                    swal(
+                        result.error_count > 0 ? "Импорт завершен с ошибками" : "Импорт успешно завершен",
+                        message,
+                        result.error_count > 0 ? "warning" : "success"
+                    );
+
+                    // Сортируем таблицу
+                    $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
+                },
+                error: function (jqXHR, text, error) {
+                    if (error === "Unprocessable Content") {
+                        swal(
+                            "Превышен лимит",
+                            "Достигнут лимит аккаунтов",
+                            "warning"
+                        );
+                    } else if (error === "Bad Request") {
+                        swal(
+                            "Ошибка",
+                            "Неверный формат JSON файла",
+                            "error"
+                        );
+                    } else if (error == "Forbidden") {
+                        swal(
+                            "Ошибка",
+                            "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
+                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
+                            " включите их снова, по крайней мере, для этого сайта.",
+                            "error"
+                        );
+                    } else {
+                        swal("Ошибка", error, "error");
+                    }
+                },
+                complete: function() {
+                    preloadHide();
+                    $("#btn_master_import").val("");
+                }
+            });
+            
+        } catch (e) {
+            swal("Ошибка", "Неверный формат JSON файла: " + e.message, "error");
+            preloadHide();
+            $("#btn_master_import").val("");
+        }
     });
+
+    function addImportedAccountsToTable(importedAccountsIds, accountsForTable) {
+        let $table = $("#Accounts_table");
+        let $tbody = $table.children("tbody").first();
+        let fragment = document.createDocumentFragment();
+
+        importedAccountsIds.forEach((importedAccountId) => {
+            let tableData = accountsForTable[importedAccountId.index];
+
+            let $row = createNewRowElement(
+                importedAccountId.id,
+                tableData.site,
+                tableData.description,
+                tableData.login,
+                tableData.password
+            );
+            fragment.appendChild($row[0]);
+        });
+
+        $tbody.append(fragment);
+        $table.trigger("update", [true]);
+    }
 
     $("#btn_master_export").on("click", function () {
         let oldPassword = $("#in-old_password").val();
@@ -915,12 +1010,40 @@ $(function () {
         }
     });
 
-    function sortTable() {
+    function configureTable() {
         let $table = $("#Accounts_table");
-        $table.trigger("update");
-        setTimeout(function () {
-            $table.trigger("sorton", [[[1, 0]]]);
-        }, 100);
+
+        // ПРАВИЛЬНАЯ ПРОВЕРКА: используем data()
+        if ($table.data("tablesorter")) {
+            // Уничтожаем существующий экземпляр
+            $table.trigger("destroy");
+            $table.removeData("tablesorter");
+            $table.removeClass("tablesorter tablesorter-default");
+            console.log("destroy");
+        }
+
+        // Конфигурируем сортировку
+        $table.tablesorter({
+            sortList: [[1, 0]], // Сортируем по второму столбцу (индекс 1), по возрастанию
+            // Добавляем обработку для скрытых колонок
+            textExtraction: {
+                0: function(node, table, cellIndex) {
+                    return $(node).text(); // favicon
+                },
+                1: function(node, table, cellIndex) {
+                    return $(node).text(); // site
+                },
+                2: function(node, table, cellIndex) {
+                    return $(node).text(); // description
+                },
+                3: function(node, table, cellIndex) {
+                    return $(node).text(); // login (скрытый)
+                },
+                4: function(node, table, cellIndex) {
+                    return $(node).text(); // password (скрытый)
+                }
+            }
+        });
     }
 
     function exportAccounts() {

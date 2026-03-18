@@ -21,6 +21,7 @@ urlpatterns = [
     path('lk/site_in_service_toggle/', views.site_in_service_toggle),
     path('donation_notification/', views.donation_notification),
     path('create_account/', views.create_account),
+    path('import_accounts/', views.import_accounts, name='import_accounts_url'),
     path('delete_account/', views.delete_account),
     path('change_info_account/', views.change_info_account),
     path('get_master_password/', views.get_master_password),

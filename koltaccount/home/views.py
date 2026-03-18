@@ -391,6 +391,13 @@ def create_account(request):
     return core_service.json_response(answer)
 
 
+@require_POST
+@is_ajax
+def import_accounts(request):
+    """Массовый импорт аккаунтов"""
+    return accounts_service.import_accounts(request.user, request.POST.get("accounts", "{}"))
+
+
 @is_ajax
 def delete_account(request):
     """ Удаляет аккаунт """

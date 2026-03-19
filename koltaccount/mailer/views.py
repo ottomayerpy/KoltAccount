@@ -1,6 +1,4 @@
 from core.baseapp.models import UserModel
-from core.email_service import activate_email as act_email
-from core.email_service import hiding_email, send_email
 from core.service import get_base_context
 from core.token_generator import account_activation_token
 from django.contrib.sites.models import Site
@@ -9,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from mailer.service import activate_email, hiding_email, send_email
 
 from koltaccount.settings import SITE_PROTOCOL
 
@@ -103,7 +102,7 @@ def activate(request, uidb64, token):
     if not request.user.is_authenticated:
         return redirect(reverse("kolt_login"))
 
-    if act_email(uidb64, token):
+    if activate_email(uidb64, token):
         request.session["valid"] = True
     return redirect(reverse("email_confirm_complete_url"))
 

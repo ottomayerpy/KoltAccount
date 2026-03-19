@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'core.donation.apps.DonationConfig',
     'core.site_settings.apps.SiteSettingsConfig',
     'core.accounts.apps.AccountsConfig',
-    'core.baseapp.apps.BaseappConfig'
+    'core.baseapp.apps.BaseappConfig',
+    'mailer.apps.MailerConfig',
 ]
 
 STATIC_VERSION = 1

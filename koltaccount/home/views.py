@@ -9,7 +9,6 @@ from core.crypto import master_password
 from core.crypto.models import MasterPassword
 from core.donation import yandex_donations
 from core.donation.models import Donation
-from core.email_service import send_email
 from core.logger_service import get_logs
 from core.middleware import is_ajax
 from core.service import (
@@ -36,6 +35,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
+from mailer.service import send_email
 
 from koltaccount.settings import (
     CANDIES_LIMIT,

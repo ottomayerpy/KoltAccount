@@ -9,11 +9,15 @@ from core.crypto import master_password
 from core.crypto.models import MasterPassword
 from core.donation import yandex_donations
 from core.donation.models import Donation
-from core.email_service import activate_email as act_email
-from core.email_service import hiding_email, send_email
+from core.email_service import send_email
 from core.logger_service import get_logs
 from core.middleware import is_ajax
-from core.service import check_if_password_correct, check_username_db, json_response
+from core.service import (
+    check_if_password_correct,
+    check_username_db,
+    get_base_context,
+    json_response,
+)
 from core.site_settings.models import SiteSetting
 from core.token_generator import account_activation_token
 from django.contrib.admin.views.decorators import staff_member_required
@@ -36,14 +40,12 @@ from django.views.generic import TemplateView
 from koltaccount.settings import (
     CANDIES_LIMIT,
     SITE_PROTOCOL,
-    STATIC_VERSION,
     SUPPORT_EMAIL,
     YANDEX_MONEY_DEFAULT_SUM,
     YANDEX_MONEY_WALLET_NUMBER,
 )
 
 from .forms import (
-    EmailChangeForm,
     KoltAuthenticationForm,
     KoltPasswordResetForm,
     MasterPasswordResetForm,
@@ -52,31 +54,6 @@ from .forms import (
 
 # Русская локализация для даты
 locale.setlocale(locale.LC_ALL, "")
-
-
-def check_email_template(request):
-    """Текстирование шаблона для почты"""
-    if not request.user.is_staff:
-        return HttpResponseForbidden(render(request, "403.html"))
-
-    context = {
-        "username": request.user.username,
-        "protocol": SITE_PROTOCOL,
-        "domain": "koltaccount.ru",
-        "uid": "MQ%5B0-9A-Za-z_%5",
-        "token": "-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%",
-        "email": hiding_email(request.user.email),
-    }
-
-    # Шаблоны
-    templates = [
-        "email/registration_email_confirm_email.html",
-        "email/email_change_notification_to_old_email.html",
-        "email/email_change_email.html",
-        "email/notification_ip_info_completed_requests_to_admin.html",
-    ]
-
-    return render(request, templates[0], context)
 
 
 @staff_member_required
@@ -117,20 +94,9 @@ def save_cpu_temp_path(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-def get_context(context: dict) -> dict:
-    base_context = {
-        "site_in_service": SiteSetting.get_bool("site_in_service"),
-        "static_version": STATIC_VERSION,
-    }
-
-    if context:
-        base_context.update(context)
-    return base_context
-
-
 def index(request):
     """Главная страница"""
-    context = get_context({"title": "KoltAccount"})
+    context = get_base_context({"title": "KoltAccount"})
 
     if not request.user.is_authenticated:
         context.update(
@@ -151,13 +117,13 @@ def logs(request):
     """Страница с отображением последних логов"""
     if not request.user.is_staff:
         return HttpResponseForbidden(render(request, "403.html"))
-    context = get_context({"title": "Логи", "logs": get_logs()})
+    context = get_base_context({"title": "Логи", "logs": get_logs()})
     return render(request, "logs.html", context)
 
 
 def noscript(request):
     """Страница отображаемая если пользователь отключит javascript"""
-    context = get_context({"title": "Включите javascript!"})
+    context = get_base_context({"title": "Включите javascript!"})
     return render(request, "noscript.html", context)
 
 
@@ -209,7 +175,7 @@ def lk(request):
     # Сортируем по времени
     combined_history.sort(key=lambda x: x["time"], reverse=True)
 
-    context = get_context(
+    context = get_base_context(
         {
             "title": "Личный кабинет",
             "login_history": combined_history[:50],  # Ограничим 50 записями
@@ -223,12 +189,12 @@ def lk(request):
 
 
 def support(request):
-    context = get_context({"title": "Помощь и поддержка"})
+    context = get_base_context({"title": "Помощь и поддержка"})
     return render(request, "support/support.html", context)
 
 
 def donation(request):
-    context = get_context(
+    context = get_base_context(
         {
             "title": "Пожертвования",
             "wallet_number": YANDEX_MONEY_WALLET_NUMBER,
@@ -239,13 +205,13 @@ def donation(request):
 
 
 def protection(request):
-    context = get_context({"title": "Защита данных"})
+    context = get_base_context({"title": "Защита данных"})
     return render(request, "support/protection.html", context)
 
 
 def privacy(request):
     current_site = Site.objects.get_current()
-    context = get_context(
+    context = get_base_context(
         {
             "title": "Политика конфиденциальности",
             "face": "Колтман Никита Николаевич",
@@ -258,106 +224,8 @@ def privacy(request):
 
 
 def terms(request):
-    context = get_context({"title": "Пользовательское соглашение"})
+    context = get_base_context({"title": "Пользовательское соглашение"})
     return render(request, "support/terms.html", context)
-
-
-def email_change(request):
-    """Изменить адрес электронной почты"""
-    context = get_context({"title": "Изменить почтовый адрес", "form": EmailChangeForm})
-
-    if request.method == "POST":
-        email = request.POST.get("email")
-        user = UserModel.objects.get(id=request.user.id)
-        current_site = Site.objects.get_current()
-        send_email(
-            user=user,
-            subject="Привязка email к аккаунту",
-            template="email/email_change_email.html",
-            context={
-                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                "token": account_activation_token.make_token(user),
-            },
-            email=email,
-        )
-        send_email(
-            user=user,
-            subject="Привязка email к аккаунту",
-            template="email/email_change_notification_to_old_email.html",
-            context={
-                "email": hiding_email(email),
-                "username": user.username,
-                "domain": current_site.domain,
-            },
-        )
-        user.email = email
-        user.is_active_email = False
-        user.save()
-        return redirect(reverse("email_change_done_url"))
-    return render(request, "email/email_change_form.html", context)
-
-
-def email_change_done(request):
-    """Страница которая говорит о том что письмо с
-    инструкциями по изменению почтового адреса отправлено"""
-    context = get_context(
-        {"title": "Письмо с инструкциями по изменению почтового адреса отправлено"}
-    )
-    return render(request, "email/email_change_done.html", context)
-
-
-def email_change_complete(request):
-    """Страница которая говорит о том что
-    изменение адреса почты завершено"""
-    context = get_context({"title": "Изменение адреса почты завершено"})
-    return render(request, "email/email_change_complete.html", context)
-
-
-def confirm_email_done(request):
-    """Страница которая говорит о том что
-    отправленно письмо подтверждения почты после регистрации"""
-    context = get_context({"title": "Письмо отправленно"})
-    return render(request, "email/confirm_email_done.html", context)
-
-
-def confirm_email_complete(request):
-    """Страница которая говорит о том что
-    пользователь успешно подтвердили почту после регистрации"""
-    valid = False
-
-    if "valid" in request.session:
-        valid = request.session["valid"]
-        del request.session["valid"]
-
-    context = get_context({"title": "Подтверждение почты", "valid": valid})
-    return render(request, "email/confirm_email_complete.html", context)
-
-
-def confirm_email(request):
-    """Отправка письма о подтверждении
-    почты после регистрации"""
-    if not request.user.is_authenticated:
-        return redirect(reverse("home_url"))
-    send_email(
-        user=request.user,
-        subject="Добро пожаловать в KoltAccount",
-        template="email/registration_email_confirm_email.html",
-        context={
-            "uid": urlsafe_base64_encode(force_bytes(request.user.pk)),
-            "token": account_activation_token.make_token(request.user),
-        },
-    )
-    return redirect(reverse("confirm_email_done_url"))
-
-
-def activate_email(request, uidb64, token):
-    """Активация почты"""
-    if not request.user.is_authenticated:
-        return redirect(reverse("kolt_login"))
-
-    if act_email(uidb64, token):
-        request.session["valid"] = True
-    return redirect(reverse("confirm_email_complete_url"))
 
 
 def master_password_reset(request):
@@ -365,7 +233,7 @@ def master_password_reset(request):
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
 
-    context = get_context(
+    context = get_base_context(
         {
             "title": "Сброс мастер пароля",
             "form": MasterPasswordResetForm,
@@ -548,7 +416,7 @@ def kolt_login(request):
     if request.user.is_authenticated:
         return redirect(reverse("home_url"))
 
-    context = get_context(
+    context = get_base_context(
         {"title": "Авторизация", "form": KoltAuthenticationForm, "form_message": "None"}
     )
 
@@ -586,7 +454,7 @@ class RegisterView(TemplateView):
         if request.user.is_authenticated:
             return redirect(reverse("home_url"))
 
-        context = get_context(
+        context = get_base_context(
             {"title": "Регистрация", "form": RegisterForm, "form_message": "None"}
         )
 

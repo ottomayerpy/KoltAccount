@@ -223,7 +223,7 @@
     {% if request.user.email %}
     <div class="confirm_email-notification">
         <p>Вам нужно подтвердить почту. Мы уже отправили вам письмо с инструкциями. Если письмо не пришло то нажмите <a
-                href="{% url 'confirm_email_url' %}" class="urls_in_text">здесь</a> для повторной отправки письма.</p>
+                href="{% url 'email_confirm_url' %}" class="urls_in_text">здесь</a> для повторной отправки письма.</p>
     </div>
     {% else %}
     <div class="confirm_email-notification">

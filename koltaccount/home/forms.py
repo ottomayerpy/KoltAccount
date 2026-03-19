@@ -97,13 +97,3 @@ class MasterPasswordResetForm(Form):
         widget=PasswordInput(
             attrs={"autocomplete": "new-password", "autofocus": True})
     )
-
-
-class EmailChangeForm(Form):
-    """ Форма изменения электронной почты """
-    email = EmailField(
-        label="Адрес электронной почты",
-        max_length=254,
-        widget=EmailInput(
-            attrs={"autocomplete": "email", "autofocus": True})
-    )

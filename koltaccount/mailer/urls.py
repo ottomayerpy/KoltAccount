@@ -21,7 +21,9 @@ urlpatterns = [
         name="email_confirm_complete_url",
     ),
     path(
-        "activate/<uidb64>[0-9A-Za-z_\-]+)/<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/",
+        # Старая строка
+        # "activate/<uidb64>[0-9A-Za-z_\-]+)/<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/",
+        r'activate/<uidb64>[0-9A-Za-z_-]+/<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20}/',
         activate,
         name="email_activate_url",
     ),

@@ -1,6 +1,5 @@
-from core.accounts.models import Account
+from candy.models import Candy, MasterPassword
 from core.baseapp.forms import PersonChangeForm, PersonCreationForm
-from core.crypto.models import MasterPassword
 from core.donation.models import Donation
 from core.site_settings.models import SiteSetting
 from django.contrib import admin
@@ -15,8 +14,8 @@ class KoltAdminSite(admin.AdminSite):
 admin_site = KoltAdminSite(name="koltadmin")
 
 
-@admin.register(Account, site=admin_site)
-class AccountAdmin(admin.ModelAdmin):
+@admin.register(Candy, site=admin_site)
+class CandyAdmin(admin.ModelAdmin):
     list_display = ["user"]
 
 

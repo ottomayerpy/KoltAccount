@@ -30,12 +30,11 @@ INSTALLED_APPS = [
     'dotenv',
 
     'home.apps.HomeConfig',
-    'core.crypto.apps.CryptoConfig',
     'core.donation.apps.DonationConfig',
     'core.site_settings.apps.SiteSettingsConfig',
-    'core.accounts.apps.AccountsConfig',
     'core.baseapp.apps.BaseappConfig',
     'mailer.apps.MailerConfig',
+    'candy.apps.CandyConfig'
 ]
 
 STATIC_VERSION = 1

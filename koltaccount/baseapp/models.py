@@ -1,14 +1,17 @@
 from uuid import uuid7
 
-from django.db.models import UUIDField
-from django.utils.translation import gettext_lazy as _
-from django.db.models import DateTimeField, Model
-
 from django.contrib.auth.models import AbstractUser
-from django.db.models import BooleanField
-
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import CharField, JSONField, TextField
+from django.db.models import (
+    BooleanField,
+    CharField,
+    DateTimeField,
+    JSONField,
+    Model,
+    TextField,
+    UUIDField,
+)
+from django.utils.translation import gettext_lazy as _
 
 
 class TimeStampedModel(Model):

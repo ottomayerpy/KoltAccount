@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import uuid7
 
 from django.contrib.auth.models import AbstractUser
@@ -14,30 +15,32 @@ from django.db.models import (
 from django.utils.translation import gettext_lazy as _
 
 
-class TimeStampedModel(Model):
-    """Абстрактный класс для моделей объектов,
-    которым необходимы временные отметки"""
-
-    created_time = DateTimeField(verbose_name=_("Создано"), auto_now_add=True)
-    modified_time = DateTimeField(verbose_name=_("Модифицировано"), auto_now=True)
-
-    class Meta:
-        abstract = True
-
-
-class BaseModel(TimeStampedModel):
-    """Основной базовый класс моделей приложения"""
+class BaseModel(Model):
+    """Базовый класс с UUIDv7 и полем обновления"""
 
     id = UUIDField(
         primary_key=True, default=uuid7, editable=False, verbose_name=_("UUID")
     )
 
+    updated_at = DateTimeField(auto_now=True, verbose_name=_("Обновлено"))
+
     class Meta:
         abstract = True
 
+    def get_created_at(self):
+        """Извлечь время создания из UUIDv7"""
+        # UUIDv7 хранит время в первых 48 битах (смещение 80)
+        timestamp_ms = self.id.int >> 80
+        return datetime.fromtimestamp(timestamp_ms / 1000)
 
-class UserModel(AbstractUser):
-    is_active_email = BooleanField(verbose_name=_("Подтверждение почты"), default=False)
+    @property
+    def created_at(self):
+        """Свойство для совместимости с TimeStampedModel"""
+        return self.get_created_at()
+
+
+class UserModel(BaseModel, AbstractUser):
+    is_active_email = BooleanField(default=False, verbose_name=_("Подтверждение почты"))
 
     def __str__(self):
         return self.username
@@ -74,7 +77,7 @@ class SiteSetting(BaseModel):
         ordering = ["name"]
 
     def __str__(self):
-        return f"{self.name}: {self.value}"
+        return self.name
 
     @classmethod
     def get(cls, name, default=None):

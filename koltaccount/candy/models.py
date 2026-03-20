@@ -1,4 +1,4 @@
-from core.baseapp.models import BaseModel, UserModel
+from baseapp.models import BaseModel, UserModel
 from django.db.models import CASCADE, CharField, ForeignKey, OneToOneField
 from django.utils.translation import gettext_lazy as _
 

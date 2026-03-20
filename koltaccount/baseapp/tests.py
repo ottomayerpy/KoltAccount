@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .service import check_if_password_correct
+from .utils import check_if_password_correct
 
 
 class ServiceTestCase(TestCase):

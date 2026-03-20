@@ -1,18 +1,18 @@
 import threading
 
+from baseapp.models import UserModel
+from baseapp.utils import account_activation_token
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from koltaccount.settings import EMAIL_HOST_USER, SITE_PROTOCOL
 
-from core.baseapp.models import UserModel
-from core.token_generator import account_activation_token
+from koltaccount.settings import EMAIL_HOST_USER, SITE_PROTOCOL
 
 
 class EmailThread(threading.Thread):
-    """ Отправка почты в новом потоке """
+    """Отправка почты в новом потоке"""
 
     def __init__(self, subject, html_content, recipient_list):
         self.subject = subject
@@ -21,39 +21,46 @@ class EmailThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        msg = EmailMessage(self.subject, self.html_content,
-                           EMAIL_HOST_USER, self.recipient_list)
+        msg = EmailMessage(
+            self.subject, self.html_content, EMAIL_HOST_USER, self.recipient_list
+        )
         msg.content_subtype = "html"
         msg.send()
 
 
-def send_email(user: UserModel, subject: str, template: str, context: dict = None, email: str = None) -> None:
-    """ Отправить письмо """
+def send_email(
+    user: UserModel,
+    subject: str,
+    template: str,
+    context: dict = None,
+    email: str = None,
+) -> None:
+    """Отправить письмо"""
     current_site = Site.objects.get_current()
 
     if context is None:
         context = dict()
 
-    context.update({
-        "username": user.username,
-        "protocol": SITE_PROTOCOL,
-        "domain": current_site.domain,
-    })
+    context.update(
+        {
+            "username": user.username,
+            "protocol": SITE_PROTOCOL,
+            "domain": current_site.domain,
+        }
+    )
 
     htmly = get_template(template)
     html_content = htmly.render(context)
 
     email_thread = EmailThread(
-        subject,
-        html_content,
-        [user.email if email is None else email]
+        subject, html_content, [user.email if email is None else email]
     )
     email_thread.start()
     email_thread.join(1.0)
 
 
 def activate_email(uidb64, token) -> bool:
-    """ Активация почты """
+    """Активация почты"""
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = UserModel.objects.get(pk=uid)
@@ -73,8 +80,8 @@ def activate_email(uidb64, token) -> bool:
 
 
 def hiding_email(email: str) -> str:
-    """ Скрывает тремя звездочками часть email адреса """
+    """Скрывает тремя звездочками часть email адреса"""
     try:
-        return email[0:2] + "***" + email[email.index("@"):]
+        return email[0:2] + "***" + email[email.index("@") :]
     except Exception:
         return ""

@@ -1,7 +1,7 @@
-from core.logger_service import sorted_logs
+from baseapp.logger import sorted_logs
 from django.test import TestCase
 
-from ..mailer.service import hiding_email
+from .utils import hiding_email
 
 
 class KoltEmailTestCase(TestCase):

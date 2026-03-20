@@ -3,18 +3,18 @@ import locale
 import os
 
 from axes.models import AccessAttempt, AccessLog
-from candy.models import Candy
-from core.baseapp.models import UserModel
-from core.logger_service import get_logs
-from core.middleware import is_ajax
-from core.service import (
+from baseapp.forms import KoltAuthenticationForm, KoltPasswordResetForm, RegisterForm
+from baseapp.logger import get_logs
+from baseapp.middleware import is_ajax
+from baseapp.models import SiteSetting, UserModel
+from baseapp.utils import (
+    account_activation_token,
     check_if_password_correct,
     check_username_db,
     get_base_context,
     json_response,
 )
-from core.site_settings.models import SiteSetting
-from core.token_generator import account_activation_token
+from candy.models import Candy
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import PasswordResetView
@@ -31,16 +31,9 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
-from mailer.service import send_email
+from mailer.utils import send_email
 
-from koltaccount.settings import (
-    SITE_PROTOCOL,
-    SUPPORT_EMAIL,
-    YANDEX_MONEY_DEFAULT_SUM,
-    YANDEX_MONEY_WALLET_NUMBER,
-)
-
-from .forms import KoltAuthenticationForm, KoltPasswordResetForm, RegisterForm
+from koltaccount.settings import SITE_PROTOCOL, SUPPORT_EMAIL
 
 # Русская локализация для даты
 locale.setlocale(locale.LC_ALL, "")

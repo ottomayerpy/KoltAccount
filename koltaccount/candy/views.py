@@ -1,8 +1,8 @@
 import json
 
+from baseapp.middleware import is_ajax
+from baseapp.utils import get_base_context, json_response
 from candy.models import Candy, MasterPassword
-from core.middleware import is_ajax
-from core.service import get_base_context, json_response
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse

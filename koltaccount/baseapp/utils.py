@@ -1,10 +1,23 @@
 import re
 
-from core.baseapp.models import UserModel
-from core.site_settings.models import SiteSetting
+import six
+from baseapp.models import SiteSetting, UserModel
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.http import JsonResponse
 
 from koltaccount.settings import STATIC_VERSION
+
+
+class TokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return (
+            six.text_type(user.pk)
+            + six.text_type(timestamp)
+            + six.text_type(user.is_active)
+        )
+
+
+account_activation_token = TokenGenerator()
 
 
 def check_username_db(request) -> dict:

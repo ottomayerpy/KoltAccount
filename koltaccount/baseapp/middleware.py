@@ -1,8 +1,8 @@
 import functools
 import traceback
 
-from core.logger_service import write_error_to_log_file
-from core.site_settings.models import SiteSetting
+from baseapp.logger import write_error_to_log_file
+from baseapp.models import SiteSetting
 from django.http import HttpResponseForbidden, HttpResponseServerError
 from django.shortcuts import render
 from loguru import logger as log

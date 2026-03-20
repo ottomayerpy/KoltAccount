@@ -29,19 +29,22 @@ INSTALLED_APPS = [
     'axes',
     'dotenv',
 
-    'home.apps.HomeConfig',
-    'core.site_settings.apps.SiteSettingsConfig',
-    'core.baseapp.apps.BaseappConfig',
-    'mailer.apps.MailerConfig',
-    'candy.apps.CandyConfig'
+    'baseapp.apps.BaseappConfig',
+    'candy.apps.CandyConfig',
+    'mailer.apps.MailerConfig'
 ]
 
 STATIC_VERSION = 1
+
 SITE_ID = 3
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+SITE_DOMAIN = 'koltaccount.ru'
 SITE_PROTOCOL = 'https'
-AUTH_USER_MODEL = "baseapp.UserModel"
 SITE_IN_SERVICE = False
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTH_USER_MODEL = "baseapp.UserModel"
+
 CANDIES_LIMIT = 200
 
 LOGIN_REDIRECT_URL = '/'
@@ -123,7 +126,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'axes.middleware.AxesMiddleware',
-    'core.middleware.BaseViewMiddleware',
+    'baseapp.middleware.BaseViewMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [

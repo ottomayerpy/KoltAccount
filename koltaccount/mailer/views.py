@@ -1,15 +1,14 @@
-from core.baseapp.models import UserModel
-from core.service import get_base_context
-from core.token_generator import account_activation_token
+from baseapp.models import UserModel
+from baseapp.utils import account_activation_token, get_base_context
 from django.contrib.sites.models import Site
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from mailer.service import activate_email, hiding_email, send_email
+from mailer.utils import activate_email, hiding_email, send_email
 
-from koltaccount.settings import SITE_PROTOCOL
+from koltaccount.settings import SITE_PROTOCOL, SITE_DOMAIN
 
 from .forms import EmailChangeForm
 
@@ -115,7 +114,7 @@ def check_test_template(request):
     context = {
         "username": request.user.username,
         "protocol": SITE_PROTOCOL,
-        "domain": "koltaccount.ru",
+        "domain": SITE_DOMAIN,
         "uid": "MQ%5B0-9A-Za-z_%5",
         "token": "-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%",
         "email": hiding_email(request.user.email),

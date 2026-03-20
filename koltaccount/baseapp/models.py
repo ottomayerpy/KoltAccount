@@ -1,7 +1,43 @@
-from core.baseapp.models import BaseModel
+from uuid import uuid7
+
+from django.db.models import UUIDField
+from django.utils.translation import gettext_lazy as _
+from django.db.models import DateTimeField, Model
+
+from django.contrib.auth.models import AbstractUser
+from django.db.models import BooleanField
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import CharField, JSONField, TextField
-from django.utils.translation import gettext_lazy as _
+
+
+class TimeStampedModel(Model):
+    """Абстрактный класс для моделей объектов,
+    которым необходимы временные отметки"""
+
+    created_time = DateTimeField(verbose_name=_("Создано"), auto_now_add=True)
+    modified_time = DateTimeField(verbose_name=_("Модифицировано"), auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class BaseModel(TimeStampedModel):
+    """Основной базовый класс моделей приложения"""
+
+    id = UUIDField(
+        primary_key=True, default=uuid7, editable=False, verbose_name=_("UUID")
+    )
+
+    class Meta:
+        abstract = True
+
+
+class UserModel(AbstractUser):
+    is_active_email = BooleanField(verbose_name=_("Подтверждение почты"), default=False)
+
+    def __str__(self):
+        return self.username
 
 
 class SiteSetting(BaseModel):

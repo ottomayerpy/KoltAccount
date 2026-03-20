@@ -3,37 +3,26 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='home_url'),
-    path('get_cpu_temp', views.get_cpu_temp, name='get_cpu_temp_url'),
-    path('save-cpu-temp-path/', views.save_cpu_temp_path, name='save_cpu_temp_path'),
-    path('lk/', views.lk, name='lk_url'),
-    path('noscript/', views.noscript, name='noscript_url'),
-    path('logs/', views.logs, name='logs_url'),
-    path('login/', views.kolt_login, name="kolt_login"),
-    path('register/', views.RegisterView.as_view(), name="register_url"),
-
-    path('support/', views.support, name='support_url'),
-    path('support/protection/', views.protection, name='protection_url'),
-    path('support/donation/', views.donation, name='donation_url'),
-    path('support/privacy/', views.privacy, name='privacy_url'),
-    path('support/terms/', views.terms, name='terms_url'),
-
-    path('lk/site_in_service_toggle/', views.site_in_service_toggle),
-    path('donation_notification/', views.donation_notification),
-
-    path('create_candy/', views.create_candy),
-    path('delete_candy/', views.delete_candy),
-    path('change_candy/', views.change_candy),
-    path('import_candies/', views.import_candies),
-
-    path('get_master_password/', views.get_master_password),
-    path('change_or_create_master_password/',
-         views.change_or_create_master_password),
-    path('register/check_username/', views.check_username),
-
-    path('accounts/password_reset/', views.KoltPasswordResetView.as_view(
-        html_email_template_name='registration/password_reset_email.html')),
-
-    path('master_password_reset/', views.master_password_reset,
-         name='master_password_reset_url'),
+    path("", views.index, name="home_url"),
+    path("get_cpu_temp", views.get_cpu_temp, name="get_cpu_temp_url"),
+    path("save-cpu-temp-path/", views.save_cpu_temp_path, name="save_cpu_temp_path"),
+    path("lk/", views.lk, name="lk_url"),
+    path("noscript/", views.noscript, name="noscript_url"),
+    path("logs/", views.logs, name="logs_url"),
+    path("login/", views.kolt_login, name="kolt_login"),
+    path("register/", views.RegisterView.as_view(), name="register_url"),
+    path("support/", views.support, name="support_url"),
+    path("support/protection/", views.protection, name="protection_url"),
+    path("support/donation/", views.donation, name="donation_url"),
+    path("support/privacy/", views.privacy, name="privacy_url"),
+    path("support/terms/", views.terms, name="terms_url"),
+    path("lk/site_in_service_toggle/", views.site_in_service_toggle),
+    path("donation_notification/", views.donation_notification),
+    path("register/check_username/", views.check_username),
+    path(
+        "accounts/password_reset/",
+        views.KoltPasswordResetView.as_view(
+            html_email_template_name="registration/password_reset_email.html"
+        ),
+    ),
 ]

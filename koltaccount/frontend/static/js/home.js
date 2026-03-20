@@ -32,38 +32,48 @@ $(function () {
             url: "get_master_password/",
             type: "GET",
             success: function (result) {
-                masterPassword = result["result"];
-                enMasterPassword = result["result"];
-                cs = result["cs"];
-                defaultCs = JSON.parse(result["default_cs"]);
-                if (masterPassword != "doesnotexist") {
-                    // Открываем модальное окно ввода ключа/мастер пароля
-                    $("#EnterKeyModal").modal("show");
-                } else {
-                    /* При первом посещении страницы, а также исходя из результата "doesnotexist", мастер пароля в базе не существует, поэтому... */
-                    // Отключаем поле ввода старого пароля в модальном окне изменения пароля
-                    $("#in-old_password").attr("disabled", "disabled").css("display", "none");
-                    $('label[for="in-old_password"]').css("display", "none");
-                    $("#pesonal-crypto-settings").css("display", "block");
-                    $(".modal-body-master-password").css("height", "560px");
-                    $("#btn-send_master_password").text("Создать");
-                    $("#MasterPasswordModal .modal-title").text("Конфигурация шифрования");
-                    // Открываем модальное окно изменения пароля
-                    $("#MasterPasswordModal").modal("show");
-                }
+                (enMasterPassword, (masterPassword = result["password"]));
+                cs = result["crypto_settings"];
+                defaultCs = JSON.parse(result["default_crypto_settings"]);
+
+                // Открываем модальное окно для ввода мастер-пароля
+                $("#EnterKeyModal").modal("show");
                 preloadHide();
             },
-            error: function (jqXHR, text, error) {
-                if (error == "Forbidden") {
+            error: function (jqXHR) {
+                if (jqXHR.status === 404) {
+                    // Статус 404 - мастер-пароль не найден (первый вход)
+                    defaultCs = JSON.parse(jqXHR.responseJSON["default_crypto_settings"]);
+
+                    // Отключаем поле старого пароля
+                    $("#in-old_password").attr("disabled", "disabled").css("display", "none");
+                    $('label[for="in-old_password"]').css("display", "none");
+
+                    // Показываем настройки шифрования
+                    $("#pesonal-crypto-settings").css("display", "block");
+                    $(".modal-body-master-password").css("height", "560px");
+
+                    // Меняем интерфейс на создание нового мастер-пароля
+                    $("#btn-send_master_password").text("Создать");
+                    $("#MasterPasswordModal .modal-title").text("Конфигурация шифрования");
+
+                    // Открываем модальное окно мастер пароля
+                    $("#MasterPasswordModal").modal("show");
+                } else if (jqXHR.status === 403) {
                     swal(
                         "Ошибка 403",
                         "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
                             " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
                             " включите их снова, по крайней мере, для этого сайта.",
-                        "error",
+                        "warning",
                     );
-                    preloadHide();
+                } else {
+                    let result = jqXHR.responseJSON;
+                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
                 }
+            },
+            complete: function () {
+                preloadHide();
             },
         });
     }
@@ -330,93 +340,95 @@ $(function () {
     }
 
     function changeOrCreateMasterPassword(newMasterPassword) {
-        /* Изменить или создать мастер пароль */
+        /* Создает или обновляет мастер-пароль */
         preloadShow();
-        setTimeout(function () {
-            const KEY = $(".key_select").val().split("/");
-            const IV = $(".iv_select").val().split("/");
-            const SALT = $(".salt_select").val().split("/");
-            const ITERATIONS = $("#in-iterations").val();
-            const CS = {
-                KEY: {
-                    size: KEY[0],
-                    division: KEY[1],
-                },
-                IV: {
-                    size: IV[0],
-                    division: IV[1],
-                },
-                SALT: {
-                    size: SALT[0],
-                    division: SALT[1],
-                },
-                ITERATIONS: ITERATIONS ? ITERATIONS : (Math.random() * (7999 - 57) + 57).toFixed(),
-            };
-            setCryptoSettings(defaultCs, CS);
-            const hash = enMP(newMasterPassword);
-            const masterPasswordKey = hash.key;
-            const result = hash.result;
 
-            const NEW_CS = encrypt(JSON.stringify(CS), newMasterPassword);
+        // Собираем настройки шифрования из формы
+        const KEY = $(".key_select").val().split("/");
+        const IV = $(".iv_select").val().split("/");
+        const SALT = $(".salt_select").val().split("/");
+        const ITERATIONS = $("#in-iterations").val();
 
+        const CRYPTO_SETTINGS = {
+            KEY: { size: KEY[0], division: KEY[1] },
+            IV: { size: IV[0], division: IV[1] },
+            SALT: { size: SALT[0], division: SALT[1] },
+            ITERATIONS: ITERATIONS || (Math.random() * (7999 - 57) + 57).toFixed(),
+        };
+
+        setCryptoSettings(defaultCs, CRYPTO_SETTINGS);
+
+        // Хешируем новый мастер-пароль
+        const HASH = enMP(newMasterPassword);
+        const MASTER_PASSWORD_KEY = HASH.key;
+        const ENCRYPTED_MASTER_PASSWORD = HASH.result;
+
+        // Шифруем настройки новым мастер-паролем
+        const ENCRYPTED_CRYPTO_SETTINGS = encrypt(JSON.stringify(CRYPTO_SETTINGS), newMasterPassword);
+
+        let dataToSend = {
+            new_cs: ENCRYPTED_CRYPTO_SETTINGS,
+            new_master_password: ENCRYPTED_MASTER_PASSWORD,
+        };
+
+        if ($("td").length > 0) {
+            // Собираем данные из таблицы для перешифровки
             let sites = {},
                 descriptions = {},
                 logins = {},
-                passwords = {},
-                tds = $("td");
+                passwords = {};
 
-            if (tds.length > 0) {
-                // Если таблица не пустая, то проходим циклом по ее элементам
-                tds.each(function (index, td) {
-                    let accountId = td.getAttribute("data-id");
-                    if (td.className == "td-site") {
-                        // Шифруем строку из ячейки и присваиваем ее массиву под индексом ее id в базе данных
-                        sites[accountId] = encrypt(td.innerHTML, masterPasswordKey);
-                    } else if (td.className == "td-description") {
-                        descriptions[accountId] = encrypt(td.innerHTML, masterPasswordKey);
-                    } else if (td.className == "td-login td-hide") {
-                        // Тоже самое, только предварительно расшировать, потому что логин хранится в ячейке в зашифрованном виде
-                        logins[accountId] = encrypt(decrypt(td.innerHTML, masterPassword), masterPasswordKey);
-                    } else if (td.className == "td-password td-hide") {
-                        // Тоже самое, только предварительно расшировать, потому что пароль хранится в ячейке в зашифрованном виде
-                        passwords[accountId] = encrypt(decrypt(td.innerHTML, masterPassword), masterPasswordKey);
-                    }
-                });
-            }
+            $("td").each(function () {
+                let accountId = $(this).data("id");
+                if (!accountId) return;
 
-            $.ajax({
-                url: "change_or_create_master_password/",
-                type: "POST",
-                data: {
-                    sites: JSON.stringify(sites),
-                    descriptions: JSON.stringify(descriptions),
-                    logins: JSON.stringify(logins),
-                    passwords: JSON.stringify(passwords),
-                    new_cs: NEW_CS,
-                    new_master_password: result,
-                },
-                success: function (result) {
-                    preloadHide();
-                    if (result["status"] == "success") {
-                        reloadPage();
-                    } else {
-                        swal("Ошибка", result["result"], "error");
-                    }
-                },
-                error: function (jqXHR, text, error) {
-                    if (error == "Forbidden") {
-                        swal(
-                            "Ошибка 403",
-                            "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                                " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                                " включите их снова, по крайней мере, для этого сайта.",
-                            "error",
-                        );
-                        preloadHide();
-                    }
-                },
+                if ($(this).hasClass("td-site")) {
+                    sites[accountId] = encrypt(this.innerHTML, MASTER_PASSWORD_KEY);
+                } else if ($(this).hasClass("td-description")) {
+                    descriptions[accountId] = encrypt(this.innerHTML, MASTER_PASSWORD_KEY);
+                } else if ($(this).hasClass("td-login")) {
+                    // Для логина: расшифровать старым ключом, зашифровать новым
+                    logins[accountId] = encrypt(decrypt(this.innerHTML, masterPassword), MASTER_PASSWORD_KEY);
+                } else if ($(this).hasClass("td-password")) {
+                    // Для пароля: расшифровать старым ключом, зашифровать новым
+                    passwords[accountId] = encrypt(decrypt(this.innerHTML, masterPassword), MASTER_PASSWORD_KEY);
+                }
             });
-        }, 600);
+
+            // Добавляем данные в отправку
+            Object.assign(dataToSend, {
+                sites: JSON.stringify(sites),
+                descriptions: JSON.stringify(descriptions),
+                logins: JSON.stringify(logins),
+                passwords: JSON.stringify(passwords),
+            });
+        }
+
+        $.ajax({
+            url: "save_master_password/",
+            type: "POST",
+            data: dataToSend,
+            success: function () {
+                reloadPage();
+            },
+            error: function (jqXHR) {
+                if (jqXHR.status === 403) {
+                    swal(
+                        "Ошибка 403",
+                        "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
+                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
+                            " включите их снова, по крайней мере, для этого сайта.",
+                        "warning",
+                    );
+                } else {
+                    let result = jqXHR.responseJSON;
+                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                }
+            },
+            complete: function () {
+                preloadHide();
+            },
+        });
     }
 
     function authorize() {
@@ -618,7 +630,9 @@ $(function () {
         } else if ($("#in-iterations").val() < 57 && $("#in-iterations").val() > 7999) {
             swal("Не допустимый диапазон итераций", "", "Warning");
         } else if (isNewPasswordValid && isRepeatPasswordValid) {
-            changeOrCreateMasterPassword($("#in-repeat_new_password").val());
+            setTimeout(function () {
+                changeOrCreateMasterPassword($("#in-repeat_new_password").val());
+            }, 600);
         }
     }
 

@@ -1,15 +1,24 @@
 import json
 
-from candy import service
 from candy.models import Candy, MasterPassword
 from core.middleware import is_ajax
 from core.service import get_base_context, json_response
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from koltaccount.settings import CANDIES_LIMIT
+from koltaccount.settings import (
+    CANDIES_LIMIT,
+    CRYPT_STR_AES_MODE,
+    CRYPT_STR_AES_PADDING,
+    DECRYPT_MP_SUBSTRING_END,
+    DECRYPT_MP_SUBSTRING_START,
+    DECRYPT_STR_SUBSTRING_END,
+    DECRYPT_STR_SUBSTRING_START,
+)
 
 from .forms import MasterPasswordResetForm
 
@@ -131,52 +140,109 @@ def import_candies(request):
 @is_ajax
 def get_master_password(request):
     """Возвращает мастер пароль"""
-    answer = service.get_master_password(user=request.user)
-    return json_response(answer)
+
+    # Настройки по умолчанию
+    default_crypto_settings = json.dumps(
+        {
+            "DECRYPT_SUBSTRING": {
+                "mp": {
+                    "start": DECRYPT_MP_SUBSTRING_START,
+                    "end": DECRYPT_MP_SUBSTRING_END,
+                },
+                "str": {
+                    "start": DECRYPT_STR_SUBSTRING_START,
+                    "end": DECRYPT_STR_SUBSTRING_END,
+                },
+            },
+            "CRYPT_STR_AES": {
+                "mode": CRYPT_STR_AES_MODE,
+                "padding": CRYPT_STR_AES_PADDING,
+            },
+        }
+    )
+
+    try:
+        master_password = MasterPassword.objects.get(user=request.user)
+        return json_response(
+            {
+                "password": master_password.password,
+                "crypto_settings": master_password.crypto_settings,
+                "default_crypto_settings": default_crypto_settings,
+            },
+            200,
+        )
+    except MasterPassword.DoesNotExist:
+        return json_response(
+            {
+                "result": "doesnotexist",
+                "default_crypto_settings": default_crypto_settings,
+            },
+            404,
+        )
 
 
 @is_ajax
-def change_or_create_master_password(request):
-    """Изменяет или создает мастер пароль"""
-    sites = request.POST.get("sites", None)
-    descriptions = request.POST.get("descriptions", None)
-    logins = request.POST.get("logins", None)
-    passwords = request.POST.get("passwords", None)
-    new_master_password = request.POST.get("new_master_password", None)
-    new_crypto_settings = request.POST.get("new_cs", None)
-
-    answer = service.change_or_create_master_password(
-        sites=sites,
-        descriptions=descriptions,
-        logins=logins,
-        passwords=passwords,
-        new_master_password=new_master_password,
-        new_crypto_settings=new_crypto_settings,
+def save_master_password(request):
+    """Создает или обновляет мастер-пароль"""
+    master, created = MasterPassword.objects.get_or_create(
         user=request.user,
+        defaults={
+            "password": request.POST["new_master_password"],
+            "crypto_settings": request.POST["new_cs"],
+        },
     )
-    return json_response(answer)
+
+    # Перешифровываем существующие конфетки если они есть
+    if Candy.objects.filter(user=request.user).exists():
+        sites = json.loads(request.POST["sites"])
+        desc = json.loads(request.POST["descriptions"])
+        logins = json.loads(request.POST["logins"])
+        passwords = json.loads(request.POST["passwords"])
+
+        for candy in Candy.objects.filter(user=request.user):
+            candy.site = sites[str(candy.id)]
+            candy.description = desc[str(candy.id)]
+            candy.login = logins[str(candy.id)]
+            candy.password = passwords[str(candy.id)]
+            candy.save()
+
+    # Обновляем существующий мастер-пароль
+    if not created:
+        master.password = request.POST["new_master_password"]
+        master.crypto_settings = request.POST["new_cs"]
+        master.save()
+
+    return HttpResponse(status=204)
 
 
+@login_required
 def master_password_reset(request):
     """Сброс мастер пароля"""
-    if not request.user.is_authenticated:
-        return redirect(reverse("home_url"))
-
     context = get_base_context(
         {
             "title": "Сброс мастер пароля",
             "form": MasterPasswordResetForm,
-            "form_message": "None",
-            "master_password": False,
+            "form_message": None,
+            "has_master_password": MasterPassword.objects.filter(
+                user=request.user
+            ).exists(),
         }
     )
 
-    if MasterPassword.objects.filter(user=request.user).exists():
-        context.update({"master_password": True})
+    if request.method != "POST":
+        return render(request, "registration/master_password_reset.html", context)
 
-    if request.method == "POST":
-        if service.master_password_reset(request) is not None:
-            return redirect(reverse("home_url"))
+    # Обработка POST запроса
+    password = request.POST.get("password")
 
-        context.update({"form_message": "Password is not valid"})
-    return render(request, "registration/master_password_reset.html", context)
+    if not check_password(password, request.user.password):
+        context["form_message"] = "Неверный пароль"
+        return render(request, "registration/master_password_reset.html", context)
+
+    # Удаляем все конфетки пользователя
+    Candy.objects.filter(user=request.user).delete()
+
+    # Удаляем мастер-пароль
+    MasterPassword.objects.filter(user=request.user).delete()
+
+    return redirect(reverse("home_url"))

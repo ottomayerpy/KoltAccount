@@ -53,10 +53,9 @@ LOGOUT_REDIRECT_URL = '/'
 # Почта поддержки
 SUPPORT_EMAIL = env("SUPPORT_EMAIL")
 
-###SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-###SECURE_SSL_REDIRECT = True
-
 SESSION_COOKIE_SAMESITE = 'Lax'  # 'Strict' #'Lax'
+
+### CSRF_TRUSTED_ORIGINS = ['https://koltaccount.ru']
 
 # Защита XSS для старых браузеров
 SECURE_BROWSER_XSS_FILTER = True
@@ -79,6 +78,7 @@ SECURE_BROWSER_XSS_FILTER = True
 
 # Если True, перенаправляет все запросы, отличные от HTTPS, на HTTPS
 ###SECURE_SSL_REDIRECT = True
+###SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Защита Content-Security-Policy для контента
 CSP_DEFAULT_SRC = ("'none'",)
@@ -160,8 +160,13 @@ WSGI_APPLICATION = 'koltaccount.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR.parent.parent.parent / 'db/kolt-db/db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
+        'CONN_MAX_AGE': 600,  # keep connections open
     }
 }
 

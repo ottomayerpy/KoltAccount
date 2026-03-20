@@ -42,6 +42,10 @@ class BaseModel(Model):
 class UserModel(BaseModel, AbstractUser):
     is_active_email = BooleanField(default=False, verbose_name=_("Подтверждение почты"))
 
+    class Meta:
+        verbose_name = _("Пользователь")
+        verbose_name_plural = _("Пользователи")
+
     def __str__(self):
         return self.username
 

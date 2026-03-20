@@ -32,7 +32,7 @@ $(function () {
             url: "get_master_password/",
             type: "GET",
             success: function (result) {
-                (enMasterPassword, (masterPassword = result["password"]));
+                enMasterPassword = result["password"];
                 cs = result["crypto_settings"];
                 defaultCs = JSON.parse(result["default_crypto_settings"]);
 
@@ -51,7 +51,7 @@ $(function () {
 
                     // Показываем настройки шифрования
                     $("#pesonal-crypto-settings").css("display", "block");
-                    $(".modal-body-master-password").css("height", "560px");
+                    $(".modal-body-master-password").css("height", "640px");
 
                     // Меняем интерфейс на создание нового мастер-пароля
                     $("#btn-send_master_password").text("Создать");

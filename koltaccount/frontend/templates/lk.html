@@ -8,11 +8,10 @@
     <div class="support-content row">
         <div class="col-md-4 lk-block">
             <button class="simple-tabs" data-nav-tab="true" data-tabs-id="1">Профиль</button>
-            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История пожертвований</button>
-            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">История авторизаций</button>
-            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Темы оформления</button>
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="2">История авторизаций</button>
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="3">Темы оформления</button>
             {% if request.user.is_staff %}
-            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="5">Администрирование</button>
+            <button class="simple-tabs" data-nav-tab="true" data-tabs-id="4">Администрирование</button>
             {% endif %}
         </div>
         <div class="col-md-8 lk-block">
@@ -52,25 +51,6 @@
                     </div>
                 </div>
                 <div class="swiper-tabs" data-tabs="2">
-                    <strong>История пожертвований</strong>
-                    {% for donate in donation %}
-                    <div class="js-donate" data-number="{{ forloop.counter }}">
-                        <input type="hidden" value="{{ donate.data }}" />
-                        <div class="auth-ip">User: {{ donate.user }}</div>
-                        <div class="auth-top">
-                            <div class="auth-display js-donate-notification_type"></div>
-                            <span class="auth-display">|</span>
-                            <div class="auth-display js-donate-withdraw_amount"></div>
-                        </div>
-                        <div class="auth-bottom">
-                            <div class="auth-display js-auth-date">{{ donate.timestamp|date:"Y-m-d_H:i" }}</div>
-                            <span class="auth-display">|</span>
-                            <div class="auth-display js-donate-codepro"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="swiper-tabs" data-tabs="3">
                     <strong>История авторизаций</strong>
                     <div class="auth-history-container">
                         {% if login_history %} {% for item in login_history %} {% if item.type == 'log' %}
@@ -136,7 +116,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="swiper-tabs" data-tabs="4">
+                <div class="swiper-tabs" data-tabs="3">
                     <strong>Темы оформления</strong>
                     <div class="theme-tabs">
                         <button class="theme-tab active" data-theme-mode="light">Светлая тема</button>
@@ -248,7 +228,7 @@
                     </div>
                 </div>
                 {% if request.user.is_staff %}
-                <div class="swiper-tabs" data-tabs="5" align="center">
+                <div class="swiper-tabs" data-tabs="4" align="center">
                     <strong>Администрирование</strong>
 
                     <!-- Настройки сайта -->

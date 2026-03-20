@@ -764,29 +764,6 @@ label {
     padding-left: 15px;
 }
 
-/* Очистка поля ввода */
-.input_clear {
-    background-image: url('/frontend/static/img/svg/donation/clear_input.svg');
-    width: 28px;
-    height: 36px;
-    position: absolute;
-    z-index: 5;
-    top: 90px;
-    left: 134px;
-    margin: 0;
-    padding: 0;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    cursor: pointer;
-    pointer-events: auto;
-    opacity: .3;
-    transition: opacity .1s ease-out;
-}
-
-.input_clear:hover {
-    opacity: .8;
-}
-
 /* --- Скрыть стрелочки для input type number --- */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
@@ -923,10 +900,6 @@ tbody tr {
 
 .card-body p span {
     font-weight: bold;
-}
-
-.donation_card {
-    margin-bottom: 10px;
 }
 
 /* ==========================================================================
@@ -1237,74 +1210,8 @@ tbody tr {
 /* ==========================================================================
    3.17. Пожертвования (donation)
    ========================================================================== */
-.donation_form_title p {
-    font-size: 12px;
-}
 
-.donation_form_title h4 {
-    font-weight: 800;
-}
-
-.donation_form_label_sum {
-    font-size: 12px;
-    font-weight: unset;
-}
-
-.donation_form_input_sum {
-    width: 150px;
-}
-
-.donation_form_donate_button {
-    width: 150px;
-}
-
-#donation_form_radio_yandex_money {
-    background-image: url('/frontend/static/img/svg/donation/yandex_money.svg');
-}
-
-#donation_form_radio_visa_card {
-    background-image: url('/frontend/static/img/svg/donation/visa_card.svg');
-}
-
-#donation_vk {
-    box-shadow: 0 2px 25px #4c75a1;
-    border-radius: 50px;
-}
-
-#donation_facebook {
-    box-shadow: 0 2px 25px #4465a2;
-    border-radius: 50px;
-    background: #4465a2;
-}
-
-#donation_ok {
-    box-shadow: 0 2px 25px #e17e35;
-    border-radius: 30px;
-}
-
-#donation_twitter {
-    box-shadow: 0 2px 25px #55acee;
-    border-radius: 30px;
-}
-
-#donation_mailru {
-    background-color: #2166a9;
-    border-radius: 30px;
-    padding: 5px;
-    box-shadow: 0 2px 25px #2166a9;
-}
-
-.donate_icon {
-    display: inline-block;
-    background-position: 50%;
-    background-repeat: no-repeat;
-    background-size: contain;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
-    width: 19px;
-    height: 20px;
-}
+   /* Удалено */
 
 /* ==========================================================================
    3.18. Разное

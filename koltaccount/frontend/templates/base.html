@@ -162,7 +162,6 @@
                             </a>
                             <ul class="k-dropdown-menu">
                                 <li><a href="{% url 'support_url' %}" class="k-dropdown-item">Помощь</a></li>
-                                <li><a href="{% url 'donation_url' %}" class="k-dropdown-item">Пожертвования</a></li>
                                 <li><a href="{% url 'lk_url' %}" class="k-dropdown-item">Кабинет</a></li>
                             </ul>
                         </li>
@@ -174,9 +173,6 @@
                         </li>
 
                         {% if request.user.is_authenticated %}
-                        <li class="k-nav-item">
-                            <a href="{% url 'donation_url' %}" class="k-nav-link">Пожертвования</a>
-                        </li>
                         <li class="k-nav-item">
                             <a href="{% url 'lk_url' %}" class="k-nav-link">Кабинет</a>
                         </li>
@@ -202,12 +198,10 @@
             {% if request.user.is_superuser %}
             <li class="k-mobile-item"><a href="{% url 'admin:index' %}" class="k-mobile-link">Админка</a></li>
             <li class="k-mobile-item"><a href="{% url 'support_url' %}" class="k-mobile-link">Помощь</a></li>
-            <li class="k-mobile-item"><a href="{% url 'donation_url' %}" class="k-mobile-link">Пожертвования</a></li>
             <li class="k-mobile-item"><a href="{% url 'lk_url' %}" class="k-mobile-link">Кабинет</a></li>
             {% else %}
             <li class="k-mobile-item"><a href="{% url 'support_url' %}" class="k-mobile-link">Помощь</a></li>
             {% if request.user.is_authenticated %}
-            <li class="k-mobile-item"><a href="{% url 'donation_url' %}" class="k-mobile-link">Пожертвования</a></li>
             <li class="k-mobile-item"><a href="{% url 'lk_url' %}" class="k-mobile-link">Кабинет</a></li>
             {% else %}
             <li class="k-mobile-item k-mobile-auth">

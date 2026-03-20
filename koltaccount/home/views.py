@@ -5,8 +5,6 @@ import os
 from axes.models import AccessAttempt, AccessLog
 from candy.models import Candy
 from core.baseapp.models import UserModel
-from core.donation import yandex_donations
-from core.donation.models import Donation
 from core.logger_service import get_logs
 from core.middleware import is_ajax
 from core.service import (
@@ -119,15 +117,6 @@ def noscript(request):
     return render(request, "noscript.html", context)
 
 
-def donation_notification(request):
-    """Уведомление о получении пожертвования"""
-    if request.method == "POST":
-        if yandex_donations.create_donation(request.POST.dict()):
-            return HttpResponse()
-        return HttpResponseServerError()
-    return HttpResponseForbidden(render(request, "403.html"))
-
-
 def lk(request):
     """Личный кабинет пользователя"""
 
@@ -171,9 +160,6 @@ def lk(request):
         {
             "title": "Личный кабинет",
             "login_history": combined_history[:50],  # Ограничим 50 записями
-            "donation": Donation.objects.filter(user=request.user).order_by(
-                "-timestamp"
-            ),
             "cpu_temp_path": SiteSetting.get_str("cpu_temp_path"),
         }
     )
@@ -183,17 +169,6 @@ def lk(request):
 def support(request):
     context = get_base_context({"title": "Помощь и поддержка"})
     return render(request, "support/support.html", context)
-
-
-def donation(request):
-    context = get_base_context(
-        {
-            "title": "Пожертвования",
-            "wallet_number": YANDEX_MONEY_WALLET_NUMBER,
-            "default_sum": YANDEX_MONEY_DEFAULT_SUM,
-        }
-    )
-    return render(request, "support/donation.html", context)
 
 
 def protection(request):

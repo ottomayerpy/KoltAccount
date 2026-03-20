@@ -149,7 +149,7 @@ $(function() {
         storage.setItem('lk_active_swiper_tab', $(this).attr('data-tabs-id'));
         
         /* Если это таб с темами (id=4), обновляем отображение */
-        if ($(this).attr('data-tabs-id') === '4') {
+        if ($(this).attr('data-tabs-id') === '3') {
             updateThemesTabDisplay();
         }
     });
@@ -224,34 +224,7 @@ $(function() {
     });
 
     // ==========================================================================
-    // 4. ИСТОРИЯ ПОЖЕРТВОВАНИЙ
-    // ==========================================================================
-    
-    $('.js-donate').each(function() {
-        let notification_type = $(this).find('.js-donate-notification_type');
-        let withdraw_amount = $(this).find('.js-donate-withdraw_amount');
-        let codepro = $(this).find('.js-donate-codepro');
-        let json_date = JSON.parse($(this).find('input').val());
-
-        $(this).find('input').val('');
-
-        if (json_date['notification_type'] == 'p2p-incoming') {
-            notification_type.text('Яндекс деньги');
-        } else {
-            notification_type.text('Банковская карта');
-        }
-
-        if (json_date['codepro'] == 'false') {
-            codepro.text('Платеж подтвержден');
-        } else {
-            codepro.text('Платеж не подтвержден');
-        }
-
-        withdraw_amount.text(json_date['withdraw_amount'] + ' ₽');
-    });
-
-    // ==========================================================================
-    // 5. ФОРМАТИРОВАНИЕ ДАТ
+    // 4. ФОРМАТИРОВАНИЕ ДАТ
     // ==========================================================================
     
     function formatDate(format_date, format_string) {

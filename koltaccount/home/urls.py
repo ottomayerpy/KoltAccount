@@ -13,11 +13,9 @@ urlpatterns = [
     path("register/", views.RegisterView.as_view(), name="register_url"),
     path("support/", views.support, name="support_url"),
     path("support/protection/", views.protection, name="protection_url"),
-    path("support/donation/", views.donation, name="donation_url"),
     path("support/privacy/", views.privacy, name="privacy_url"),
     path("support/terms/", views.terms, name="terms_url"),
     path("lk/site_in_service_toggle/", views.site_in_service_toggle),
-    path("donation_notification/", views.donation_notification),
     path("register/check_username/", views.check_username),
     path(
         "accounts/password_reset/",

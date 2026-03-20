@@ -1,6 +1,5 @@
 from candy.models import Candy, MasterPassword
 from core.baseapp.forms import PersonChangeForm, PersonCreationForm
-from core.donation.models import Donation
 from core.site_settings.models import SiteSetting
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -30,11 +29,6 @@ class PersonAdmin(UserAdmin):
 @admin.register(MasterPassword, site=admin_site)
 class MasterPasswordAdmin(admin.ModelAdmin):
     list_display = ["user", "password"]
-
-
-@admin.register(Donation, site=admin_site)
-class DonationAdmin(admin.ModelAdmin):
-    list_display = ["user"]
 
 
 @admin.register(SiteSetting, site=admin_site)

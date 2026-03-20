@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'dotenv',
 
     'home.apps.HomeConfig',
-    'core.donation.apps.DonationConfig',
     'core.site_settings.apps.SiteSettingsConfig',
     'core.baseapp.apps.BaseappConfig',
     'mailer.apps.MailerConfig',
@@ -50,10 +49,6 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Почта поддержки
 SUPPORT_EMAIL = env("SUPPORT_EMAIL")
-YANDEX_MONEY_WALLET_NUMBER = env("YANDEX_MONEY_WALLET_NUMBER")
-YANDEX_MONEY_DEFAULT_SUM = env("YANDEX_MONEY_DEFAULT_SUM")
-DONATION_NOTIFICATION_SECRET_KEY = env(
-    "DONATION_NOTIFICATION_SECRET_KEY")
 
 ###SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ###SECURE_SSL_REDIRECT = True

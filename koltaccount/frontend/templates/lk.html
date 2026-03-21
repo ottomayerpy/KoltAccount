@@ -44,7 +44,10 @@
                                     <a href="{% url 'master_password_reset_url' %}" class="btn btn-kolt btn-block default"> Сбросить мастер пароль </a>
                                 </div>
                                 <div class="mt-20">
-                                    <a href="{% url 'logout' %}" class="btn btn-kolt btn-block default"> ‹ Выход › </a>
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-kolt btn-block default">‹ Выход ›</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

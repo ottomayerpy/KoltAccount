@@ -3,7 +3,11 @@ import traceback
 
 from baseapp.logger import write_error_to_log_file
 from baseapp.models import SiteSetting
-from django.http import HttpResponseForbidden, HttpResponseServerError
+from django.http import (
+    HttpResponseForbidden,
+    HttpResponseNotFound,
+    HttpResponseServerError,
+)
 from django.shortcuts import render
 from loguru import logger as log
 
@@ -33,11 +37,23 @@ class BaseViewMiddleware:
 
 
 def is_ajax(function):
-    """Декоратор посылает 403 если не ajax запрос"""
+    """Декоратор посылает 404 если не ajax запрос"""
 
     @functools.wraps(function)
     def wrapper(request, *args, **kwargs):
         if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
+            return function(request, *args, **kwargs)
+        return HttpResponseNotFound(render(request, "404.html"))
+
+    return wrapper
+
+
+def is_staff(function):
+    """Декоратор посылает 403 если пользователь не admin"""
+
+    @functools.wraps(function)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_staff:
             return function(request, *args, **kwargs)
         return HttpResponseForbidden(render(request, "403.html"))
 

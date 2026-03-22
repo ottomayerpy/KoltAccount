@@ -57,20 +57,9 @@ $(function () {
                         is_form_submit = true;
                         $("form").submit();
                     }
-
-                    preloadHide();
                 },
-                error: function (jqXHR, text, error) {
-                    if (error == "Forbidden") {
-                        swal(
-                            "Ошибка 403",
-                            "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                                " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                                " включите их снова, по крайней мере, для этого сайта.",
-                            "error"
-                        );
-                        preloadHide();
-                    }
+                complete: function () {
+                    preloadHide();
                 }
             });
 

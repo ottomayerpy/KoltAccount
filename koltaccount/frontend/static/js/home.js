@@ -59,14 +59,6 @@ $(function () {
 
                     // Открываем модальное окно мастер пароля
                     $("#MasterPasswordModal").modal("show");
-                } else if (jqXHR.status === 403) {
-                    swal(
-                        "Ошибка 403",
-                        "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                            " включите их снова, по крайней мере, для этого сайта.",
-                        "warning",
-                    );
                 } else {
                     let result = jqXHR.responseJSON;
                     swal("Ошибка", result?.result || "Что-то пошло не так", "error");
@@ -135,18 +127,8 @@ $(function () {
             },
             // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                if (jqXHR.status === 403) {
-                    swal(
-                        "Ошибка 403",
-                        "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                            " включите их снова, по крайней мере, для этого сайта.",
-                        "warning",
-                    );
-                } else {
-                    let result = jqXHR.responseJSON;
-                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
-                }
+                let result = jqXHR.responseJSON;
+                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -240,18 +222,8 @@ $(function () {
             },
             // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                if (jqXHR.status === 403) {
-                    swal(
-                        "Ошибка 403",
-                        "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                            " включите их снова, по крайней мере, для этого сайта.",
-                        "warning",
-                    );
-                } else {
-                    let result = jqXHR.responseJSON;
-                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
-                }
+                let result = jqXHR.responseJSON;
+                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -320,18 +292,8 @@ $(function () {
             },
             // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                if (jqXHR.status === 403) {
-                    swal(
-                        "Ошибка 403",
-                        "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                            " включите их снова, по крайней мере, для этого сайта.",
-                        "warning",
-                    );
-                } else {
-                    let result = jqXHR.responseJSON;
-                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
-                }
+                let result = jqXHR.responseJSON;
+                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -412,18 +374,8 @@ $(function () {
                 reloadPage();
             },
             error: function (jqXHR) {
-                if (jqXHR.status === 403) {
-                    swal(
-                        "Ошибка 403",
-                        "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                            " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                            " включите их снова, по крайней мере, для этого сайта.",
-                        "warning",
-                    );
-                } else {
-                    let result = jqXHR.responseJSON;
-                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
-                }
+                let result = jqXHR.responseJSON;
+                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -891,14 +843,6 @@ $(function () {
                         swal("Превышен лимит", "Достигнут лимит на добавление записей", "warning");
                     } else if (jqXHR.status === 400) {
                         swal("Ошибка", "Неверный формат JSON файла", "error");
-                    } else if (jqXHR.status === 403) {
-                        swal(
-                            "Ошибка 403",
-                            "Этот сайт требует наличия файла cookie CSRF при отправке форм." +
-                                " Если вы настроили свой браузер так, чтобы он не сохранял файлы cookie," +
-                                " включите их снова, по крайней мере, для этого сайта.",
-                            "warning",
-                        );
                     } else {
                         let result = jqXHR.responseJSON;
                         swal("Ошибка", result?.result || "Что-то пошло не так", "error");

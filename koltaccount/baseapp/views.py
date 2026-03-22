@@ -5,7 +5,7 @@ import os
 from axes.models import AccessAttempt, AccessLog
 from baseapp.forms import KoltAuthenticationForm, KoltPasswordResetForm, RegisterForm
 from baseapp.logger import get_logs
-from baseapp.middleware import is_ajax
+from baseapp.middleware import is_ajax, is_staff
 from baseapp.models import SiteSetting, UserModel
 from baseapp.utils import (
     account_activation_token,
@@ -15,21 +15,16 @@ from baseapp.utils import (
     json_response,
 )
 from candy.models import Candy
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.models import Site
-from django.http import (
-    HttpResponse,
-    HttpResponseForbidden,
-    HttpResponseServerError,
-    JsonResponse,
-)
+from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import TemplateView
 from mailer.utils import send_email
 
@@ -39,7 +34,9 @@ from koltaccount.settings import SITE_PROTOCOL, SUPPORT_EMAIL
 locale.setlocale(locale.LC_ALL, "")
 
 
-@staff_member_required
+@require_GET
+@is_staff
+@is_ajax
 def get_cpu_temp(request) -> HttpResponse:
     cpu_temp_path = SiteSetting.get_str("cpu_temp_path")
     if cpu_temp_path:
@@ -53,8 +50,8 @@ def get_cpu_temp(request) -> HttpResponse:
     return HttpResponseServerError("Не установлена настройка сайта cpu_temp_path")
 
 
-@staff_member_required
 @require_POST
+@is_staff
 def save_cpu_temp_path(request):
     """
     Сохраняет путь к датчику температуры CPU
@@ -96,10 +93,9 @@ def index(request):
     return render(request, "home.html", context)
 
 
+@is_staff
 def logs(request):
     """Страница с отображением последних логов"""
-    if not request.user.is_staff:
-        return HttpResponseForbidden(render(request, "403.html"))
     context = get_base_context({"title": "Логи", "logs": get_logs()})
     return render(request, "logs.html", context)
 
@@ -110,6 +106,7 @@ def noscript(request):
     return render(request, "noscript.html", context)
 
 
+@login_required
 def lk(request):
     """Личный кабинет пользователя"""
 
@@ -188,15 +185,20 @@ def terms(request):
     return render(request, "support/terms.html", context)
 
 
+@require_POST
+@is_staff
 @is_ajax
 def site_in_service_toggle(request):
-    """Закрыть сайт на техническое обслуживание"""
-    if request.user.is_staff:
-        new_value, created = SiteSetting.toggle("site_in_service")
-        return json_response(new_value)
-    return HttpResponseForbidden(render(request, "403.html"))
+    """Переключить режим обслуживания сайта"""
+    changed, _ = SiteSetting.toggle("site_in_service")
+
+    if not changed:
+        return HttpResponse(status=404)
+
+    return HttpResponse(status=204)
 
 
+@require_POST
 @is_ajax
 def check_username(request):
     """Проверяет существование имени в БД"""
@@ -215,17 +217,11 @@ def kolt_login(request):
     if request.method == "POST":
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
-        # system = request.POST.get("system", None)
-        # browser = request.POST.get("browser", None)
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
-            # nlh_thread = login_history_service.NewLoginHistory(
-            #     user, request.META, system, browser)
-            # nlh_thread.start()
-            # nlh_thread.join(1.0)
             return redirect(reverse("home_url"))
 
         context.update({"form_message": "Login error"})

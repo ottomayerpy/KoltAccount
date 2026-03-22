@@ -47,6 +47,7 @@ AUTH_USER_MODEL = "baseapp.UserModel"
 
 CANDIES_LIMIT = 200
 
+LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 

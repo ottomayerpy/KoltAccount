@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_GET, require_POST
 
 from koltaccount.settings import (
     CANDIES_LIMIT,
@@ -23,6 +23,8 @@ from koltaccount.settings import (
 from .forms import MasterPasswordResetForm
 
 
+@require_POST
+@login_required
 @is_ajax
 def create_candy(request):
     """Создает конфетку"""
@@ -50,6 +52,7 @@ def create_candy(request):
 
 
 @require_POST
+@login_required
 @is_ajax
 def delete_candy(request):
     """Удаляет конфетку"""
@@ -58,12 +61,14 @@ def delete_candy(request):
     if not candy_id:
         return json_response({"result": "missing_candy_id"}, 400)
 
-    if not Candy.objects.filter(id=candy_id).delete()[0]:
+    if not Candy.objects.filter(id=candy_id, user=request.user).delete()[0]:
         return json_response({"result": "doesnotexist"}, 404)
 
     return HttpResponse(status=204)
 
 
+@require_POST
+@login_required
 @is_ajax
 def change_candy(request):
     """Изменяет конфетку"""
@@ -73,7 +78,7 @@ def change_candy(request):
         return json_response({"result": "missing_candy_id"}, 400)
 
     try:
-        candy = Candy.objects.get(id=candy_id)
+        candy = Candy.objects.get(id=candy_id, user=request.user)
     except Candy.DoesNotExist:
         return json_response({"result": "doesnotexist"}, 404)
 
@@ -93,6 +98,7 @@ def change_candy(request):
 
 
 @require_POST
+@login_required
 @is_ajax
 def import_candies(request):
     """Массовый импорт конфеток"""
@@ -137,6 +143,8 @@ def import_candies(request):
     )
 
 
+@require_GET
+@login_required
 @is_ajax
 def get_master_password(request):
     """Возвращает мастер пароль"""
@@ -181,6 +189,8 @@ def get_master_password(request):
         )
 
 
+@require_POST
+@login_required
 @is_ajax
 def save_master_password(request):
     """Создает или обновляет мастер-пароль"""

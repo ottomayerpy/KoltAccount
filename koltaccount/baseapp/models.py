@@ -141,17 +141,18 @@ class SiteSetting(BaseModel):
         return []
 
     @classmethod
-    def toggle(cls, name, default=False, description=""):
+    def toggle(cls, name, create=False, default=False, description=""):
         """
         Переключить булево значение настройки
 
         Args:
             name: имя настройки
             default: значение по умолчанию, если настройки нет
+            create: создавать настройку если её нет
             description: описание (используется при создании)
 
         Returns:
-            tuple: (новое значение, создана ли настройка)
+            tuple: (изменено ли значение, создана ли настройка)
         """
         try:
             # Пытаемся получить существующую настройку
@@ -160,9 +161,10 @@ class SiteSetting(BaseModel):
             new_value = not bool(obj.value)
             obj.value = new_value
             obj.save()
-            return obj.value, False
-
+            return True, False
         except cls.DoesNotExist:
+            if not create:
+                return False, False
             # Создаем новую с инвертированным default
             new_value = not bool(default)
             obj = cls.objects.create(
@@ -170,7 +172,7 @@ class SiteSetting(BaseModel):
                 value=new_value,
                 description=description or cls.get_default_description(name),
             )
-            return obj.value, True
+            return True, True
 
     @classmethod
     def get_default_description(cls, name):

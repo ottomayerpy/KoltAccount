@@ -1,6 +1,6 @@
 from baseapp.models import BaseModel, UserModel
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import CASCADE, CharField, ForeignKey, JSONField, OneToOneField
+from django.db.models import CASCADE, ForeignKey, JSONField, OneToOneField, TextField
 from django.utils.translation import gettext_lazy as _
 
 
@@ -13,10 +13,10 @@ class Candy(BaseModel):
         on_delete=CASCADE,
         related_name="candies",  # user.candies.all()
     )
-    site = CharField(verbose_name=_("Сайт"), max_length=255)
-    description = CharField(verbose_name=_("Описание"), max_length=255)
-    login = CharField(verbose_name=_("Логин"), max_length=255)
-    password = CharField(verbose_name=_("Пароль"), max_length=255)
+    site = TextField(verbose_name=_("Сайт"))
+    description = TextField(verbose_name=_("Описание"))
+    login = TextField(verbose_name=_("Логин"))
+    password = TextField(verbose_name=_("Пароль"))
 
     def __str__(self):
         return self.user.username
@@ -30,7 +30,7 @@ class MasterPassword(BaseModel):
     """Мастер пароль пользователя"""
 
     user = OneToOneField(UserModel, verbose_name=_("Пользователь"), on_delete=CASCADE)
-    password = CharField(verbose_name=_("Пароль"), max_length=255)
+    password = TextField(verbose_name=_("Пароль"))
     crypto_settings = JSONField(
         verbose_name=_("Значение"),
         default=dict,

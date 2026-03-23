@@ -28,7 +28,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import TemplateView
 from mailer.utils import send_email
 
-from koltaccount.settings import SITE_PROTOCOL, SUPPORT_EMAIL
+from koltaccount.settings import SITE_PROTOCOL, SUPPORT_EMAIL, CANDIES_LIMIT
 
 # Русская локализация для даты
 locale.setlocale(locale.LC_ALL, "")
@@ -70,8 +70,8 @@ def save_cpu_temp_path(request):
 
     except json.JSONDecodeError:
         return JsonResponse({"error": "Неверный формат данных"}, status=400)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+    except Exception:
+        return HttpResponse(status=500)
 
 
 def index(request):
@@ -87,6 +87,7 @@ def index(request):
     context.update(
         {
             "accounts": Candy.objects.filter(user=request.user),
+            "CANDIES_LIMIT": CANDIES_LIMIT,
         }
     )
 

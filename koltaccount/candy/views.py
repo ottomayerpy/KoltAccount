@@ -70,6 +70,25 @@ def delete_candy(request):
 @require_POST
 @login_required
 @is_ajax
+def clear_all_candies(request):
+    """
+    Очистить все конфетки пользователя
+
+    Returns:
+        200: все конфетки удалены
+        404: нет конфеток
+    """
+    deleted_count, _ = Candy.objects.filter(user=request.user).delete()
+
+    if deleted_count == 0:
+        return HttpResponse(status=404)
+
+    return HttpResponse(status=204)
+
+
+@require_POST
+@login_required
+@is_ajax
 def change_candy(request):
     """Изменяет конфетку"""
     candy_id = request.POST.get("candy_id")

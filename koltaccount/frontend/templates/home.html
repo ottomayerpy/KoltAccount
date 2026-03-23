@@ -14,13 +14,16 @@
 <div class="container account_container {% if not request.user.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
     <div align="center" class="main_buttons">
         <button id="btn_create_account_modal" data-toggle="modal" data-target="#CreateAccountModal" class="btn btn-kolt btn-round">Добавить аккаунт</button>
+        <button id="btn_clear_all_candies" class="btn btn-kolt btn-round">
+            Очистить (<span id="candies_count">{{ accounts.count }}</span>/{{ CANDIES_LIMIT }})
+        </button>
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-kolt btn-round">Мастер пароль</button>
     </div>
     <input class="form-control" placeholder="Поиск" type="text" id="in-search" maxlength="254">
     <table id="Accounts_table" class="main_table tablesorter tablesorter-blue">
         <thead>
             <tr>
-                <th class="account_table_th_icon" id="js-account-counter" data-sorter="false">{{ accounts.count }}</th>
+                <th class="account_table_th_icon" data-sorter="false"></th>
                 <th>Сайт</th>
                 <th>Описание</th>
             </tr>

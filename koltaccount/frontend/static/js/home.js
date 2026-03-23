@@ -60,8 +60,7 @@ $(function () {
                     // Открываем модальное окно мастер пароля
                     $("#MasterPasswordModal").modal("show");
                 } else {
-                    let result = jqXHR.responseJSON;
-                    swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                    swal("Ошибка", "Что-то пошло не так", "error");
                 }
             },
             complete: function () {
@@ -115,8 +114,8 @@ $(function () {
                         true,
                         function () {
                             // Увеличиваем счетчик конфеток
-                            const candyCount = parseInt($("#js-account-counter div").text());
-                            $("#js-account-counter div").text(candyCount + 1);
+                            const candyCount = parseInt($("#candies_count").text());
+                            $("#candies_count").text(candyCount + 1);
                             // Очищаем поля ввода (логин и пароль очищаются всегда при закрытии модалки)
                             $("#in-site, #in-description").val("");
                             // Подсвечиваем только что добавленную строку
@@ -127,8 +126,7 @@ $(function () {
             },
             // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                let result = jqXHR.responseJSON;
-                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                swal("Ошибка", "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -216,20 +214,68 @@ $(function () {
                     // После завершения анимации удаляем строку из DOM
                     $(this).remove();
                     // Уменьшаем счетчик конфеток
-                    const currentCount = parseInt($("#js-account-counter").text()) || 0;
-                    $("#js-account-counter").text(currentCount - 1);
+                    const candyCount = parseInt($("#candies_count").text());
+                    $("#candies_count").text(candyCount - 1);
                 });
             },
             // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                let result = jqXHR.responseJSON;
-                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                swal("Ошибка", "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
             },
         });
     }
+
+    function clearAllCandies() {
+        preloadShow();
+
+        $.ajax({
+            url: "clear_all_candies/",
+            type: "POST",
+            success: function () {
+                $("#Accounts_table tbody tr").fadeOut(150, function () {
+                    $(this).remove();
+                    $("#candies_count").text("0");
+                });
+            },
+            error: function (jqXHR) {
+                if (jqXHR.status === 404) {
+                    swal("Ошибка", "Нет аккаунтов для удаления", "info");
+                } else {
+                    swal("Ошибка", "Что-то пошло не так", "error");
+                }
+            },
+            complete: function () {
+                preloadHide();
+            },
+        });
+    }
+
+    // Добавляем обработчик для кнопки очистки
+    $("#btn_clear_all_candies").on("click", function () {
+        let currentCount = parseInt($("#candies_count").text());
+
+        if (currentCount === 0) {
+            swal("Ошибка", "Нет аккаунтов для удаления", "info");
+            return;
+        }
+
+        swal(
+            {
+                title: "Вы уверены?",
+                text: `Будет удалено ${currentCount} аккаунт${currentCount === 1 ? "" : currentCount < 5 ? "а" : "ов"}. Это действие нельзя отменить!`,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Да, удалить всё!",
+                cancelButtonText: "Отмена",
+            },
+            function () {
+                clearAllCandies();
+            },
+        );
+    });
 
     function changeCandy() {
         /* Изменение информации аккаунта */
@@ -292,8 +338,7 @@ $(function () {
             },
             // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                let result = jqXHR.responseJSON;
-                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                swal("Ошибка", "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -374,8 +419,7 @@ $(function () {
                 reloadPage();
             },
             error: function (jqXHR) {
-                let result = jqXHR.responseJSON;
-                swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                swal("Ошибка", "Что-то пошло не так", "error");
             },
             complete: function () {
                 preloadHide();
@@ -822,8 +866,8 @@ $(function () {
                     addImportedCandiesToTable(result.imported, candiesForTable);
 
                     // Обновляем счетчик
-                    const currentCount = parseInt($("#js-account-counter div").text());
-                    $("#js-account-counter div").text(currentCount + result.success_count);
+                    const candyCount = parseInt($("#candies_count").text());
+                    $("#candies_count").text(candyCount + result.success_count);
 
                     // Формируем сообщение о результате
                     let message = `Импортировано: ${result.success_count} из ${result.total}`;
@@ -844,8 +888,7 @@ $(function () {
                     } else if (jqXHR.status === 400) {
                         swal("Ошибка", "Неверный формат JSON файла", "error");
                     } else {
-                        let result = jqXHR.responseJSON;
-                        swal("Ошибка", result?.result || "Что-то пошло не так", "error");
+                        swal("Ошибка", "Что-то пошло не так", "error");
                     }
                 },
                 complete: function () {

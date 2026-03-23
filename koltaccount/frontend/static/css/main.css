@@ -6,7 +6,7 @@
    1. ПЕРЕМЕННЫЕ И ТЕМЫ
    ========================================================================== */
 
-    /* В color-themes.css */
+/* В color-themes.css */
 
 /* ==========================================================================
    2. БАЗОВЫЕ СТИЛИ
@@ -16,10 +16,11 @@
    2.1. Шрифты
    ========================================================================== */
 @font-face {
-    font-family: 'Comfortaa';
-    src: url('/frontend/static/fonts/comfortaa/comfortaa_regular.woff2') format('woff2'),
-         url('/frontend/static/fonts/comfortaa/comfortaa_regular.woff') format('woff'),
-         url('/frontend/static/fonts/comfortaa/comfortaa_regular.ttf') format('truetype');
+    font-family: "Comfortaa";
+    src:
+        url("/frontend/static/fonts/comfortaa/comfortaa_regular.woff2") format("woff2"),
+        url("/frontend/static/fonts/comfortaa/comfortaa_regular.woff") format("woff"),
+        url("/frontend/static/fonts/comfortaa/comfortaa_regular.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
     font-display: fallback;
@@ -28,13 +29,29 @@
 /* ==========================================================================
    2.2. Типографика
    ========================================================================== */
-p, h1, h2, h4, h5, strong, label, td, th, button, a,
-.auth, .popover-title, .popover-content, .logo, .cpu_temp, .simple-tabs {
+p,
+h1,
+h2,
+h4,
+h5,
+strong,
+label,
+td,
+th,
+button,
+a,
+.auth,
+.popover-title,
+.popover-content,
+.logo,
+.cpu_temp,
+.simple-tabs {
     font-family: Comfortaa;
     color: var(--text-color);
 }
 
-.h2, h2 {
+.h2,
+h2 {
     font-size: 28px;
 }
 
@@ -58,9 +75,10 @@ body.modal-open {
     overflow: hidden;
 }
 
-a:focus, a:hover {
-  color: var(--colorschemehover);
-  text-decoration: none;
+a:focus,
+a:hover {
+    color: var(--colorschemehover);
+    text-decoration: none;
 }
 
 .site-header + * {
@@ -107,7 +125,8 @@ a:focus, a:hover {
     gap: 20px;
 }
 
-.logo, .cpu_temp {
+.logo,
+.cpu_temp {
     font-family: Comfortaa;
     text-shadow: var(--logo-shadow) 0 0 10px;
     font-size: 28px;
@@ -339,13 +358,13 @@ a:focus, a:hover {
    3.2. 
    ========================================================================== */
 
-   /* Удалено */
+/* Удалено */
 
 /* ==========================================================================
    3.3. 
    ========================================================================== */
 
-   /* Удалено */
+/* Удалено */
 
 /* ==========================================================================
    3.4. Стили для таба тем оформления
@@ -523,7 +542,7 @@ a:focus, a:hover {
 
 .btn-close::before,
 .btn-close::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -545,7 +564,7 @@ a:focus, a:hover {
 .btn-close:hover {
     background-color: var(--btn-close-hover-bg);
     transform: rotate(90deg) scale(1.1);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .btn-close:hover::before,
@@ -577,7 +596,9 @@ a:focus, a:hover {
 /* Кнопка с пузырьковым эффектом */
 .bubbly-button {
     position: relative;
-    transition: transform ease-in .1s, box-shadow ease-in .25s;
+    transition:
+        transform ease-in 0.1s,
+        box-shadow ease-in 0.25s;
     background-color: var(--colorscheme);
     box-shadow: 0 2px 25px var(--shadow-box-bubbly-button);
     -webkit-appearance: none;
@@ -592,41 +613,52 @@ a:focus, a:hover {
     display: block;
     width: 140%;
     height: 100%;
-    content: '';
-    transition: all ease-in-out .5s;
+    content: "";
+    transition: all ease-in-out 0.5s;
     background-repeat: no-repeat;
 }
 
 .bubbly-button:before {
     top: -75%;
     display: none;
-    background-image: radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, transparent 20%, var(--colorscheme) 20%, transparent 30%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, transparent 10%, var(--colorscheme) 15%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%);
-    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
+    background-image:
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%), radial-gradient(circle, transparent 20%, var(--colorscheme) 20%, transparent 30%),
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%), radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, var(--colorscheme) 15%, transparent 20%), radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%), radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%);
+    background-size:
+        10% 10%,
+        20% 20%,
+        15% 15%,
+        20% 20%,
+        18% 18%,
+        10% 10%,
+        15% 15%,
+        10% 10%,
+        18% 18%;
 }
 
 .bubbly-button:after {
     bottom: -75%;
     display: none;
-    background-image: radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, transparent 10%, var(--colorscheme) 15%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
-                      radial-gradient(circle, var(--colorscheme) 20%, transparent 20%);
-    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
+    background-image:
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%), radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, var(--colorscheme) 15%, transparent 20%), radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%), radial-gradient(circle, var(--colorscheme) 20%, transparent 20%),
+        radial-gradient(circle, var(--colorscheme) 20%, transparent 20%);
+    background-size:
+        15% 15%,
+        20% 20%,
+        18% 18%,
+        20% 20%,
+        15% 15%,
+        10% 10%,
+        20% 20%;
 }
 
 .bubbly-button:active {
-    transform: scale(.9);
+    transform: scale(0.9);
     background-color: var(--colorschemehover);
     box-shadow: 0 2px 25px var(--shadow-box-bubbly-button);
 }
@@ -634,13 +666,13 @@ a:focus, a:hover {
 .bubbly-button.animate:before {
     z-index: 10000;
     display: block;
-    animation: topBubbles ease-in-out .75s forwards;
+    animation: topBubbles ease-in-out 0.75s forwards;
 }
 
 .bubbly-button.animate:after {
     z-index: 10000;
     display: block;
-    animation: bottomBubbles ease-in-out .75s forwards;
+    animation: bottomBubbles ease-in-out 0.75s forwards;
 }
 
 /* ==========================================================================
@@ -653,12 +685,14 @@ a:focus, a:hover {
 
 .form-control:focus {
     border-color: var(--colorscheme);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px var(--colorschemehover);
+    box-shadow:
+        inset 0 1px 1px rgba(0, 0, 0, 0.075),
+        0 0 8px var(--colorschemehover);
 }
 
 label {
     font-weight: bold;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     margin-bottom: 0;
 }
 
@@ -675,7 +709,7 @@ label {
     float: left;
 }
 
-.form_radio_group input[type=radio] {
+.form_radio_group input[type="radio"] {
     display: none;
 }
 
@@ -698,7 +732,7 @@ label {
     border-right: 1px solid var(--border-color);
 }
 
-.form_radio_group input[type=radio]:checked + label {
+.form_radio_group input[type="radio"]:checked + label {
     background: #ffeca6;
 }
 
@@ -706,7 +740,7 @@ label {
     color: var(--text-color);
 }
 
-.form_radio_group input[type=radio]:disabled + label {
+.form_radio_group input[type="radio"]:disabled + label {
     background: var(--accent-bg);
     color: var(--text-color);
 }
@@ -717,11 +751,13 @@ label {
     border: none;
     background: none;
     padding: 0;
-    transition: transform ease-in .1s, box-shadow ease-in .25s;
+    transition:
+        transform ease-in 0.1s,
+        box-shadow ease-in 0.25s;
 }
 
 .in-password_additional_button:active {
-    transform: scale(.9);
+    transform: scale(0.9);
 }
 
 .position-login-show_password {
@@ -765,13 +801,13 @@ label {
 }
 
 /* --- Скрыть стрелочки для input type number --- */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-input[type=number] {
+input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
@@ -801,9 +837,11 @@ tbody tr {
     padding: 8px !important;
 }
 
+.td-site,
 .td-description {
-    text-overflow: ellipsis;
-    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
 }
 
 .td-btn {
@@ -830,11 +868,12 @@ tbody tr {
 }
 
 @keyframes twinkle {
-    0%, 100% { 
+    0%,
+    100% {
         background-color: transparent;
         opacity: 1;
     }
-    50% { 
+    50% {
         background-color: var(--btn-kolt-bg);
         opacity: 0.7;
     }
@@ -850,7 +889,7 @@ tbody tr {
     min-width: 0;
     word-wrap: break-word;
     border: 1px solid var(--card-border);
-    border-radius: .25rem;
+    border-radius: 0.25rem;
     background-color: var(--card-bg);
     background-clip: border-box;
 }
@@ -862,7 +901,7 @@ tbody tr {
 }
 
 .card-title {
-    margin-bottom: .75rem;
+    margin-bottom: 0.75rem;
 }
 
 /* Специфичные карточки */
@@ -1013,21 +1052,21 @@ tbody tr {
     margin: 0;
     font-size: 14px;
     transition: all 0.3s ease;
-    
+
     /* Светлая тема */
     color: var(--text-color);
 }
 
 /* Подчеркивание с анимацией */
 .footer-urls_privacy-terms a::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
     width: 0;
     height: 2px;
     transition: width 0.3s ease;
-    
+
     /* Цвет подчеркивания через ваши переменные */
     background: var(--btn-kolt-bg);
 }
@@ -1084,7 +1123,10 @@ tbody tr {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease,
+        transform 0.3s ease;
     pointer-events: auto;
     margin: 0;
     padding: 0;
@@ -1092,7 +1134,7 @@ tbody tr {
 }
 
 .scrollup-wrapper .scrollup-btn::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1134,7 +1176,7 @@ tbody tr {
     transform: translateX(-50%);
     border-radius: 4px;
     background-color: var(--cookie-bg);
-    box-shadow: 2px 3px 10px rgba(0, 0, 0, .4);
+    box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.4);
     justify-content: space-between;
     align-items: flex-end;
 }
@@ -1189,7 +1231,7 @@ tbody tr {
     height: 75%;
     background: var(--border-color);
     width: 3px;
-    content: '';
+    content: "";
     display: block;
     position: relative;
     border-radius: 10px;
@@ -1211,7 +1253,7 @@ tbody tr {
    3.17. Пожертвования (donation)
    ========================================================================== */
 
-   /* Удалено */
+/* Удалено */
 
 /* ==========================================================================
    3.18. Разное
@@ -1241,8 +1283,10 @@ pre {
 }
 
 .share-button:active {
-    transition: transform ease-in .1s, box-shadow ease-in .25s;
-    transform: scale(.9);
+    transition:
+        transform ease-in 0.1s,
+        box-shadow ease-in 0.25s;
+    transform: scale(0.9);
 }
 
 .terms_confirm-text {
@@ -1657,7 +1701,7 @@ pre {
    5. ПРЕЛОАДЕР
    ========================================================================== */
 
-   /* В топе base.html */
+/* В топе base.html */
 
 /* ==========================================================================
    6. АНИМАЦИИ
@@ -1665,27 +1709,87 @@ pre {
 
 @keyframes topBubbles {
     0% {
-        background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+        background-position:
+            5% 90%,
+            10% 90%,
+            10% 90%,
+            15% 90%,
+            25% 90%,
+            25% 90%,
+            40% 90%,
+            55% 90%,
+            70% 90%;
     }
     50% {
-        background-position: 0 80%, 0 20%, 10% 40%, 20% 0, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 90% 30%;
+        background-position:
+            0 80%,
+            0 20%,
+            10% 40%,
+            20% 0,
+            30% 30%,
+            22% 50%,
+            50% 50%,
+            65% 20%,
+            90% 30%;
     }
     100% {
-        background-position: 0 70%, 0 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%, 50% 40%, 65% 10%, 90% 20%;
-        background-size: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+        background-position:
+            0 70%,
+            0 10%,
+            10% 30%,
+            20% -10%,
+            30% 20%,
+            22% 40%,
+            50% 40%,
+            65% 10%,
+            90% 20%;
+        background-size:
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0;
     }
 }
 
 @keyframes bottomBubbles {
     0% {
-        background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%, 70% -10%, 70% 0;
+        background-position:
+            10% -10%,
+            30% 10%,
+            55% -10%,
+            70% -10%,
+            85% -10%,
+            70% -10%,
+            70% 0;
     }
     50% {
-        background-position: 0 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%, 105% 0;
+        background-position:
+            0 80%,
+            20% 80%,
+            45% 60%,
+            60% 100%,
+            75% 70%,
+            95% 60%,
+            105% 0;
     }
     100% {
-        background-position: 0 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
-        background-size: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+        background-position:
+            0 90%,
+            20% 90%,
+            45% 70%,
+            60% 110%,
+            75% 80%,
+            95% 70%,
+            110% 10%;
+        background-size:
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0,
+            0 0;
     }
 }
 
@@ -1796,7 +1900,7 @@ pre {
         align-items: center;
         gap: 10px;
     }
-    
+
     .footer-urls_privacy-terms p {
         font-size: 12px;
     }
@@ -1807,12 +1911,12 @@ pre {
         left: 20px;
         bottom: 20px;
     }
-    
+
     .theme-toggle {
         width: 40px;
         height: 40px;
     }
-    
+
     .theme-toggle__icon {
         font-size: 20px;
     }
@@ -1827,17 +1931,17 @@ pre {
 
 @media (max-width: 768px) {
     .k-nav {
-        display: none;  /* Скрываем навигацию на мобильных */
+        display: none; /* Скрываем навигацию на мобильных */
     }
-    
+
     .k-mobile-menu-toggle {
-        display: flex;  /* Показываем бургер */
+        display: flex; /* Показываем бургер */
     }
-    
+
     .k-mobile-nav {
-        display: block;  /* Показываем мобильное меню (но оно скрыто через max-height) */
+        display: block; /* Показываем мобильное меню (но оно скрыто через max-height) */
     }
-    
+
     .header-container {
         padding: 0 15px;
     }
@@ -1845,11 +1949,11 @@ pre {
 
 @media (min-width: 769px) {
     .k-mobile-menu-toggle {
-        display: none;  /* Скрываем бургер на десктопе */
+        display: none; /* Скрываем бургер на десктопе */
     }
-    
+
     .k-mobile-nav {
-        display: none;  /* Скрываем мобильное меню на десктопе */
+        display: none; /* Скрываем мобильное меню на десктопе */
     }
 }
 
@@ -1873,17 +1977,17 @@ pre {
         align-items: flex-start;
         gap: 5px;
     }
-    
+
     .auth-time {
         font-size: 11px;
     }
-    
+
     .auth-detail {
         flex-direction: column;
         align-items: flex-start;
         gap: 2px;
     }
-    
+
     .auth-label {
         min-width: auto;
     }
@@ -1893,17 +1997,17 @@ pre {
     .theme-tabs {
         gap: 10px;
     }
-    
+
     .theme-tab {
         padding: 6px 15px;
         font-size: 14px;
     }
-    
+
     .theme-cards-container {
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
     }
-    
+
     .theme-preview {
         width: 50px;
         height: 50px;

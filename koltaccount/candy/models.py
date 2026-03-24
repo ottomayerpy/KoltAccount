@@ -14,7 +14,7 @@ class Candy(BaseModel):
         related_name="candies",  # user.candies.all()
     )
     site = TextField(verbose_name=_("Сайт"))
-    description = TextField(verbose_name=_("Описание"))
+    description = TextField(verbose_name=_("Описание"), blank=True)
     login = TextField(verbose_name=_("Логин"))
     password = TextField(verbose_name=_("Пароль"))
 

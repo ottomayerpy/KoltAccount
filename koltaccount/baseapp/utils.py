@@ -1,11 +1,14 @@
 import re
 
 import six
-from baseapp.models import SiteSetting, UserModel
+from baseapp.models import SiteSetting
+from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.http import JsonResponse
 
 from koltaccount.settings import STATIC_VERSION
+
+UserModel = get_user_model()
 
 
 class TokenGenerator(PasswordResetTokenGenerator):

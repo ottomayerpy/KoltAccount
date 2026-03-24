@@ -6,8 +6,9 @@ from axes.models import AccessAttempt, AccessLog
 from baseapp.forms import KoltAuthenticationForm, KoltPasswordResetForm, RegisterForm
 from baseapp.logger import get_logs
 from baseapp.middleware import is_ajax, is_staff
-from baseapp.models import SiteSetting, UserModel
+from baseapp.models import SiteSetting
 from baseapp.utils import (
+    UserModel,
     account_activation_token,
     check_if_password_correct,
     check_username_db,
@@ -28,7 +29,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.views.generic import TemplateView
 from mailer.utils import send_email
 
-from koltaccount.settings import SITE_PROTOCOL, SUPPORT_EMAIL, CANDIES_LIMIT
+from koltaccount.settings import CANDIES_LIMIT, SITE_PROTOCOL, SUPPORT_EMAIL
 
 # Русская локализация для даты
 locale.setlocale(locale.LC_ALL, "")

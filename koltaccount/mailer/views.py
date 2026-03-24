@@ -1,5 +1,4 @@
-from baseapp.models import UserModel
-from baseapp.utils import account_activation_token, get_base_context
+from baseapp.utils import UserModel, account_activation_token, get_base_context
 from django.contrib.sites.models import Site
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
@@ -8,7 +7,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from mailer.utils import activate_email, hiding_email, send_email
 
-from koltaccount.settings import SITE_PROTOCOL, SITE_DOMAIN
+from koltaccount.settings import SITE_DOMAIN, SITE_PROTOCOL
 
 from .forms import EmailChangeForm
 

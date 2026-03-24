@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from baseapp.utils import UserModel
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordResetForm,
@@ -20,8 +20,6 @@ from django.forms import (
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from mailer.utils import send_email
-
-UserModel = get_user_model()
 
 
 class PersonCreationForm(UserCreationForm):

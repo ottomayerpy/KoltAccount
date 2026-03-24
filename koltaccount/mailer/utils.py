@@ -1,7 +1,6 @@
 import threading
 
-from baseapp.models import UserModel
-from baseapp.utils import account_activation_token
+from baseapp.utils import UserModel, account_activation_token
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
@@ -29,7 +28,7 @@ class EmailThread(threading.Thread):
 
 
 def send_email(
-    user: UserModel,
+    user,
     subject: str,
     template: str,
     context: dict = None,

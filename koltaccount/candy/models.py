@@ -1,14 +1,16 @@
-from baseapp.models import BaseModel, UserModel
+from baseapp.models import BaseModel
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import CASCADE, ForeignKey, JSONField, OneToOneField, TextField
 from django.utils.translation import gettext_lazy as _
+
+from koltaccount.settings import AUTH_USER_MODEL
 
 
 class Candy(BaseModel):
     """Конфетки пользователя"""
 
     user = ForeignKey(
-        UserModel,
+        AUTH_USER_MODEL,
         verbose_name=_("Пользователь"),
         on_delete=CASCADE,
         related_name="candies",  # user.candies.all()
@@ -29,7 +31,7 @@ class Candy(BaseModel):
 class MasterPassword(BaseModel):
     """Мастер пароль пользователя"""
 
-    user = OneToOneField(UserModel, verbose_name=_("Пользователь"), on_delete=CASCADE)
+    user = OneToOneField(AUTH_USER_MODEL, verbose_name=_("Пользователь"), on_delete=CASCADE)
     password = TextField(verbose_name=_("Пароль"))
     crypto_settings = JSONField(
         verbose_name=_("Значение"),

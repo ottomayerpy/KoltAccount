@@ -1,12 +1,9 @@
 from baseapp.forms import PersonChangeForm, PersonCreationForm
 from baseapp.models import SiteSetting
+from baseapp.utils import UserModel
 from candy.models import Candy, MasterPassword
 from django.contrib import admin
-from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-
-
-UserModel = get_user_model()
 
 
 class KoltAdminSite(admin.AdminSite):

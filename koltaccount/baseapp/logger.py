@@ -3,7 +3,6 @@ import os
 import zipfile
 from datetime import datetime
 
-from baseapp.models import UserModel
 from loguru import logger
 
 from koltaccount.settings import BASE_DIR
@@ -33,7 +32,7 @@ def sorted_logs(logs: json) -> list:
 
 
 def write_error_to_log_file(
-    error_type: str, user: UserModel, traceback_format_exc: str
+    error_type: str, user, traceback_format_exc: str
 ) -> None:
     """Запись исключения в файл"""
     try:

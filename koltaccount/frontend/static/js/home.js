@@ -51,7 +51,6 @@ $(function () {
 
                     // Меняем интерфейс на создание нового мастер-пароля
                     $("#btn-send_master_password").text("Создать");
-                    $("#MasterPasswordModal .modal-title").text("Конфигурация шифрования");
 
                     // Открываем модальное окно мастер пароля
                     $("#MasterPasswordModal").modal("show");
@@ -603,8 +602,8 @@ $(function () {
         }
     }
 
-    function submitMasterPassword() {
-        /* Событие нажатия на кнопку "Изменить" в модальном окне изменения мастер пароля */
+    $("#btn-send_master_password").on("click", function () {
+        /* Событие нажатия на кнопку "Изменить" или "Создать" в модальном окне изменения мастер пароля */
         if (($("#in-old_password").val() == "" && !$("#in-old_password").attr("disabled")) || ($("#in-old_password").val() != "" && $("#in-old_password").attr("disabled"))) {
             swal('Заполните поле "Старый пароль"', "", "info");
         } else if ($("#in-new_password").val() == "") {
@@ -619,13 +618,9 @@ $(function () {
             swal("Не допустимый диапазон итераций", "", "Warning");
         } else if (isNewPasswordValid && isRepeatPasswordValid) {
             setTimeout(function () {
-                changeOrCreateMasterPassword($("#in-repeat_new_password").val());
+                changeOrCreateMasterPassword($("#in-new_password").val());
             }, 600);
         }
-    }
-
-    $("#btn-send_master_password").on("click", function () {
-        submitMasterPassword();
     });
 
     $("#modal-btn-account_delete").on("click", function () {

@@ -135,43 +135,45 @@ $(function () {
     }
 
     function createNewRowElement(candyId, site, description, login, password) {
-        return $("tr", {
+        const $tr = $("<tr>").attr({
             "data-toggle": "modal",
             "data-target": "#CandyModal",
             "data-id": candyId,
             role: "row",
-        }).append(
-            $("td", { class: "td-favicon" }).append(
-                $("<img>", {
-                    "data-id": candyId,
-                    class: "favicon-sites",
-                    height: "16",
-                    width: "16",
-                    alt: "icon",
-                    src: safeFaviconUrl(site),
-                }),
-            ),
-            $("td", {
-                class: "td-site",
-                "data-id": candyId,
-                text: site,
-            }),
-            $("td", {
-                class: "td-description",
-                "data-id": candyId,
-                text: description,
-            }),
-            $("td", {
-                class: "td-login td-hide",
-                "data-id": candyId,
-                text: login,
-            }),
-            $("td", {
-                class: "td-password td-hide",
-                "data-id": candyId,
-                text: password,
-            }),
+        });
+
+        $tr.append(
+            $("<td>")
+                .addClass("td-favicon")
+                .append(
+                    $("<img>").attr({
+                        "data-id": candyId,
+                        class: "favicon-sites",
+                        height: "16",
+                        width: "16",
+                        alt: "icon",
+                        src: safeFaviconUrl(site || ""),
+                    }),
+                ),
+            $("<td>")
+                .addClass("td-site")
+                .attr("data-id", candyId)
+                .text(site || ""),
+            $("<td>")
+                .addClass("td-description")
+                .attr("data-id", candyId)
+                .text(description || ""),
+            $("<td>")
+                .addClass("td-login td-hide")
+                .attr("data-id", candyId)
+                .text(login || ""),
+            $("<td>")
+                .addClass("td-password td-hide")
+                .attr("data-id", candyId)
+                .text(password || ""),
         );
+
+        return $tr;
     }
 
     function highlightRow(candyId) {
@@ -281,10 +283,10 @@ $(function () {
         preloadShow();
 
         // Получаем данные из формы
-        let site = $("#modal-site").val(),
-            description = $("#modal-description").val(),
-            newLogin = $("#modal-new_login").val(),
-            newPassword = $("#modal-new_password").val(),
+        let site = $("#cm-in-site").val(),
+            description = $("#cm-in-description").val(),
+            newLogin = $("#cm-in-new_login").val(),
+            newPassword = $("#cm-in-new_password").val(),
             candyId = $("#modal-btn-account_delete").attr("data-id");
 
         // Шифруем логин и пароль если они были изменены
@@ -318,13 +320,13 @@ $(function () {
                 // Если логин был изменен - обновляем и очищаем поле
                 if (newLogin != "") {
                     tr.find(".td-login").text(newLogin);
-                    $("#modal-new_login").val("");
+                    $("#cm-in-new_login").val("");
                 }
 
                 // Если пароль был изменен - обновляем и очищаем поле
                 if (newPassword != "") {
                     tr.find(".td-password").text(newPassword);
-                    $("#modal-new_password").val(""); // Не обязательно, но оставим
+                    $("#cm-in-new_password").val(""); // Не обязательно, но оставим
                 }
 
                 // Сортируем таблицу по первому столбцу
@@ -477,10 +479,10 @@ $(function () {
 
         if (type == LOGIN_TYPE) {
             // Если нужно скопировать логин то расшифровываем логин
-            key = decrypt($("#modal-login").val(), masterPassword);
+            key = decrypt($("#cm-in-login").val(), masterPassword);
         } else {
             // Если не логин, то пароль
-            key = decrypt($("#modal-password").val(), masterPassword);
+            key = decrypt($("#cm-in-password").val(), masterPassword);
         }
 
         if (key != "") {
@@ -651,9 +653,9 @@ $(function () {
 
     $("#modal-btn-save").on("click", function () {
         /* Событие нажатия кнопки "Сохранить" в модальном окне просмотра аккаунта */
-        if ($("#modal-site").val() == "") {
+        if ($("#cm-in-site").val() == "") {
             swal('Заполните поле "Сайт"', "", "info");
-        } else if ($("#modal-description").val() == "") {
+        } else if ($("#cm-in-description").val() == "") {
             swal('Заполните поле "Описание"', "", "info");
         } else {
             changeCandy();

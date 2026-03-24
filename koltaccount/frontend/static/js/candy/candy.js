@@ -1,6 +1,6 @@
 /* Главная страница с таблицей аккаунтов */
 import { setCryptoSettings, enMP, deMP, encrypt, decrypt } from "./crypto.js";
-import { saveJSONToFile } from "./save_json_to_file.js";
+import { saveJSONToFile } from "../core/save_json_to_file.js";
 
 $(function () {
     let masterPassword = "", // Хранит мастер пароль для расшифровки данных таблицы

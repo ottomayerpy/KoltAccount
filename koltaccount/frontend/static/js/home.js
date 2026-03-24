@@ -232,13 +232,16 @@ $(function () {
                     $("#candies_count").text(candyCount - 1);
                 });
             },
-            // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                swal("Ошибка", "Что-то пошло не так", "error");
+                if (jqXHR.status === 400) {
+                    swal("Ошибка", "Не передан ID записи", "warning");
+                } else if (jqXHR.status === 404) {
+                    swal("Ошибка", "Запись не найдена", "warning");
+                } else {
+                    swal("Ошибка", "Что-то пошло не так", "error");
+                }
             },
-            complete: function () {
-                preloadHide();
-            },
+            complete: () => preloadHide(),
         });
     }
 

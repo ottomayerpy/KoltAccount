@@ -279,71 +279,62 @@ $(function () {
     });
 
     function changeCandy() {
-        /* Изменение информации аккаунта */
         preloadShow();
 
-        // Получаем данные из формы
-        let site = $("#cm-in-site").val(),
-            description = $("#cm-in-description").val(),
-            newLogin = $("#cm-in-new_login").val(),
-            newPassword = $("#cm-in-new_password").val(),
-            candyId = $("#modal-btn-account_delete").attr("data-id");
+        let candyId = $("#modal-btn-account_delete").attr("data-id");
+        let site = $("#cm-in-site").val();
+        let desc = $("#cm-in-description").val();
+        let newLogin = $("#cm-in-new_login").val();
+        let newPass = $("#cm-in-new_password").val();
 
-        // Шифруем логин и пароль если они были изменены
-        if (newLogin != "") {
-            newLogin = encrypt(newLogin, masterPassword);
-        }
-        if (newPassword != "") {
-            newPassword = encrypt(newPassword, masterPassword);
+        let data = { candy_id: candyId };
+        let tr = $(`tr[data-id="${candyId}"]`);
+
+        if (site !== tr.find(".td-site").text()) data.site = encrypt(site, masterPassword);
+        if (desc !== tr.find(".td-description").text()) data.description = encrypt(desc, masterPassword);
+        if (newLogin) data.new_login = encrypt(newLogin, masterPassword);
+        if (newPass) data.new_password = encrypt(newPass, masterPassword);
+
+        // Если ничего не изменилось - выходим
+        if (Object.keys(data).length === 1) { // только candy_id
+            $("#CandyModal").modal("hide");
+            highlightRow(candyId);
+            preloadHide();
+            return;
         }
 
         $.ajax({
             url: "change_candy/",
             type: "POST",
-            data: {
-                site: encrypt(site, masterPassword), // Сайт всегда шифруем
-                description: encrypt(description, masterPassword), // Описание всегда шифруем
-                new_login: newLogin,
-                new_password: newPassword,
-                candy_id: candyId,
-            },
+            data: data,
             success: function () {
-                // Находим строку с измененной конфеткой
-                let tr = $(`tr[data-id="${candyId}"]`);
-
-                // Обновляем favicon
-                tr.find(".td-favicon img").attr("src", safeFaviconUrl(site));
-                // Обновляем название сайта и описание
-                tr.find(".td-site").text(site);
-                tr.find(".td-description").text(description);
-
-                // Если логин был изменен - обновляем и очищаем поле
-                if (newLogin != "") {
-                    tr.find(".td-login").text(newLogin);
+                if (data.site) {
+                    tr.find(".td-favicon img").attr("src", safeFaviconUrl(site));
+                    tr.find(".td-site").text(site);
+                }
+                if (data.description) tr.find(".td-description").text(desc);
+                if (data.new_login) {
+                    tr.find(".td-login").text(data.new_login);
                     $("#cm-in-new_login").val("");
                 }
-
-                // Если пароль был изменен - обновляем и очищаем поле
-                if (newPassword != "") {
-                    tr.find(".td-password").text(newPassword);
-                    $("#cm-in-new_password").val(""); // Не обязательно, но оставим
+                if (data.new_password) {
+                    tr.find(".td-password").text(data.new_password);
+                    $("#cm-in-new_password").val("");
                 }
-
-                // Сортируем таблицу по первому столбцу
                 $("#CandiesTable").trigger("sorton", [[[1, 0]]]);
-                // Закрываем модальное окно просмотра конфетки
                 $("#CandyModal").modal("hide");
-
-                // Подсвечиваем измененную строку
                 highlightRow(candyId);
             },
-            // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                swal("Ошибка", "Что-то пошло не так", "error");
+                if (jqXHR.status === 400) {
+                    swal("Ошибка", "Не передан ID конфетки", "warning");
+                } else if (jqXHR.status === 404) {
+                    swal("Ошибка", "Конфетка не найдена", "warning");
+                } else {
+                    swal("Ошибка", "Что-то пошло не так", "error");
+                }
             },
-            complete: function () {
-                preloadHide();
-            },
+            complete: () => preloadHide(),
         });
     }
 

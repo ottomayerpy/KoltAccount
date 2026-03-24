@@ -11,7 +11,7 @@
     <div align="center" class="main_buttons">
         <button id="btn_create_candy" class="btn btn-kolt btn-round" data-toggle="modal" data-target="#CreateCandyModal">Добавить</button>
         <input id="btn_master_import" type="file" value="Import" style="display: none" />
-        <label class="btn btn-kolt btn-round" for="btn_master_import" style="margin-top: 0; cursor: pointer;" accept=".json,application/json">Импорт</label>
+        <label class="btn btn-kolt btn-round" for="btn_master_import" style="margin-top: 0; cursor: pointer" accept=".json,application/json">Импорт</label>
         <button id="btn_clear_all_candies" class="btn btn-kolt btn-round">Очистить (<span id="candies_count">{{ candies.count }}</span>/{{ CANDIES_LIMIT }})</button>
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-kolt btn-round">Мастер пароль</button>
     </div>
@@ -19,7 +19,9 @@
     <table id="CandiesTable" class="main_table tablesorter tablesorter-blue">
         <thead>
             <tr>
-                <th class="candies_table_th_icon" data-sorter="false"></th>
+                <th class="candies_table_th_icon" data-sorter="false">
+                    <span style="font-size: 20px">🍬</span>
+                </th>
                 <th>Сайт</th>
                 <th>Описание</th>
             </tr>
@@ -164,7 +166,7 @@
         </div>
     </div>
 </div>
-<div style="display: none;">
+<div style="display: none">
     <span id="candies_limit">{{ CANDIES_LIMIT }}</span>
 </div>
 {% endblock %}

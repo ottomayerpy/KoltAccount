@@ -61,7 +61,7 @@
                             <div class="auth-header">
                                 <span class="auth-status"> {% if item.is_active %} ● Активен {% else %} ○ Завершен {% endif %} </span>
                                 <span class="auth-time">
-                                    {{ item.data.attempt_time|date:"d.m.Y H:i:s" }} {% if item.data.logout_time %} – {{ item.data.logout_time|date:"d.m.Y H:i:s" }} {% endif %}
+                                    {{ item.data.attempt_time|date:"d.m.Y H:i:s" }} {% if item.data.logout_time %} — {{ item.data.logout_time|date:"d.m.Y H:i:s" }} {% endif %}
                                 </span>
                             </div>
                             <div class="auth-details">
@@ -70,12 +70,12 @@
                                     <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
                                 </div>
                                 <div class="auth-detail">
-                                    <span class="auth-label">User-Agent:</span>
-                                    <span class="auth-value auth-useragent">{{item.data.user_agent|truncatechars:80 }}</span>
+                                    <span class="auth-label">Устройство:</span>
+                                    <span class="auth-value auth-device"></span>
                                 </div>
                                 <div class="auth-detail">
-                                    <span class="auth-label">Путь:</span>
-                                    <span class="auth-value">{{ item.data.path_info }}</span>
+                                    <span class="auth-label">Браузер/ОС:</span>
+                                    <span class="auth-value auth-browser-os"></span>
                                 </div>
                                 {% if not item.is_active and item.data.logout_time %}
                                 <div class="auth-detail">
@@ -97,12 +97,12 @@
                                     <span class="auth-value">{{ item.data.ip_address|default:"Не определен" }}</span>
                                 </div>
                                 <div class="auth-detail">
-                                    <span class="auth-label">User-Agent:</span>
-                                    <span class="auth-value auth-useragent">{{ item.data.user_agent|truncatechars:80 }}</span>
+                                    <span class="auth-label">Устройство:</span>
+                                    <span class="auth-value auth-device"></span>
                                 </div>
                                 <div class="auth-detail">
-                                    <span class="auth-label">Путь:</span>
-                                    <span class="auth-value">{{ item.data.path_info }}</span>
+                                    <span class="auth-label">Браузер/ОС:</span>
+                                    <span class="auth-value auth-browser-os"></span>
                                 </div>
                                 {% if item.data.failures_since_start %}
                                 <div class="auth-detail">
@@ -259,7 +259,7 @@
                                         type="text"
                                         id="cpu_temp_path_input"
                                         name="cpu_temp_path"
-                                        value="{{ cpu_temp_path|default:'/sys/class/thermal/thermal_zone0/temp' }}"
+                                        value="{{ cpu_temp_path }}"
                                         class="form-control cpu-temp-input"
                                         placeholder="/sys/class/thermal/thermal_zone0/temp"
                                         autocomplete="off"

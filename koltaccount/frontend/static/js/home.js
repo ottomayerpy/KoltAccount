@@ -14,6 +14,15 @@ $(function () {
     const LOGIN_TYPE = "login";
     const PASSWORD_TYPE = "password";
 
+    function safeFaviconUrl(siteName) {
+        if (!siteName || typeof siteName !== "string") {
+            return "https://favicon.yandex.net/favicon/";
+        }
+        // Экранируем спецсимволы для URL
+        const encoded = encodeURIComponent(siteName);
+        return `https://favicon.yandex.net/favicon/${encoded}`;
+    }
+
     getMasterPassword();
 
     function reloadPage() {
@@ -126,39 +135,38 @@ $(function () {
     }
 
     function createNewRowElement(candyId, site, description, login, password) {
-        /* Вспомогательная функция для создания элемента строки */
-        return $("<tr>", {
+        return $("tr", {
             "data-toggle": "modal",
             "data-target": "#CandyModal",
             "data-id": candyId,
             role: "row",
         }).append(
-            $("<td>", { class: "td-favicon" }).append(
+            $("td", { class: "td-favicon" }).append(
                 $("<img>", {
                     "data-id": candyId,
                     class: "favicon-sites",
                     height: "16",
                     width: "16",
                     alt: "icon",
-                    src: "https://favicon.yandex.net/favicon/" + site,
+                    src: safeFaviconUrl(site),
                 }),
             ),
-            $("<td>", {
+            $("td", {
                 class: "td-site",
                 "data-id": candyId,
                 text: site,
             }),
-            $("<td>", {
+            $("td", {
                 class: "td-description",
                 "data-id": candyId,
                 text: description,
             }),
-            $("<td>", {
+            $("td", {
                 class: "td-login td-hide",
                 "data-id": candyId,
                 text: login,
             }),
-            $("<td>", {
+            $("td", {
                 class: "td-password td-hide",
                 "data-id": candyId,
                 text: password,
@@ -302,7 +310,7 @@ $(function () {
                 let tr = $(`tr[data-id="${candyId}"]`);
 
                 // Обновляем favicon
-                tr.find(".td-favicon img").attr("src", "https://favicon.yandex.net/favicon/" + site);
+                tr.find(".td-favicon img").attr("src", safeFaviconUrl(site));
                 // Обновляем название сайта и описание
                 tr.find(".td-site").text(site);
                 tr.find(".td-description").text(description);
@@ -716,7 +724,8 @@ $(function () {
 
             // Скачиваем иконку для каждого сайта в таблице
             $(".favicon-sites").each(function () {
-                $(this).attr("src", "https://favicon.yandex.net/favicon/" + $('.td-site[data-id="' + $(this).attr("data-id") + '"]').text());
+                const siteText = $('.td-site[data-id="' + $(this).attr("data-id") + '"]').text();
+                $(this).attr("src", safeFaviconUrl(siteText));
             });
 
             // Показываем ранее спрятанный копирайт

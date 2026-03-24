@@ -409,10 +409,10 @@ $(function () {
                 else deviceIcon = "🌐";
 
                 // Добавляем отформатированную информацию
-                $item.find(".auth-device").html(`${deviceIcon} ${parsed.device}`);
-                $item.find(".auth-browser-os").html(`${parsed.browser} / ${parsed.os}`);
+                $item.find(".auth-device").text(`${deviceIcon} ${parsed.device}`);
+                $item.find(".auth-browser-os").text(`${parsed.browser} / ${parsed.os}`);
 
-                // Добавляем полный User-Agent в tooltip (опционально)
+                // Добавляем полный User-Agent в tooltip
                 $item.find(".auth-browser-os").attr("title", parsed.full);
             } else {
                 $item.find(".auth-device").text("Не определено");

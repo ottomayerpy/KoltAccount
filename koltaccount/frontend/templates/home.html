@@ -9,7 +9,7 @@
 {% endblock %} {% block content %}
 <div class="container candies_container {% if not request.user.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
     <div align="center" class="main_buttons">
-        <button data-toggle="modal" data-target="#CreateCandyModal" class="btn btn-kolt btn-round">Добавить аккаунт</button>
+        <button data-toggle="modal" data-target="#CreateCandyModal" class="btn btn-kolt btn-round">Добавить</button>
         <input id="btn_master_import" type="file" value="Import" style="display: none" />
         <button class="btn btn-kolt btn-round"><label for="btn_master_import" style="margin-top: 0" accept=".json,application/json">Импорт</label></button>
         <button id="btn_clear_all_candies" class="btn btn-kolt btn-round">Очистить (<span id="candies_count">{{ candies.count }}</span>/{{ CANDIES_LIMIT }})</button>

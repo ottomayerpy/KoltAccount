@@ -9,7 +9,6 @@ from django.http import (
     HttpResponseServerError,
 )
 from django.shortcuts import render
-from loguru import logger as log
 
 from koltaccount.settings import STATIC_VERSION
 
@@ -31,7 +30,6 @@ class BaseViewMiddleware:
         return self._get_response(request)
 
     def process_exception(self, request, exception):
-        log.error(traceback.format_exc())
         write_error_to_log_file("ERROR", request.user, traceback.format_exc())
         return HttpResponseServerError(render(request, "500.html"))
 

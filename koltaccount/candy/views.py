@@ -1,5 +1,7 @@
 import json
+import traceback
 
+from baseapp.logger import write_error_to_log_file
 from baseapp.middleware import is_ajax
 from baseapp.utils import get_base_context, json_response
 from candy.models import Candy, MasterPassword
@@ -147,13 +149,13 @@ def import_candies(request):
                 password=item.get("password"),
             )
             imported.append({"index": idx, "id": candy.id})
-        except Exception as e:
-            errors.append({"index": idx, "error": str(e)})
+        except Exception:
+            write_error_to_log_file("ERROR", request.user, traceback.format_exc())
+            errors.append({"index": idx})
 
     return json_response(
         {
             "imported": imported,
-            "errors": errors,
             "total": len(data),
             "success_count": len(imported),
             "error_count": len(errors),

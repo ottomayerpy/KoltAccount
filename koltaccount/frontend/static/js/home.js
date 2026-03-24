@@ -853,7 +853,6 @@ $(function () {
                     let message = `Импортировано: ${result.success_count} из ${result.total}`;
                     if (result.error_count > 0) {
                         message += `\nОшибок: ${result.error_count}`;
-                        console.error("Ошибки импорта:", result.errors);
                     }
 
                     swal(result.error_count > 0 ? "Импорт завершен с ошибками" : "Импорт успешно завершен", message, result.error_count > 0 ? "warning" : "success");

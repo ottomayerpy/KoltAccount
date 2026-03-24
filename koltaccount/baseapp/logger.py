@@ -4,6 +4,7 @@ import zipfile
 from datetime import datetime
 
 from baseapp.models import UserModel
+from loguru import logger
 
 from koltaccount.settings import BASE_DIR
 
@@ -36,6 +37,7 @@ def write_error_to_log_file(
 ) -> None:
     """Запись исключения в файл"""
     try:
+        logger.error(traceback_format_exc)
         _log_file = open(BASE_DIR / "logs/log.json")
         log_file = _log_file.read()
         _log_file.close()

@@ -1,11 +1,11 @@
 {% extends "base.html" %} {% load static %} {% block title %}{{ title }}{% endblock %} {% block addons_head %}
 <link rel="stylesheet" href="{% static 'css/themes/table-theme-blue.css' %}?ver={{ static_version }}" />
 <link rel="stylesheet" href="{% static 'css/themes/table-theme-dark.css' %}?ver={{ static_version }}" />
-<script defer type="text/javascript" src="{% static 'js/addons/jquery.tablesorter.min.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/bubbly_animation.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/addons/crypto-js.min.js' %}?ver={{ static_version }}"></script>
-<script defer type="module" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/vendor/jquery.tablesorter.min.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/candy/bubbly_animation.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/core/ajax_setup.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/vendor/crypto-js.min.js' %}?ver={{ static_version }}"></script>
+<script defer type="module" src="{% static 'js/candy/candy.js' %}?ver={{ static_version }}"></script>
 {% endblock %} {% block content %}
 <div class="container candies_container {% if not request.user.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
     <div align="center" class="main_buttons">

@@ -92,7 +92,7 @@ def index(request):
         }
     )
 
-    return render(request, "home.html", context)
+    return render(request, "candy.html", context)
 
 
 @is_staff
@@ -220,7 +220,7 @@ def kolt_login(request):
             return redirect(reverse("home_url"))
 
         context.update({"form_message": "Login error"})
-    return render(request, "registration/login.html", context)
+    return render(request, "auth/login.html", context)
 
 
 class KoltPasswordResetView(PasswordResetView):
@@ -232,7 +232,7 @@ class KoltPasswordResetView(PasswordResetView):
 class RegisterView(TemplateView):
     """Регистрация пользователей"""
 
-    template_name = "registration/register.html"
+    template_name = "auth/register.html"
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:

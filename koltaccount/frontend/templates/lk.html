@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% load static %} {% block title %}{{ title }}{% endblock %} {% block addons_head %}
-<script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/core/ajax_setup.js' %}?ver={{ static_version }}"></script>
 {% if request.user.is_staff %}
-<script defer type="text/javascript" src="{% static 'js/lk_admin.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/lk/lk_admin.js' %}?ver={{ static_version }}"></script>
 {% endif %} {% endblock %} {% block content %}
 <div class="container">
     <h2 align="center">{{ title }}</h2>

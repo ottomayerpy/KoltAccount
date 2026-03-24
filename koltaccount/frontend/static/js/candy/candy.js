@@ -1,5 +1,5 @@
 /* Главная страница с таблицей аккаунтов */
-import { setCryptoSettings, enMP, deMP, encrypt, decrypt } from "./kolt_crypto.js";
+import { setCryptoSettings, enMP, deMP, encrypt, decrypt } from "./crypto.js";
 import { saveJSONToFile } from "./save_json_to_file.js";
 
 $(function () {

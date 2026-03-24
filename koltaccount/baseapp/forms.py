@@ -84,8 +84,8 @@ class KoltPasswordResetForm(PasswordResetForm):
     def save(
         self,
         domain_override=None,
-        subject_template_name="registration/password_reset_subject.txt",
-        email_template_name="registration/password_reset_email.html",
+        subject_template_name="passwords/password_reset_subject.txt",
+        email_template_name="passwords/password_reset_email.html",
         use_https=False,
         token_generator=default_token_generator,
         from_email=None,

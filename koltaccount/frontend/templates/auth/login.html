@@ -2,9 +2,8 @@
 {% load static %}
 {% block title %}{{ title }}{% endblock %}
 {% block addons_head %}
-<script defer type="text/javascript" src="{% static 'js/client_detection.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/login.js' %}?ver={{ static_version }}"></script>
-<script defer type="text/javascript" src="{% static 'js/form_message_handler.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/auth/login.js' %}?ver={{ static_version }}"></script>
+<script defer type="text/javascript" src="{% static 'js/core/form_message_handler.js' %}?ver={{ static_version }}"></script>
 {% endblock %}
 {% block content %}
 <div class="container registration-container">

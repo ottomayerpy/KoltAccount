@@ -18,7 +18,7 @@ urlpatterns = [
     path(
         "accounts/password_reset/",
         views.KoltPasswordResetView.as_view(
-            html_email_template_name="registration/password_reset_email.html"
+            html_email_template_name="passwords/password_reset_email.html"
         ),
     ),
 ]

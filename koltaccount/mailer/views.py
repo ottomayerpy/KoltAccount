@@ -70,7 +70,7 @@ def confirm(request):
     send_email(
         user=request.user,
         subject="Добро пожаловать в KoltAccount",
-        template="email/registration_confirm.html",
+        template="email/confirm.html",
         context={
             "uid": urlsafe_base64_encode(force_bytes(request.user.pk)),
             "token": account_activation_token.make_token(request.user),
@@ -118,7 +118,7 @@ def check_test_template(request):
     }
 
     templates = [
-        "email/registration_confirm.html",
+        "email/confirm.html",
         "email/notification_to_old_email.html",
         "email/change.html",
     ]

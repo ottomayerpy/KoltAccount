@@ -8,4 +8,4 @@ env_314
 .idea
 .flake8
 db.sqlite3
-logs
+z_logs

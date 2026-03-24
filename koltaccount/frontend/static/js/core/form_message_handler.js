@@ -24,7 +24,7 @@ $(function () {
                 swal("Ошибка", "Введенный пароль не верный.", "warning");
                 break;
 
-            // registration/register.html
+            // auth/register.html
             case "username error":
                 swal("Ошибка", "Пользователь с таким именем уже существует", "warning");
                 break;

@@ -263,14 +263,14 @@ def master_password_reset(request):
     )
 
     if request.method != "POST":
-        return render(request, "registration/master_password_reset.html", context)
+        return render(request, "passwords/master_password_reset.html", context)
 
     # Обработка POST запроса
     password = request.POST.get("password")
 
     if not check_password(password, request.user.password):
         context["form_message"] = "Password is not valid"
-        return render(request, "registration/master_password_reset.html", context)
+        return render(request, "passwords/master_password_reset.html", context)
 
     # Удаляем все конфетки пользователя
     Candy.objects.filter(user=request.user).delete()

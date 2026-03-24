@@ -3,7 +3,6 @@
 {% block title %}{{ title }}{% endblock %}
 {% block addons_head %}
 <script defer type="text/javascript" src="{% static 'js/addons/PassGenJS.min.js' %}"></script>
-<script defer type="text/javascript" src="{% static 'js/landing.js' %}?ver={{ static_version }}"></script>
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -18,7 +17,6 @@
                 </div>
                 <div class="col-md-4">
                     <h2>Безопасно 😎</h2>
-                    <p>Пример пароля: <span class="random-string"></span></p>
                     <p>Подробно о том как проходит защита данных, можно узнать <a class="urls_in_text" href="{% url 'protection_url' %}">здесь</a>.</p>
                 </div>
                 <div class="col-md-4">

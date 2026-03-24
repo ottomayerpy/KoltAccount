@@ -675,13 +675,40 @@ a:hover {
    3.6. Формы и поля ввода
    ========================================================================== */
 
+/* Анимация вспышки для ошибки */
+.input-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 8px #dc3545 !important;
+    transition: all 0.1s ease;
+}
+
+/* Или с анимацией пульсации */
+.input-error-pulse {
+    animation: errorPulse 0.5s ease-in-out 3;
+}
+
+@keyframes errorPulse {
+    0% {
+        border-color: #dc3545;
+        box-shadow: 0 0 0px #dc3545;
+    }
+    50% {
+        border-color: #ff6b6b;
+        box-shadow: 0 0 12px #ff6b6b;
+    }
+    100% {
+        border-color: #dc3545;
+        box-shadow: 0 0 0px #dc3545;
+    }
+}
+
 /* Стили для textarea */
 textarea.form-control {
-    resize: vertical;           /* Разрешаем изменение размера только по вертикали */
-    min-height: 70px;           /* Минимальная высота */
-    max-height: 200px;          /* Максимальная высота */
-    font-family: Comfortaa;     /* Сохраняем шрифт */
-    line-height: 1.5;           /* Увеличиваем межстрочный интервал для читаемости */
+    resize: vertical; /* Разрешаем изменение размера только по вертикали */
+    min-height: 70px; /* Минимальная высота */
+    max-height: 200px; /* Максимальная высота */
+    font-family: Comfortaa; /* Сохраняем шрифт */
+    line-height: 1.5; /* Увеличиваем межстрочный интервал для читаемости */
 }
 
 /* Стили для счетчиков символов */
@@ -967,8 +994,8 @@ tbody tr {
 /* Контейнер для кнопок в модальном окне */
 .modal-actions {
     display: flex;
-    justify-content: flex-end;  /* Выравнивание кнопок справа */
-    gap: 10px;                  /* Расстояние между кнопками */
+    justify-content: flex-end; /* Выравнивание кнопок справа */
+    gap: 10px; /* Расстояние между кнопками */
     margin: 0;
     padding: 5px;
     border-top: 1px solid var(--border-color); /* Опционально: разделитель */

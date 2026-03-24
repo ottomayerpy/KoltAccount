@@ -27,7 +27,8 @@ export function authorize(key, cs, defaultCs, enMasterPassword, callbacks) {
     if (key == "") {
         $("#in-enter_master_password").focus();
         $("#EnterKeyModal").modal("show");
-        return;
+        if (callbacks?.error) callbacks.error();
+        return false;
     }
 
     setCryptoSettings(defaultCs, {});
@@ -42,14 +43,15 @@ export function authorize(key, cs, defaultCs, enMasterPassword, callbacks) {
     if (key == "") {
         $("#in-enter_master_password").val("").focus();
         $("#EnterKeyModal").modal("show");
+        if (callbacks?.error) callbacks.error();
         return false;
     }
 
-    callbacks.success(key);
+    if (callbacks?.success) callbacks.success(key);
     return true;
 }
 
-export function changeOrCreateMasterPassword(newMasterPassword, masterPassword, defaultCs, enMasterPassword, callbacks) {
+export function changeOrCreateMasterPassword(newMasterPassword, masterPassword, defaultCs, callbacks) {
     const KEY = $(".key_select").val().split("/");
     const IV = $(".iv_select").val().split("/");
     const SALT = $(".salt_select").val().split("/");

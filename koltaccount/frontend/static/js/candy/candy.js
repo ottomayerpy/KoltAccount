@@ -48,7 +48,7 @@ $(function () {
             defaultCs = defaultCryptoSettings;
             $("#in-old_password").attr("disabled", "disabled").css("display", "none");
             $('label[for="in-old_password"]').css("display", "none");
-            $('#btn_master_export').css("display", "none");
+            $("#btn_master_export").css("display", "none");
             $("#btn-send_master_password").text("Создать");
             $("#MasterPasswordModal").modal("show");
         },
@@ -58,19 +58,26 @@ $(function () {
     // Прячем копирайт
     $(".footer-urls").hide();
 
-    // Авторизация
+    // Авторизация (ввод мастер пароля на главной)
     function handleAuthorize() {
         let key = $("#in-enter_master_password").val();
+        let $input = $("#in-enter_master_password");
+
         preloadShow();
         authorize(key, cs, defaultCs, enMasterPassword, {
             success: (newKey) => {
                 masterPassword = newKey;
                 isAllowShowPage = true;
                 $("#EnterKeyModal").modal("hide");
-                preloadHide();
             },
-            complete: () => preloadHide(),
+            error: () => {
+                $input.addClass("input-error-pulse");
+                setTimeout(() => {
+                    $input.removeClass("input-error-pulse");
+                }, 1000);
+            },
         });
+        preloadHide();
     }
 
     $("#btn-enter_master_password").on("click", handleAuthorize);
@@ -347,7 +354,7 @@ $(function () {
             swal("Не правильный старый пароль", "", "warning");
         } else if (isNewPasswordValid && isRepeatPasswordValid) {
             preloadShow();
-            changeOrCreateMasterPassword($("#in-new_password").val(), masterPassword, defaultCs, enMasterPassword, {
+            changeOrCreateMasterPassword($("#in-new_password").val(), masterPassword, defaultCs, {
                 success: () => (location.href = location.href),
                 complete: () => preloadHide(),
             });

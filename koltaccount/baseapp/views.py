@@ -86,7 +86,7 @@ def index(request):
 
     context.update(
         {
-            "accounts": Candy.objects.filter(user=request.user),
+            "candies": Candy.objects.filter(user=request.user),
             "CANDIES_LIMIT": CANDIES_LIMIT,
         }
     )

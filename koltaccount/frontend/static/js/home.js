@@ -49,10 +49,6 @@ $(function () {
                     $("#in-old_password").attr("disabled", "disabled").css("display", "none");
                     $('label[for="in-old_password"]').css("display", "none");
 
-                    // Показываем настройки шифрования
-                    $("#pesonal-crypto-settings").css("display", "block");
-                    $(".modal-body-master-password").css("height", "640px");
-
                     // Меняем интерфейс на создание нового мастер-пароля
                     $("#btn-send_master_password").text("Создать");
                     $("#MasterPasswordModal .modal-title").text("Конфигурация шифрования");
@@ -69,18 +65,14 @@ $(function () {
         });
     }
 
-    $("#btn_master_password_modal").on("click", function () {
-        $("#pesonal-crypto-settings").css("display", "block");
-    });
-
     function createCandy() {
         /* Добавление новой конфетки */
         preloadShow();
 
-        let site = $("#in-site").val(),
-            description = $("#in-description").val(),
-            login = encrypt($("#in-login").val(), masterPassword),
-            password = encrypt($("#in-password").val(), masterPassword);
+        let site = $("#ccm-in-site").val(),
+            description = $("#ccm-in-description").val(),
+            login = encrypt($("#ccm-in-login").val(), masterPassword),
+            password = encrypt($("#ccm-in-password").val(), masterPassword);
 
         $.ajax({
             url: "create_candy/",
@@ -101,11 +93,11 @@ $(function () {
                 $newRow.hide();
 
                 // Добавляем строку в таблицу
-                let $table = $("#Accounts_table");
+                let $table = $("#CandiesTable");
                 $table.children("tbody").first().append($newRow);
 
-                // Закрываем модальное окно создания
-                $("#CreateAccountModal").modal("hide");
+                // Закрываем модальное окно создания конфетки
+                $("#CreateCandyModal").modal("hide");
 
                 // Плавно показываем новую строку
                 $newRow.fadeIn(150, function () {
@@ -117,7 +109,7 @@ $(function () {
                             const candyCount = parseInt($("#candies_count").text());
                             $("#candies_count").text(candyCount + 1);
                             // Очищаем поля ввода (логин и пароль очищаются всегда при закрытии модалки)
-                            $("#in-site, #in-description").val("");
+                            $("#ccm-in-site, #ccm-in-description").val("");
                             // Подсвечиваем только что добавленную строку
                             highlightRow(candyId);
                         },
@@ -138,7 +130,7 @@ $(function () {
         /* Вспомогательная функция для создания элемента строки */
         return $("<tr>", {
             "data-toggle": "modal",
-            "data-target": "#AccountModal",
+            "data-target": "#CandyModal",
             "data-id": candyId,
             role: "row",
         }).append(
@@ -206,8 +198,8 @@ $(function () {
                 candy_id: candyId,
             },
             success: function () {
-                // Закрываем модальное окно удаления
-                $("#AccountModal").modal("hide");
+                // Закрываем модальное окно удаления конфетки
+                $("#CandyModal").modal("hide");
 
                 // Плавно скрываем удаляемую строку
                 $(`tr[data-id="${candyId}"]`).fadeOut(150, function () {
@@ -235,7 +227,7 @@ $(function () {
             url: "clear_all_candies/",
             type: "POST",
             success: function () {
-                $("#Accounts_table tbody tr").fadeOut(150, function () {
+                $("#CandiesTable tbody tr").fadeOut(150, function () {
                     $(this).remove();
                     $("#candies_count").text("0");
                 });
@@ -329,9 +321,9 @@ $(function () {
                 }
 
                 // Сортируем таблицу по первому столбцу
-                $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
-                // Закрываем модальное окно
-                $("#AccountModal").modal("hide");
+                $("#CandiesTable").trigger("sorton", [[[1, 0]]]);
+                // Закрываем модальное окно просмотра конфетки
+                $("#CandyModal").modal("hide");
 
                 // Подсвечиваем измененную строку
                 highlightRow(candyId);
@@ -503,7 +495,7 @@ $(function () {
     function copyToClipboard(text) {
         /* Скопировать текст в буфер обмена */
         let $tmp = $("<input>");
-        $("#AccountModal").append($tmp);
+        $("#CandyModal").append($tmp);
         $tmp.val(text).select();
         document.execCommand("copy");
         $tmp.remove();
@@ -515,15 +507,15 @@ $(function () {
         authorize();
     });
 
-    $("#btn-send_account").on("click", function () {
-        /* Событие нажатия на кнопку "Добавить" в модальном окне добавления нового аккаунта */
-        if ($("#in-site").val() == "") {
+    $("#btn-send_candy").on("click", function () {
+        /* Событие нажатия на кнопку "Добавить" в модальном окне добавления новой конфетки */
+        if ($("#ccm-in-site").val() == "") {
             swal('Заполните поле "Сайт"', "", "info");
-        } else if ($("#in-description").val() == "") {
+        } else if ($("#ccm-in-description").val() == "") {
             swal('Заполните поле "Описание"', "", "info");
-        } else if ($("#in-login").val() == "") {
+        } else if ($("#ccm-in-login").val() == "") {
             swal('Заполните поле "Логин"', "", "info");
-        } else if ($("#in-password").val() == "") {
+        } else if ($("#ccm-in-password").val() == "") {
             swal('Заполните поле "Пароль"', "", "info");
         } else {
             createCandy();
@@ -636,14 +628,6 @@ $(function () {
         submitMasterPassword();
     });
 
-    $(".modal-body-master-password input").on("keypress", function (e) {
-        /* Событие нажатия клавиши (Ввод текста в поле создания/изменения мастер пароля) */
-        if (e.keyCode == 13) {
-            // Если нажата клавиша "Enter"
-            submitMasterPassword();
-        }
-    });
-
     $("#modal-btn-account_delete").on("click", function () {
         /* Событие нажатия на кнопку "Удалить" в модальном окне просмотра аккаунта */
         swal(
@@ -683,27 +667,27 @@ $(function () {
         showOrCopyLoginOrPassword(PASSWORD_TYPE);
     });
 
-    $("#AccountModal").on("show.bs.modal", function (e) {
-        /* Событие перед открытием модального окна просмотра аккаунта */
+    $("#CandyModal").on("show.bs.modal", function (e) {
+        /* Событие перед открытием модального окна просмотра конфетки */
         let accountId = $(e.relatedTarget).attr("data-id"),
             site = $('.td-site[data-id="' + accountId + '"]').text(),
             description = $('.td-description[data-id="' + accountId + '"]').text(),
             login = $('.td-login[data-id="' + accountId + '"]').text(),
             password = $('.td-password[data-id="' + accountId + '"]').text();
 
-        // Заполняем модальное окно
-        $("#modal-site").val(site);
-        $("#modal-description").val(description);
-        $("#modal-login").val(login);
-        $("#modal-password").val(password);
-        $("#modal-new_password").val("");
+        // Заполняем модальное окно и триггерим события input для обновления счетчиков
+        $("#cm-in-site").val(site).trigger("input");
+        $("#cm-in-description").val(description).trigger("input");
+        $("#cm-in-login").val(login);
+        $("#cm-in-password").val(password);
         $("#modal-btn-account_delete").attr("data-id", accountId);
         $("#modal-btn-account_delete").attr("data-site", site);
     });
 
-    $("#AccountModal").on("shown.bs.modal", function (e) {
-        /* Событие после открытия модального окна просмотра аккаунта */
-        // account_modal_tour(); (Удалено, потом новый сделаем)
+    $("#CandyModal").on("hidden.bs.modal", function (e) {
+        /* Событие после закрытия модального окна просмотра конфетки */
+        $("#cm-in-new_login").val("").trigger("input");
+        $("#cm-in-new_password").val("").trigger("input");
     });
 
     $("#EnterKeyModal").on("shown.bs.modal", function () {
@@ -713,14 +697,14 @@ $(function () {
     });
 
     $("#MasterPasswordModal").on("hide.bs.modal", function () {
-        /* Событие закрытия модального окна изменения мастер пароля */
+        /* Событие до закрытия модального окна изменения мастер пароля */
         if (masterPassword == "doesnotexist") {
             $(".js-reload_master_password_modal").show();
         }
     });
 
     $("#EnterKeyModal").on("hide.bs.modal", function () {
-        /* Событие закрытия модального окна ввода ключа/мастер пароля */
+        /* Событие до закрытия модального окна ввода ключа/мастер пароля */
         if (isAllowShowPage) {
             let tds = $("td");
             if (tds.length > 0) {
@@ -745,7 +729,7 @@ $(function () {
             // Скрываем кнопку загрузить таблицу
             $(".js-reload_enter_key_modal").hide();
             // Показываем таблицу
-            $(".account_container").show();
+            $(".candies_container").show();
             // Запускаем тур по главной странице
             // account_table_tour(); (Удалено, потом новый сделаем)
         } else {
@@ -756,10 +740,10 @@ $(function () {
         }
     });
 
-    $("#CreateAccountModal").on("hidden.bs.modal", function () {
-        /* Событие после закрытия модального окна добавления аккаунта */
-        $("#in-login").val("");
-        $("#in-password").val("");
+    $("#CreateCandyModal").on("hidden.bs.modal", function () {
+        /* Событие после закрытия модального окна добавления конфетки */
+        $("#ccm-in-login").val("");
+        $("#ccm-in-password").val("");
     });
 
     $("#in-search").on("keyup", function () {
@@ -880,7 +864,7 @@ $(function () {
                     swal(result.error_count > 0 ? "Импорт завершен с ошибками" : "Импорт успешно завершен", message, result.error_count > 0 ? "warning" : "success");
 
                     // Сортируем таблицу
-                    $("#Accounts_table").trigger("sorton", [[[1, 0]]]);
+                    $("#CandiesTable").trigger("sorton", [[[1, 0]]]);
                 },
                 error: function (jqXHR) {
                     if (jqXHR.status === 422) {
@@ -904,7 +888,7 @@ $(function () {
     });
 
     function addImportedCandiesToTable(importedCandiesIds, candiesForTable) {
-        let $table = $("#Accounts_table");
+        let $table = $("#CandiesTable");
         let $tbody = $table.children("tbody").first();
         let fragment = document.createDocumentFragment();
 
@@ -935,7 +919,7 @@ $(function () {
     });
 
     function configureTable() {
-        let $table = $("#Accounts_table");
+        let $table = $("#CandiesTable");
 
         // ПРАВИЛЬНАЯ ПРОВЕРКА: используем data()
         if ($table.data("tablesorter")) {
@@ -975,7 +959,7 @@ $(function () {
         var jsonData = [{ data: "data" }];
         let rowIndex = -1;
         let cellIndex = 0;
-        $("#Accounts_table td").each(function () {
+        $("#CandiesTable td").each(function () {
             let data = $(this).text();
 
             if (data == "") {
@@ -1008,4 +992,56 @@ $(function () {
 
         saveJSONToFile(jsonData, "KoltAccount dump");
     }
+
+    // ==========================================================================
+    // Счетчики символов
+    // ==========================================================================
+
+    // Счетчики для модального окна создания
+    const createCharCounters = [
+        { inputId: "#ccm-in-site", counterId: "#ccm-in-site-counter", maxId: "#ccm-in-site-max" },
+        { inputId: "#ccm-in-description", counterId: "#ccm-in-description-counter", maxId: "#ccm-in-description-max" },
+        { inputId: "#ccm-in-login", counterId: "#ccm-in-login-counter", maxId: "#ccm-in-login-max" },
+        { inputId: "#ccm-in-password", counterId: "#ccm-in-password-counter", maxId: "#ccm-in-password-max" },
+    ];
+
+    // Счетчики для модального окна редактирования
+    const editCharCounters = [
+        { inputId: "#cm-in-site", counterId: "#cm-in-site-counter", maxId: "#cm-in-site-max" },
+        { inputId: "#cm-in-description", counterId: "#cm-in-description-counter", maxId: "#cm-in-description-max" },
+        { inputId: "#cm-in-new_login", counterId: "#cm-in-new-login-counter", maxId: "#cm-in-new-login-max" },
+        { inputId: "#cm-in-new_password", counterId: "#cm-in-new-password-counter", maxId: "#cm-in-new-password-max" },
+    ];
+
+    function initCharCounters(counters) {
+        counters.forEach((counter) => {
+            const $input = $(counter.inputId);
+            const $counter = $(counter.counterId);
+            const maxLength = $input.attr("maxlength");
+
+            $(counter.maxId).text(maxLength);
+
+            $input.on("input", function () {
+                const currentLength = $(this).val().length;
+                $counter.text(currentLength);
+
+                if (currentLength >= maxLength) {
+                    $counter.css("color", "#dc3545");
+                } else if (currentLength >= maxLength * 0.8) {
+                    $counter.css("color", "#ffc107");
+                } else {
+                    $counter.css("color", "var(--text-color)");
+                }
+            });
+        });
+    }
+
+    // Инициализация
+    initCharCounters(createCharCounters);
+    initCharCounters(editCharCounters);
+
+    $("#CreateCandyModal").on("show.bs.modal", function () {
+        /* Событие перед открытием модального окна создания конфетки */
+        $("#ccm-in-site, #ccm-in-description, #ccm-in-login, #ccm-in-password").trigger("input");
+    });
 });

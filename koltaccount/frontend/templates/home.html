@@ -1,41 +1,37 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %}{{ title }}{% endblock %}
-{% block addons_head %}
-<link rel="stylesheet" href="{% static 'css/themes/table-theme-blue.css' %}?ver={{ static_version }}">
-<link rel="stylesheet" href="{% static 'css/themes/table-theme-dark.css' %}?ver={{ static_version }}">
+{% extends "base.html" %} {% load static %} {% block title %}{{ title }}{% endblock %} {% block addons_head %}
+<link rel="stylesheet" href="{% static 'css/themes/table-theme-blue.css' %}?ver={{ static_version }}" />
+<link rel="stylesheet" href="{% static 'css/themes/table-theme-dark.css' %}?ver={{ static_version }}" />
 <script defer type="text/javascript" src="{% static 'js/addons/jquery.tablesorter.min.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/bubbly_animation.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/ajax_setup.js' %}?ver={{ static_version }}"></script>
 <script defer type="text/javascript" src="{% static 'js/addons/crypto-js.min.js' %}?ver={{ static_version }}"></script>
 <script defer type="module" src="{% static 'js/home.js' %}?ver={{ static_version }}"></script>
-{% endblock %}
-{% block content %}
-<div class="container account_container {% if not request.user.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
+{% endblock %} {% block content %}
+<div class="container candies_container {% if not request.user.is_active_email and request.user.is_authenticated %}mt-20{% endif %}">
     <div align="center" class="main_buttons">
-        <button id="btn_create_account_modal" data-toggle="modal" data-target="#CreateAccountModal" class="btn btn-kolt btn-round">Добавить аккаунт</button>
-        <button id="btn_clear_all_candies" class="btn btn-kolt btn-round">
-            Очистить (<span id="candies_count">{{ accounts.count }}</span>/{{ CANDIES_LIMIT }})
-        </button>
+        <button data-toggle="modal" data-target="#CreateCandyModal" class="btn btn-kolt btn-round">Добавить аккаунт</button>
+        <input id="btn_master_import" type="file" value="Import" style="display: none" />
+        <button class="btn btn-kolt btn-round"><label for="btn_master_import" style="margin-top: 0" accept=".json,application/json">Импорт</label></button>
+        <button id="btn_clear_all_candies" class="btn btn-kolt btn-round">Очистить (<span id="candies_count">{{ candies.count }}</span>/{{ CANDIES_LIMIT }})</button>
         <button id="btn_master_password_modal" data-toggle="modal" data-target="#MasterPasswordModal" class="btn btn-kolt btn-round">Мастер пароль</button>
     </div>
-    <input class="form-control" placeholder="Поиск" type="text" id="in-search" maxlength="254">
-    <table id="Accounts_table" class="main_table tablesorter tablesorter-blue">
+    <input class="form-control" placeholder="Поиск" type="text" id="in-search" maxlength="254" />
+    <table id="CandiesTable" class="main_table tablesorter tablesorter-blue">
         <thead>
             <tr>
-                <th class="account_table_th_icon" data-sorter="false"></th>
+                <th class="candies_table_th_icon" data-sorter="false"></th>
                 <th>Сайт</th>
                 <th>Описание</th>
             </tr>
         </thead>
         <tbody>
-            {% for account in accounts %}
-            <tr data-toggle="modal" data-target="#AccountModal" data-id="{{ account.id }}">
-                <td class="td-favicon"><img data-id="{{ account.id }}" class="favicon-sites" height="16" width="16" alt="icon"></td>
-                <td class="td-site" data-id="{{ account.id }}">{{ account.site }}</td>
-                <td class="td-description" data-id="{{ account.id }}">{{ account.description }}</td>
-                <td class="td-login td-hide" data-id="{{ account.id }}">{{ account.login }}</td>
-                <td class="td-password td-hide" data-id="{{ account.id }}">{{ account.password }}</td>
+            {% for candy in candies %}
+            <tr data-toggle="modal" data-target="#CandyModal" data-id="{{ candy.id }}">
+                <td class="td-favicon"><img data-id="{{ candy.id }}" class="favicon-sites" height="16" width="16" alt="icon" /></td>
+                <td class="td-site" data-id="{{ candy.id }}">{{ candy.site }}</td>
+                <td class="td-description" data-id="{{ candy.id }}">{{ candy.description }}</td>
+                <td class="td-login td-hide" data-id="{{ candy.id }}">{{ candy.login }}</td>
+                <td class="td-password td-hide" data-id="{{ candy.id }}">{{ candy.password }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -48,52 +44,52 @@
 <div align="center" class="btn-reshow_modal js-reload_master_password_modal">
     <button class="btn btn-kolt" data-target="#MasterPasswordModal" data-toggle="modal">Создать мастер пароль</button>
 </div>
-<div id="AccountModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="CandyModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header modal-header-create-account">
+            <div class="modal-candy-header">
                 <button type="button" class="btn btn-delete btn-round" data-site="" data-id="" id="modal-btn-account_delete">Удалить</button>
                 <button class="btn btn-kolt btn-round btn-main-fix" id="modal-btn-save">Сохранить</button>
-                <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+                <button class="btn-close" data-dismiss="modal" style="top: 11px; right: 10px" aria-label="Закрыть"></button>
             </div>
-            <div class="modal-body modal-body-show-account">
-                <label for="modal-site">Сайт</label>
-                <input class="form-control" type="text" id="modal-site" maxlength="254">
-                <label for="modal-description">Описание</label>
-                <input class="form-control" type="text" id="modal-description" maxlength="254">
-                <label for="modal-new_login">Логин</label>
-                <input class="form-control" type="text" id="modal-new_login" placeholder="Введите новый логин" maxlength="254">
-                <label for="modal-new_password">Пароль</label>
-                <input class="form-control" type="password" id="modal-new_password" placeholder="Введите новый пароль" maxlength="254">
-                <input id="modal-login" maxlength="254">
-                <input id="modal-password" maxlength="254">
+            <div class="modal-candy-body">
+                <label for="cm-in-site"> Сайт (<span class="modal-counter" id="cm-in-site-counter">0</span>/<span id="cm-in-site-max">100</span>) </label>
+                <input class="form-control" type="text" id="cm-in-site" maxlength="100" />
+                <label for="cm-in-description"> Описание (<span class="modal-counter" id="cm-in-description-counter">0</span>/<span id="cm-in-description-max">250</span>) </label>
+                <textarea class="form-control" id="cm-in-description" maxlength="250" rows="3"></textarea>
+                <label for="cm-in-new_login"> Логин (<span class="modal-counter" id="cm-in-new-login-counter">0</span>/<span id="cm-in-new-login-max">100</span>) </label>
+                <input class="form-control" type="text" id="cm-in-new_login" placeholder="Введите новый логин" maxlength="100" />
+                <label for="cm-in-new_password"> Пароль (<span class="modal-counter" id="cm-in-new-password-counter">0</span>/<span id="cm-in-new-password-max">100</span>) </label>
+                <input class="form-control" type="password" id="cm-in-new_password" placeholder="Введите новый пароль" maxlength="100" />
+                <input id="cm-in-login" style="display: none" />
+                <input id="cm-in-password" style="display: none" />
             </div>
-            <div align="center" class="modal-footer modal-footer-show-account">
-                <div align="center">
-                    <button class="btn btn-kolt bubbly-button btn-round btn-main-fix btn-bottom-show-account" id="modal-btn-login">Логин</button>
-                    <button class="btn btn-kolt bubbly-button btn-round btn-main-fix btn-bottom-show-account" id="modal-btn-password">Пароль</button>
-                </div>
+            <div class="modal-actions" style="justify-content: center">
+                <button class="btn btn-kolt bubbly-button btn-round btn-main-fix" id="modal-btn-login">Логин</button>
+                <button class="btn btn-kolt bubbly-button btn-round btn-main-fix" id="modal-btn-password">Пароль</button>
             </div>
         </div>
     </div>
 </div>
-<div id="CreateAccountModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="CreateCandyModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header modal-header-create-account">
-                <h4 class="modal-title">Добавить аккаунт</h4>
+            <div class="modal-candy-header">
+                <h3>Добавить аккаунт</h3>
                 <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <div class="modal-body modal-body-create-account">
-                <label for="in-site">Сайт</label>
-                <input class="form-control" type="text" id="in-site" maxlength="254">
-                <label for="in-description">Описание</label>
-                <input class="form-control" type="text" id="in-description" maxlength="254">
-                <label for="in-login">Логин</label>
-                <input class="form-control" type="text" id="in-login" maxlength="254">
-                <label for="in-password">Пароль</label>
-                <input class="form-control" type="password" id="in-password" maxlength="254">
-                <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_account">Добавить</button>
+            <div class="modal-candy-body">
+                <label for="ccm-in-site"> Сайт (<span class="modal-counter" id="ccm-in-site-counter">0</span>/<span id="ccm-in-site-max">100</span>) </label>
+                <input class="form-control" type="text" id="ccm-in-site" maxlength="100" />
+                <label for="ccm-in-description"> Описание (<span class="modal-counter" id="ccm-in-description-counter">0</span>/<span id="ccm-in-description-max">250</span>) </label>
+                <textarea class="form-control" id="ccm-in-description" maxlength="250" rows="3"></textarea>
+                <label for="ccm-in-login"> Логин (<span class="modal-counter" id="ccm-in-login-counter">0</span>/<span id="ccm-in-login-max">100</span>) </label>
+                <input class="form-control" type="text" id="ccm-in-login" maxlength="100" />
+                <label for="ccm-in-password"> Пароль (<span class="modal-counter" id="ccm-in-password-counter">0</span>/<span id="ccm-in-password-max">100</span>) </label>
+                <input class="form-control" type="password" id="ccm-in-password" maxlength="100" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_candy">Добавить</button>
             </div>
         </div>
     </div>
@@ -101,46 +97,37 @@
 <div id="MasterPasswordModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header modal-header-create-account">
-                <h4 class="modal-title">Мастер пароль</h4>
+            <div class="modal-candy-header">
+                <h3>Мастер пароль</h3>
                 <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <div class="modal-body modal-body-master-password">
-                <div id="pesonal-crypto-settings">
-                    <h4>Персональные настройки шифрования:</h4>
-                    <p>Если вы не знаете какие настройки устанавливать, то оставьте все как есть, и перейдите к установке мастер пароля</p>
-                    <label>Ключ (Key)</label>
-                    <select class="form-control key_select">
-                        <option value="256/8" selected>256/8</option>
-                        <option value="128/8">128/8</option>
-                    </select>
-                    <label>IV (iv)</label>
-                    <select class="form-control iv_select">
-                        <option value="128/8" selected>128/8</option>
-                        <option value="256/8">256/8</option>
-                    </select>
-                    <label>Соль (salt)</label>
-                    <select class="form-control salt_select">
-                        <option value="256/8" selected>256/8</option>
-                        <option value="128/8">128/8</option>
-                    </select>
-                    <label>Кол-во итераций (iterations)</label>
-                    <p>Оставьте поле пустым для рандомизации значения. Допустимо 57-7999</p>
-                    <input class="form-control" type="number" id="in-iterations" maxlength="5">
-                    <h4>Мастер пароль:</h4>
-                </div>
+            <div class="modal-candy-body">
+                <h3>Персональные настройки шифрования:</h3>
+                <p>Если вы не знаете какие настройки устанавливать, то оставьте все как есть, и перейдите к установке мастер пароля</p>
+                <label>Ключ (Key)</label>
+                <select class="form-control key_select">
+                    <option value="256/8" selected>256/8</option>
+                    <option value="128/8">128/8</option>
+                </select>
+                <label>IV (iv)</label>
+                <select class="form-control iv_select">
+                    <option value="128/8" selected>128/8</option>
+                    <option value="256/8">256/8</option>
+                </select>
+                <label>Соль (salt)</label>
+                <select class="form-control salt_select">
+                    <option value="256/8" selected>256/8</option>
+                    <option value="128/8">128/8</option>
+                </select>
+                <label>Кол-во итераций (оставьте поле пустым для рандомизации значения или введите число от 57 до 7999)</label>
+                <input class="form-control" type="number" id="in-iterations" maxlength="5" />
+                <h3>Мастер пароль:</h3>
                 <label for="in-old_password">Старый пароль</label>
-                <input class="form-control" type="password" id="in-old_password" maxlength="254">
+                <input class="form-control" type="password" id="in-old_password" maxlength="254" />
                 <label for="in-new_password">Новый пароль</label>
-                <input class="form-control" type="password" id="in-new_password" maxlength="254">
+                <input class="form-control" type="password" id="in-new_password" maxlength="254" />
                 <label for="in-repeat_new_password">Повторите новый пароль</label>
-                <input class="form-control" type="password" id="in-repeat_new_password" maxlength="254">
-                {% if request.user.is_staff %}
-                <input id="btn_master_import" type="file" value="Import" style="display: none;"/>
-                <label for="btn_master_import" style="margin-top: 10px;" class="btn btn-kolt btn-round" accept=".json,application/json">Мастер импорт</label>
-                <button id="btn_master_export" style="margin-top: 10px;" data-toggle="modal" class="btn btn-kolt btn-round">Мастер экспорт</button>
-                {% endif %}
-                <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_master_password">Изменить</button>
+                <input class="form-control" type="password" id="in-repeat_new_password" maxlength="254" />
                 <div id="password_info">
                     <h5>Пароль должен соответствовать критериям:</h5>
                     <ul>
@@ -151,19 +138,27 @@
                     </ul>
                 </div>
             </div>
+            <div class="modal-actions">
+                {% if request.user.is_staff %}
+                <button id="btn_master_export" class="btn btn-kolt btn-round">Экспорт</button>
+                {% endif %}
+                <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-send_master_password">Изменить</button>
+            </div>
         </div>
     </div>
 </div>
 <div id="EnterKeyModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            <div class="modal-header modal-header-create-account">
-                <h4 class="modal-title">Аутентификация</h4>
+            <div class="modal-candy-header">
+                <h3>Аутентификация</h3>
                 <button class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <div class="modal-body modal-body-enter-password">
+            <div class="modal-candy-body">
                 <label for="in-enter_master_password">Введите мастер пароль</label>
-                <input class="form-control" type="password" id="in-enter_master_password" inputmode="text" maxlength="254" autofocus>
+                <input class="form-control" type="password" id="in-enter_master_password" inputmode="text" maxlength="254" autofocus />
+            </div>
+            <div class="modal-actions">
                 <button class="btn btn-kolt btn-round btn-main-fix btn-send" id="btn-enter_master_password">Войти</button>
             </div>
         </div>

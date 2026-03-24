@@ -32,6 +32,7 @@
 p,
 h1,
 h2,
+h3,
 h4,
 h5,
 strong,
@@ -510,11 +511,6 @@ a:hover {
     display: none;
 }
 
-.btn-send {
-    float: right;
-    margin-top: 10px;
-}
-
 .btn-round {
     border-radius: 20px;
 }
@@ -526,7 +522,7 @@ a:hover {
 /* Кнопка закрытия (крестик) */
 .btn-close {
     position: absolute;
-    top: 4px;
+    top: 3px;
     right: 8px;
     width: 36px;
     height: 36px;
@@ -678,6 +674,35 @@ a:hover {
 /* ==========================================================================
    3.6. Формы и поля ввода
    ========================================================================== */
+
+/* Стили для textarea */
+textarea.form-control {
+    resize: vertical;           /* Разрешаем изменение размера только по вертикали */
+    min-height: 70px;           /* Минимальная высота */
+    max-height: 200px;          /* Максимальная высота */
+    font-family: Comfortaa;     /* Сохраняем шрифт */
+    line-height: 1.5;           /* Увеличиваем межстрочный интервал для читаемости */
+}
+
+/* Стили для счетчиков символов */
+.modal-counter {
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+/* Обновляем стили для меток */
+.modal-candy-body label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.modal-candy-body label:first-of-type {
+    margin-top: 0;
+}
+
 .form-control {
     background-color: var(--input-bg);
     color: var(--input-text);
@@ -780,9 +805,8 @@ label {
     font-size: 12px;
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: 275px;
     display: none;
-    width: 190px;
     padding: 5px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
@@ -828,7 +852,7 @@ tbody tr {
     height: 40px;
 }
 
-#Accounts_table {
+#CandiesTable {
     border-radius: 4px;
 }
 
@@ -852,13 +876,13 @@ tbody tr {
     display: none;
 }
 
-.account_table_th_icon {
+.candies_table_th_icon {
     width: 34px;
     text-align: center;
     font-size: 16px !important;
 }
 
-.account_table_th_icon div {
+.candies_table_th_icon div {
     margin: -1px;
 }
 
@@ -944,50 +968,38 @@ tbody tr {
 /* ==========================================================================
    3.9. Модальные окна
    ========================================================================== */
+
+/* Контейнер для кнопок в модальном окне */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;  /* Выравнивание кнопок справа */
+    gap: 10px;                  /* Расстояние между кнопками */
+    margin: 0;
+    padding: 5px;
+    border-top: 1px solid var(--border-color); /* Опционально: разделитель */
+}
+
 .modal-content {
     background-color: var(--modal-bg);
     color: var(--text-color);
 }
 
-.modal-title {
-    margin: 7px 0 0 7px;
-    font-size: 16px;
+.modal-candy-header {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.modal-header-create-account {
-    height: 50px;
-    padding: 7px;
+.modal-candy-header h3 {
+    margin: 0;
 }
 
-.modal-body-create-account {
-    height: 290px;
-    padding: 0 15px;
+.modal-candy-body {
+    position: relative;
+    padding: 5px 15px;
 }
 
-.modal-body-show-account {
-    padding: 0 15px 5px;
-}
-
-.modal-body-show-account #modal-login,
-.modal-body-show-account #modal-password {
-    display: none;
-}
-
-.modal-body-master-password {
-    padding: 15px;
-}
-
-.modal-body-master-password #password_info {
-    bottom: -68px;
-}
-
-.modal-body-enter-password {
-    height: 114px;
-    padding: 0 15px;
-}
-
-.modal-footer-show-account {
-    padding: 7px;
+.modal-candy-body h3 {
+    margin: 5px 0px;
 }
 
 /* ==========================================================================
@@ -1015,7 +1027,7 @@ tbody tr {
     float: left;
 }
 
-.account_container {
+.candies_container {
     display: none;
     margin-top: 60px;
 }
@@ -1266,10 +1278,6 @@ pre {
 
 #in-search {
     margin-top: 10px;
-}
-
-#pesonal-crypto-settings {
-    display: none;
 }
 
 .main_buttons {
@@ -1816,24 +1824,13 @@ pre {
 }
 
 @media (max-width: 363px) {
-    #btn_create_account_modal {
-        margin-bottom: 5px;
-    }
-
     .main_buttons button {
         width: 90%;
+        margin-bottom: 5px;
     }
 }
 
 @media (max-width: 354px) {
-    .btn-bottom-show-account {
-        width: 100px;
-    }
-
-    .modal-title {
-        margin: 7px 0px 0px 10px;
-    }
-
     .col-xs-12 {
         padding: 0;
     }

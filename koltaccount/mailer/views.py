@@ -1,4 +1,4 @@
-from baseapp.utils import UserModel, account_activation_token, get_base_context
+from baseapp.utils import account_activation_token, get_base_context
 from django.contrib.sites.models import Site
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
@@ -14,24 +14,30 @@ from .forms import EmailChangeForm
 
 def change(request):
     """Изменить адрес электронной почты"""
-    context = get_base_context(
-        {"title": "Изменить почтовый адрес", "form": EmailChangeForm}
+    if request.method != "POST":
+        context = get_base_context(
+            {"title": "Изменить почтовый адрес", "form": EmailChangeForm()}
+        )
+        return render(request, "email/change_form.html", context)
+
+    email = request.POST.get("email")
+    user = request.user
+    current_site = Site.objects.get_current()
+
+    # Отправляем письмо на новый email
+    send_email(
+        user=user,
+        subject="Привязка email к аккаунту",
+        template="email/change.html",
+        context={
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": account_activation_token.make_token(user),
+        },
+        email=email,
     )
 
-    if request.method == "POST":
-        email = request.POST.get("email")
-        user = UserModel.objects.get(id=request.user.id)
-        current_site = Site.objects.get_current()
-        send_email(
-            user=user,
-            subject="Привязка email к аккаунту",
-            template="email/change.html",
-            context={
-                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                "token": account_activation_token.make_token(user),
-            },
-            email=email,
-        )
+    # Отправляем уведомление на старый email
+    if user.email:
         send_email(
             user=user,
             subject="Привязка email к аккаунту",
@@ -42,27 +48,25 @@ def change(request):
                 "domain": current_site.domain,
             },
         )
-        user.email = email
-        user.is_active_email = False
-        user.save()
-        return redirect(reverse("email_change_done_url"))
-    return render(request, "email/change_form.html", context)
+
+    user.email = email
+    user.is_active_email = False
+    user.save()
+
+    return redirect(reverse("email_change_done_url"))
 
 
 def change_done(request):
-    """Страница которая говорит о том что письмо с
-    инструкциями по изменению почтового адреса отправлено"""
-    context = get_base_context(
-        {"title": "Письмо с инструкциями по изменению почтового адреса отправлено"}
-    )
+    """Страница после отправки письма с инструкциями"""
+    context = get_base_context({"title": "Письмо с инструкциями отправлено"})
     return render(request, "email/change_done.html", context)
 
 
 def confirm(request):
-    """Отправка письма о подтверждении
-    почты после регистрации"""
+    """Отправка письма о подтверждении почты после регистрации"""
     if not request.user.is_authenticated:
         return redirect(reverse("home_url"))
+
     send_email(
         user=request.user,
         subject="Добро пожаловать в KoltAccount",
@@ -76,21 +80,14 @@ def confirm(request):
 
 
 def confirm_done(request):
-    """Страница которая говорит о том что
-    отправленно письмо подтверждения почты после регистрации"""
-    context = get_base_context({"title": "Письмо отправленно"})
+    """Страница после отправки письма подтверждения"""
+    context = get_base_context({"title": "Письмо отправлено"})
     return render(request, "email/confirm_done.html", context)
 
 
 def confirm_complete(request):
-    """Страница которая говорит о том что
-    пользователь успешно подтвердили почту после регистрации"""
-    valid = False
-
-    if "valid" in request.session:
-        valid = request.session["valid"]
-        del request.session["valid"]
-
+    """Страница успешного подтверждения почты"""
+    valid = request.session.pop("valid", False)
     context = get_base_context({"title": "Подтверждение почты", "valid": valid})
     return render(request, "email/confirm_complete.html", context)
 
@@ -102,11 +99,12 @@ def activate(request, uidb64, token):
 
     if activate_email(uidb64, token):
         request.session["valid"] = True
+
     return redirect(reverse("email_confirm_complete_url"))
 
 
 def check_test_template(request):
-    """Текстирование шаблона для почты"""
+    """Тестирование шаблона для почты"""
     if not request.user.is_staff:
         return HttpResponseForbidden(render(request, "403.html"))
 
@@ -114,8 +112,8 @@ def check_test_template(request):
         "username": request.user.username,
         "protocol": SITE_PROTOCOL,
         "domain": SITE_DOMAIN,
-        "uid": "MQ%5B0-9A-Za-z_%5",
-        "token": "-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%",
+        "uid": "MQ",
+        "token": "abc123-def456",
         "email": hiding_email(request.user.email),
     }
 
@@ -126,11 +124,3 @@ def check_test_template(request):
     ]
 
     return render(request, templates[0], context)
-
-
-# TODO: Удалить. Потеряли где-то шаблон
-# def change_complete(request):
-#     """Страница которая говорит о том что
-#     изменение адреса почты завершено"""
-#     context = get_base_context({"title": "Изменение адреса почты завершено"})
-#     return render(request, "email/email_change_complete.html", context)

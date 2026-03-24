@@ -77,20 +77,25 @@ $(function () {
         /* Добавление новой конфетки */
         preloadShow();
 
-        let site = $("#ccm-in-site").val(),
-            description = $("#ccm-in-description").val(),
-            login = encrypt($("#ccm-in-login").val(), masterPassword),
-            password = encrypt($("#ccm-in-password").val(), masterPassword);
+        let site = $("#ccm-in-site").val();
+        let description = $("#ccm-in-description").val();
+        let login = encrypt($("#ccm-in-login").val(), masterPassword);
+        let password = encrypt($("#ccm-in-password").val(), masterPassword);
+
+        let data = {
+            site: encrypt(site, masterPassword),
+            login: login,
+            password: password,
+        };
+
+        if (description) {
+            data.description = encrypt(description, masterPassword);
+        }
 
         $.ajax({
             url: "create_candy/",
             type: "POST",
-            data: {
-                site: encrypt(site, masterPassword),
-                description: encrypt(description, masterPassword),
-                login: login,
-                password: password,
-            },
+            data: data,
             success: function (result) {
                 // Получаем ID новой конфетки из ответа сервера
                 let candyId = result["candy_id"];
@@ -124,13 +129,21 @@ $(function () {
                     ]);
                 });
             },
-            // TODO: Добавить обработку ошибок из View
             error: function (jqXHR) {
-                swal("Ошибка", "Что-то пошло не так", "error");
+                let result = jqXHR.responseJSON;
+                if (jqXHR.status === 400) {
+                    if (result?.result === "missing_fields") {
+                        swal("Ошибка", "Заполните поля сайт, логин и пароль", "warning");
+                    } else if (result?.result === "limit_reached") {
+                        swal("Ошибка", "Достигнут лимит аккаунтов", "warning");
+                    } else {
+                        swal("Ошибка", "Что-то пошло не так", "error");
+                    }
+                } else {
+                    swal("Ошибка", "Что-то пошло не так", "error");
+                }
             },
-            complete: function () {
-                preloadHide();
-            },
+            complete: () => preloadHide(),
         });
     }
 
@@ -296,7 +309,8 @@ $(function () {
         if (newPass) data.new_password = encrypt(newPass, masterPassword);
 
         // Если ничего не изменилось - выходим
-        if (Object.keys(data).length === 1) { // только candy_id
+        if (Object.keys(data).length === 1) {
+            // только candy_id
             $("#CandyModal").modal("hide");
             highlightRow(candyId);
             preloadHide();

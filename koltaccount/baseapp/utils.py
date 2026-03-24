@@ -23,13 +23,6 @@ class TokenGenerator(PasswordResetTokenGenerator):
 account_activation_token = TokenGenerator()
 
 
-def check_username_db(request) -> dict:
-    """Проверяет существование имени в БД"""
-    username = request.POST.get("username", None)
-    user = UserModel.objects.filter(username=username).exists()
-    return {"user": "exist"} if user else {"user": None}
-
-
 def check_if_password_correct(password: str, repeat_password: str):
     """Проверка корректности пароля"""
     if password != repeat_password:

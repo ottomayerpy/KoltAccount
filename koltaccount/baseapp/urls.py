@@ -15,7 +15,6 @@ urlpatterns = [
     path("support/privacy/", views.privacy, name="privacy_url"),
     path("support/terms/", views.terms, name="terms_url"),
     path("lk/site_in_service_toggle/", views.site_in_service_toggle),
-    path("register/check_username/", views.check_username),
     path(
         "accounts/password_reset/",
         views.KoltPasswordResetView.as_view(

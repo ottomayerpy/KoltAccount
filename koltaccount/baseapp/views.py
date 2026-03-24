@@ -11,7 +11,6 @@ from baseapp.utils import (
     UserModel,
     account_activation_token,
     check_if_password_correct,
-    check_username_db,
     get_base_context,
     json_response,
 )
@@ -20,6 +19,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.sites.models import Site
+from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -200,13 +200,6 @@ def site_in_service_toggle(request):
     return HttpResponse(status=204)
 
 
-@require_POST
-@is_ajax
-def check_username(request):
-    """Проверяет существование имени в БД"""
-    return json_response(check_username_db(request))
-
-
 def kolt_login(request):
     """Авторизация пользователей"""
     if request.user.is_authenticated:
@@ -239,53 +232,81 @@ class KoltPasswordResetView(PasswordResetView):
 class RegisterView(TemplateView):
     """Регистрация пользователей"""
 
+    template_name = "registration/register.html"
+
     def dispatch(self, request, *args, **kwargs):
-        """Регистрация"""
         if request.user.is_authenticated:
             return redirect(reverse("home_url"))
+        return super().dispatch(request, *args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
         context = get_base_context(
-            {"title": "Регистрация", "form": RegisterForm, "form_message": "None"}
+            {
+                "title": "Регистрация",
+                "form": RegisterForm,
+                "form_message": None,
+            }
+        )
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        # Проверка пароля
+        answer = check_if_password_correct(password1, password2)
+        if answer:
+            return self._render_form(answer, username, email)
+
+        # Создание пользователя
+        try:
+            user = UserModel.objects.create_user(
+                username=username, email=email, password=password1
+            )
+        except IntegrityError:
+            # Ошибка уникальности (username или email)
+            if UserModel.objects.filter(username=username).exists():
+                return self._render_form("username error", username, email)
+            elif email and UserModel.objects.filter(email=email).exists():
+                return self._render_form("email error", username, email)
+            else:
+                # Неожиданная ошибка IntegrityError
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"IntegrityError during registration: {username}, {email}")
+                return self._render_form("registration error", username, email)
+        except Exception as e:
+            # Другие ошибки (например, ValueError при невалидном email)
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Unexpected error during registration: {e}")
+            return self._render_form("registration error", username, email)
+
+        # Отправка письма
+        send_email(
+            user=user,
+            email=email,
+            subject="Добро пожаловать в KoltAccount",
+            template="email/registration_email_confirm_email.html",
+            context={
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": account_activation_token.make_token(user),
+            },
         )
 
-        if request.method == "POST":
-            username = request.POST.get("username")
-            email = request.POST.get("email")
-            password1 = request.POST.get("password1")
-            password2 = request.POST.get("password2")
+        return redirect(reverse("kolt_login"))
 
-            answer = check_if_password_correct(password1, password2)
-            if answer is None:
-                try:
-                    user = UserModel.objects.create_user(
-                        username=username, email=email, password=password1
-                    )
-
-                    send_email(
-                        user=user,
-                        email=email,
-                        subject="Добро пожаловать в KoltAccount",
-                        template="email/registration_email_confirm_email.html",
-                        context={
-                            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                            "token": account_activation_token.make_token(user),
-                        },
-                    )
-
-                    return redirect(reverse("kolt_login"))
-                except Exception as err:
-                    if str(err) == "UNIQUE constraint failed: auth_user.username":
-                        context.update(
-                            {
-                                "form_message": "username error",
-                                "username": username,
-                                "email": email,
-                            }
-                        )
-                    else:
-                        raise
-            else:
-                context.update(
-                    {"form_message": answer, "username": username, "email": email}
-                )
-        return render(request, "registration/register.html", context)
+    def _render_form(self, form_message, username=None, email=None):
+        """Вспомогательный метод для рендеринга формы с ошибкой"""
+        context = get_base_context(
+            {
+                "title": "Регистрация",
+                "form": RegisterForm,
+                "form_message": form_message,
+                "username": username,
+                "email": email,
+            }
+        )
+        return render(self.request, self.template_name, context)

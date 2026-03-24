@@ -8,11 +8,9 @@ $(function () {
     $("#id_email").val(email);
 
     let pattern_email = /^[a-z0-9_-]+@[a-z0-9-]+\.([a-z]{1,6}\.)?[a-z]{2,6}$/i,
-
         is_email = false,
         is_password = false,
         is_password2 = false,
-
         is_form_submit = false;
 
     $("#id_email").on("input", function () {
@@ -33,35 +31,18 @@ $(function () {
 
     $("form").on("submit", function () {
         preloadShow();
-        let username = $("#id_username").val();
 
         if (!is_form_submit) {
-            $.ajax({
-                url: "check_username/",
-                type: "POST",
-                data: {
-                    username: username
-                },
-                success: function (result) {
-                    let is_exist_username = result["user"];
-
-                    if ($("#id_username").val() == "") {
-                        swal("Заполните поле \"Имя\"", "", "info");
-                    } else if (is_exist_username == "exist") {
-                        swal("Ошибка", "Введенное имя уже используейтся, введите другое", "warning");
-                    } else if (!is_email) {
-                        $("#id_email").addClass("input-invalid");
-                    } else if (!is_password) {
-                        $("#id_password1").addClass("input-invalid");
-                    } else if (is_password2) {
-                        is_form_submit = true;
-                        $("form").submit();
-                    }
-                },
-                complete: function () {
-                    preloadHide();
-                }
-            });
+            if ($("#id_username").val() == "") {
+                swal('Заполните поле "Имя"', "", "info");
+            } else if (!is_email) {
+                $("#id_email").addClass("input-invalid");
+            } else if (!is_password) {
+                $("#id_password1").addClass("input-invalid");
+            } else if (is_password2) {
+                is_form_submit = true;
+                $("form").submit();
+            }
 
             return false;
         }
@@ -76,20 +57,23 @@ $(function () {
             lettersUpper: 3, // (number) - Количество заглавных букв в пароле
             numbers: 3, // (number) - Количество цифр в пароле
             //symbols: // (number) - Количество спец. символов в пароле
-        }
+        };
         let password = PassGenJS.getPassword(params);
         $("#id_password1").val(password);
         swal("Генератор", "Ваш пароль: " + password + "\nСтарайтесь избегать хранения паролей на электронных устройствах в открытом виде.", "info");
         check_password_is_correct();
     });
 
-    $("#id_password1").on("input", function () {
-        check_password_is_correct();
-    }).focus(function () {
-        $("#password_info").show();
-    }).blur(function () {
-        $("#password_info").hide();
-    });
+    $("#id_password1")
+        .on("input", function () {
+            check_password_is_correct();
+        })
+        .focus(function () {
+            $("#password_info").show();
+        })
+        .blur(function () {
+            $("#password_info").hide();
+        });
 
     $("#id_password2").on("input", function () {
         check_password2_is_correct();
@@ -98,7 +82,6 @@ $(function () {
     function check_password_is_correct() {
         /* Проверить правильность пароля */
         let password = $("#id_password1").val(),
-
             is_length = false,
             is_letter = false,
             is_capital = false,
@@ -145,7 +128,6 @@ $(function () {
         }
 
         check_password2_is_correct();
-
     }
 
     function check_password2_is_correct() {

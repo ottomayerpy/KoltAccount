@@ -798,27 +798,32 @@ $(function () {
         });
 
     $("#btn_master_import").on("change", async function () {
-        // Проверяем наличие мастер-пароля
-        if (masterPassword == "doesnotexist") {
-            swal("Необходимо создать мастер пароль", "", "info");
-            return;
-        }
+        const file = this.files[0];
+        if (!file) return;
 
         preloadShow();
-        $("#MasterPasswordModal").modal("hide");
 
-        // Читаем выбранный файл
         const reader = new FileReader();
-        reader.readAsText(this.files[0]);
+        reader.readAsText(file);
         await new Promise((resolve) => (reader.onload = resolve));
 
         try {
-            // Парсим JSON
             const candies = JSON.parse(reader.result);
 
-            // TODO: Добавить валидацию данных из файла (проверить наличие всех полей и их типы)
+            if (!Array.isArray(candies)) {
+                throw new Error("Файл должен содержать массив");
+            }
 
-            // Шифруем данные для отображения в таблице
+            // Проверяем лимит
+            const limitCheck = checkCandiesLimit(candies.length);
+            if (!limitCheck.allowed) {
+                swal("Превышен лимит", `Вы пытаетесь добавить ${candies.length} записей из ${limitCheck.available} доступных`, "warning");
+                preloadHide();
+                $("#btn_master_import").val("");
+                return;
+            }
+
+            // Шифруем данные
             const candiesForTable = candies.map((account) => ({
                 site: account.site,
                 description: account.description,
@@ -826,7 +831,6 @@ $(function () {
                 password: encrypt(account.password, masterPassword),
             }));
 
-            // Шифруем данные для отправки на сервер
             const candiesForServer = candiesForTable.map((account) => ({
                 site: encrypt(account.site, masterPassword),
                 description: encrypt(account.description, masterPassword),
@@ -841,24 +845,19 @@ $(function () {
                     candies: JSON.stringify(candiesForServer),
                 },
                 success: function (result) {
-                    // Добавляем импортированные конфетки в таблицу
                     addImportedCandiesToTable(result.imported, candiesForTable);
 
-                    // Обновляем счетчик
                     const candyCount = parseInt($("#candies_count").text());
                     $("#candies_count").text(candyCount + result.success_count);
 
-                    // Формируем сообщение о результате
                     let message = `Импортировано: ${result.success_count} из ${result.total}`;
                     if (result.error_count > 0) {
                         message += `\nОшибок: ${result.error_count}`;
                         console.error("Ошибки импорта:", result.errors);
                     }
 
-                    // Показываем результат
                     swal(result.error_count > 0 ? "Импорт завершен с ошибками" : "Импорт успешно завершен", message, result.error_count > 0 ? "warning" : "success");
 
-                    // Сортируем таблицу
                     $("#CandiesTable").trigger("sorton", [[[1, 0]]]);
                 },
                 error: function (jqXHR) {
@@ -872,7 +871,7 @@ $(function () {
                 },
                 complete: function () {
                     preloadHide();
-                    $("#btn_master_import").val(""); // Очищаем input file
+                    $("#btn_master_import").val("");
                 },
             });
         } catch (e) {
@@ -1035,8 +1034,64 @@ $(function () {
     initCharCounters(createCharCounters);
     initCharCounters(editCharCounters);
 
-    $("#CreateCandyModal").on("show.bs.modal", function () {
+    $("#CreateCandyModal").on("show.bs.modal", function (e) {
         /* Событие перед открытием модального окна создания конфетки */
+        // Обновляем счетчики
         $("#ccm-in-site, #ccm-in-description, #ccm-in-login, #ccm-in-password").trigger("input");
     });
+
+    $("#btn_create_candy").on("click", function (e) {
+        /* Событие нажатия на кнопку добавления конфетки */
+        // Проверяем лимит
+        const limitCheck = checkCandiesLimit(1);
+
+        if (!limitCheck.allowed) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            swal({
+                title: "Превышен лимит",
+                text: "Удалите лишние аккаунты перед добавлением новых",
+                type: "warning",
+                confirmButtonText: "Понятно",
+            });
+
+            return false;
+        }
+    });
+
+    $('label[for="btn_master_import"]').on("click", function (e) {
+        /* Событие нажатия на кнопку импорта */
+        const limitCheck = checkCandiesLimit(1);
+
+        if (!limitCheck.allowed) {
+            e.preventDefault();
+            e.stopPropagation();
+            swal("Превышен лимит", "Удалите лишние аккаунты перед импортом новых", "warning");
+            return false;
+        }
+    });
+
+    function checkCandiesLimit(additionalCount = 0) {
+        const CANDIES_LIMIT = parseInt($("#candies_limit").text()) || 200;
+        const currentCount = parseInt($("#candies_count").text()) || 0;
+        const newCount = currentCount + additionalCount;
+        const available = CANDIES_LIMIT - currentCount;
+
+        if (newCount > CANDIES_LIMIT) {
+            return {
+                allowed: false,
+                current: currentCount,
+                limit: CANDIES_LIMIT,
+                available: available,
+            };
+        }
+
+        return {
+            allowed: true,
+            current: currentCount,
+            limit: CANDIES_LIMIT,
+            available: available,
+        };
+    }
 });

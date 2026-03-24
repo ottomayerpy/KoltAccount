@@ -786,17 +786,17 @@ label {
 }
 
 .position-login-show_password {
-    top: 149px;
+    top: 158px;
     left: 85%;
 }
 
 .position-show_password {
-    top: 223px;
+    top: 232px;
     left: 72%;
 }
 
 .position-generate_password {
-    top: 223px;
+    top: 232px;
     left: 85%;
 }
 
@@ -941,7 +941,7 @@ tbody tr {
     width: 325px;
 }
 
-.register_card #id_password1 {
+.register_card #id_password {
     width: 70%;
 }
 

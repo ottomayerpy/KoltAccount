@@ -48,13 +48,13 @@ class RegisterForm(Form):
         max_length=254,
         widget=EmailInput(attrs={"autocomplete": "email"}),
     )
-    password1 = CharField(
+    password = CharField(
         label="Пароль",
         strip=False,
         max_length=254,
         widget=PasswordInput(attrs={"autocomplete": "new-password"}),
     )
-    password2 = CharField(
+    repeat_password = CharField(
         label="Повторите пароль",
         strip=False,
         max_length=254,

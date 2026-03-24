@@ -252,37 +252,34 @@ class RegisterView(TemplateView):
     def post(self, request, *args, **kwargs):
         username = request.POST.get("username")
         email = request.POST.get("email")
-        password1 = request.POST.get("password1")
-        password2 = request.POST.get("password2")
+        password = request.POST.get("password")
+        repeat_password = request.POST.get("repeat_password")
 
         # Проверка пароля
-        answer = check_if_password_correct(password1, password2)
+        answer = check_if_password_correct(password, repeat_password)
         if answer:
             return self._render_form(answer, username, email)
 
         # Создание пользователя
         try:
             user = UserModel.objects.create_user(
-                username=username, email=email, password=password1
+                username=username, email=email, password=password
             )
         except IntegrityError:
-            # Ошибка уникальности (username или email)
+            # Ошибка уникальности username
             if UserModel.objects.filter(username=username).exists():
                 return self._render_form("username error", username, email)
-            elif email and UserModel.objects.filter(email=email).exists():
-                return self._render_form("email error", username, email)
             else:
                 # Неожиданная ошибка IntegrityError
                 import logging
                 logger = logging.getLogger(__name__)
-                logger.error(f"IntegrityError during registration: {username}, {email}")
-                return self._render_form("registration error", username, email)
+                logger.error(f"IntegrityError during registration: {username}")
+                return self._render_form("registration error", username)
         except Exception as e:
-            # Другие ошибки (например, ValueError при невалидном email)
             import logging
             logger = logging.getLogger(__name__)
             logger.error(f"Unexpected error during registration: {e}")
-            return self._render_form("registration error", username, email)
+            return self._render_form("registration error", username)
 
         # Отправка письма
         send_email(

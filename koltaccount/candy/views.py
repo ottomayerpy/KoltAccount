@@ -1,6 +1,7 @@
 import json
 import traceback
 
+from axes.decorators import axes_dispatch
 from baseapp.logger import write_error_to_log_file
 from baseapp.middleware import is_ajax
 from baseapp.utils import get_base_context, json_response
@@ -247,6 +248,7 @@ def save_master_password(request):
 
 
 @login_required
+@axes_dispatch
 def master_password_reset(request):
     """Сброс мастер пароля"""
     context = get_base_context(
@@ -267,7 +269,7 @@ def master_password_reset(request):
     password = request.POST.get("password")
 
     if not check_password(password, request.user.password):
-        context["form_message"] = "Неверный пароль"
+        context["form_message"] = "Password is not valid"
         return render(request, "registration/master_password_reset.html", context)
 
     # Удаляем все конфетки пользователя

@@ -795,11 +795,6 @@ label {
     left: 72%;
 }
 
-.position-generate_password {
-    top: 232px;
-    left: 85%;
-}
-
 /* Подсказка для пароля */
 #password_info {
     font-size: 12px;

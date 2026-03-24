@@ -32,18 +32,6 @@ $(function () {
         $password.attr("type", type);
     });
 
-    // Генерация пароля
-    $(".js-generate_password").on("touchstart mousedown", function () {
-        const password = PassGenJS.getPassword({
-            letters: 4,
-            lettersUpper: 3,
-            numbers: 3,
-        });
-        $password.val(password);
-        swal("Генератор", `Ваш пароль: ${password}\nСтарайтесь избегать хранения паролей на электронных устройствах в открытом виде.`, "info");
-        validatePassword();
-    });
-
     // Валидация пароля
     $password
         .on("input", validatePassword)

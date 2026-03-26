@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jquery": "^4.0.0",
+    "jquery": "^4.0.0",
     "jsdom": "^29.0.1",
     "vitest": "^4.1.1"
   }

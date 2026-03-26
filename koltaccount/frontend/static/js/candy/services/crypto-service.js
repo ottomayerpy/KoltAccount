@@ -129,7 +129,7 @@ export function saveMasterPassword(formData, { masterPassword, enMasterPassword,
     // 1. Валидация данных формы
     const error = getValidationError(formData, enMasterPassword);
     if (error) {
-        const type = error.includes("Пароли") || error.includes("старый") ? "warning" : "info";
+        const type = error.includes("Пароли") || error.includes("старый") || error.includes("итераций") ? "warning" : "info";
         swal(error, "", type);
         callbacks?.complete?.();
         return;

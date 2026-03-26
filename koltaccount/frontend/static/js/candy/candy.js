@@ -4,7 +4,7 @@ import { initCharCounters } from "./components/counters.js";
 import { configureTable } from "./components/table.js";
 import { decrypt, deMP } from "./crypto.js";
 import { changeCandy, clearAllCandies, createCandy, deleteCandy, exportAccounts, importCandies } from "./services/api.js";
-import { authorize, changeOrCreateMasterPassword, getMasterPassword } from "./services/crypto-service.js";
+import { authorize, saveMasterPassword, getMasterPassword } from "./services/crypto-service.js";
 import { checkCandiesLimit } from "./services/limit.js";
 import { copyToClipboard, safeFaviconUrl } from "./utils/helpers.js";
 
@@ -12,10 +12,8 @@ $(function () {
     let masterPassword = "";
     let enMasterPassword = "";
     let cs = {};
-    let defaultCs = {};
     let pressTimer = 0;
     let isAllowCopy = true;
-    let isAllowShowPage = false;
 
     // Константы для счетчиков
     const createCharCounters = [
@@ -41,11 +39,9 @@ $(function () {
         success: (result) => {
             enMasterPassword = result.password;
             cs = result.crypto_settings;
-            defaultCs = result.default_crypto_settings;
             $("#EnterKeyModal").modal("show");
         },
-        error: (defaultCryptoSettings) => {
-            defaultCs = defaultCryptoSettings;
+        error: () => {
             $("#in-old_password").attr("disabled", "disabled").css("display", "none");
             $('label[for="in-old_password"]').css("display", "none");
             $("#btn_master_export").css("display", "none");
@@ -64,11 +60,30 @@ $(function () {
         let $input = $("#in-enter_master_password");
 
         preloadShow();
-        authorize(key, cs, defaultCs, enMasterPassword, {
+        authorize(key, cs, enMasterPassword, {
             success: (newKey) => {
                 masterPassword = newKey;
-                isAllowShowPage = true;
+
+                let tds = $("td");
+                if (tds.length > 0) {
+                    tds.each((_, td) => {
+                        if (!["td-login td-hide", "td-password td-hide", "td-favicon"].includes(td.className)) {
+                            td.innerHTML = decrypt(td.innerHTML, masterPassword);
+                        }
+                    });
+                }
+
+                configureTable();
+
+                $(".favicon-sites").each(function () {
+                    const siteText = $('.td-site[data-id="' + $(this).attr("data-id") + '"]').text();
+                    $(this).attr("src", safeFaviconUrl(siteText));
+                });
+
                 $("#EnterKeyModal").modal("hide");
+                $(".footer-urls").show();
+                $(".js-reload_enter_key_modal").hide();
+                $(".candies_container").show();
             },
             error: () => {
                 $input.addClass("input-error-pulse");
@@ -195,27 +210,8 @@ $(function () {
     $("#EnterKeyModal").on("shown.bs.modal", () => $("#in-enter_master_password").focus());
 
     $("#EnterKeyModal").on("hide.bs.modal", () => {
-        if (isAllowShowPage) {
-            let tds = $("td");
-            if (tds.length > 0) {
-                tds.each((_, td) => {
-                    if (!["td-login td-hide", "td-password td-hide", "td-favicon"].includes(td.className)) {
-                        td.innerHTML = decrypt(td.innerHTML, masterPassword);
-                    }
-                });
-            }
-            configureTable();
-            $(".favicon-sites").each(function () {
-                const siteText = $('.td-site[data-id="' + $(this).attr("data-id") + '"]').text();
-                $(this).attr("src", safeFaviconUrl(siteText));
-            });
-            $(".footer-urls").show();
-            $(".js-reload_enter_key_modal").hide();
-            $(".candies_container").show();
-        } else {
-            $(".js-reload_enter_key_modal").show();
-            $("#in-enter_master_password").val("");
-        }
+        $(".js-reload_enter_key_modal").show();
+        $("#in-enter_master_password").val("");
     });
 
     $("#MasterPasswordModal").on("hide.bs.modal", () => {
@@ -341,23 +337,28 @@ $(function () {
 
     // Сохранение мастер-пароля
     $("#btn-send_master_password").on("click", () => {
-        let hasOldPass = $("#in-old_password").attr("disabled");
-        if ((!hasOldPass && $("#in-old_password").val() == "") || (hasOldPass && $("#in-old_password").val() != "")) {
-            swal('Заполните поле "Старый пароль"', "", "info");
-        } else if ($("#in-new_password").val() == "") {
-            swal('Заполните поле "Новый пароль"', "", "info");
-        } else if ($("#in-repeat_new_password").val() == "") {
-            swal('Заполните поле "Подтвердите новый пароль"', "", "info");
-        } else if ($("#in-new_password").val() != $("#in-repeat_new_password").val()) {
-            swal("Пароли не совпадают", "", "warning");
-        } else if (!hasOldPass && deMP(enMasterPassword, $("#in-old_password").val()) == "") {
-            swal("Не правильный старый пароль", "", "warning");
-        } else if (isNewPasswordValid && isRepeatPasswordValid) {
-            preloadShow();
-            changeOrCreateMasterPassword($("#in-new_password").val(), masterPassword, defaultCs, {
+        // Собираем все данные из DOM в один объект
+        const formData = {
+            oldPassword: $("#in-old_password").val(),
+            newPassword: $("#in-new_password").val(),
+            repeatPassword: $("#in-repeat_new_password").val(),
+            iterations: $("#in-iterations").val(),
+            hasOldPass: !$("#in-old_password").attr("disabled"),
+            crypto: {
+                key: $(".key_select").val().split("/"),
+                iv: $(".iv_select").val().split("/"),
+                salt: $(".salt_select").val().split("/"),
+            },
+        };
+
+        preloadShow();
+        saveMasterPassword(formData, {
+            masterPassword,
+            enMasterPassword,
+            callbacks: {
                 success: () => (location.href = location.href),
                 complete: () => preloadHide(),
-            });
-        }
+            },
+        });
     });
 });

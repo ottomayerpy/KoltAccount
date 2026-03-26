@@ -1,128 +1,215 @@
-// CS (Crypto Settings) - Индивидуальные настройки шифрования пользователя
-var CS;
+/**
+ * Глобальные настройки шифрования (CRYPTO SETTINGS)
+ * Хранит текущие параметры шифрования: KEY, IV, SALT, ITERATIONS, CRYPT_STR_AES, DECRYPT_SUBSTRING
+ */
+let cryptoState = {};
 
-function setCryptoSettings(default_CS, update_CS) {
-    CS = {
-        ...default_CS,
-        ...update_CS
-    }
+/**
+ * Обновление настроек шифрования
+ *
+ * @param {Object} newSettings - Новые настройки (объединяются с существующими)
+ */
+export function updateCryptoSettings(newSettings) {
+    cryptoState = { ...cryptoState, ...newSettings };
 }
 
-function encrypt_Pbkdf2HmacSha256(password, salt = null) {
-    // Функция шифрования алгоритмом Pbkdf2HmacSha256
-    const hmac = CryptoJS.HmacSHA256(password, password);
+/**
+ * Генерация ключа PBKDF2-HMAC-SHA256 из пароля
+ *
+ * @param {string} password - Исходный пароль
+ * @param {Object|null} salt - Соль (если null - генерируется случайная)
+ * @returns {Object|string}
+ *          - если salt === null: { key: string, salt: Object } (новый ключ и соль)
+ *          - если salt передан: string (только ключ)
+ */
+function deriveKeyFromPassword(password, salt = null) {
+    // Хешируем пароль самим собой для усиления энтропии
+    const passwordHash = CryptoJS.HmacSHA256(password, password);
+
+    // Если соль не передана — генерируем новую
     if (salt == null) {
-        salt = CryptoJS.lib.WordArray.random(CS.SALT.size / CS.SALT.division);
+        const newSalt = CryptoJS.lib.WordArray.random(cryptoState.SALT.size / cryptoState.SALT.division);
+
         return {
-            "key": CryptoJS.PBKDF2(
-                hmac,
-                salt,
-                {
-                    keySize: CS.KEY.size / CS.KEY.division,
-                    iterations: CS.ITERATIONS,
-                    hasher: CryptoJS.algo.SHA256
-                }
-            ).toString(),
-            "salt": salt
+            key: CryptoJS.PBKDF2(passwordHash, newSalt, {
+                keySize: cryptoState.KEY.size / cryptoState.KEY.division,
+                iterations: cryptoState.ITERATIONS,
+                hasher: CryptoJS.algo.SHA256,
+            }).toString(),
+            salt: newSalt,
         };
-    } else {
-        return CryptoJS.PBKDF2(
-            hmac,
-            salt,
-            {
-                keySize: CS.KEY.size / CS.KEY.division,
-                iterations: CS.ITERATIONS,
-                hasher: CryptoJS.algo.SHA256
-            }
-        ).toString();
     }
+
+    // Если соль передана — генерируем только ключ (для проверки пароля)
+    return CryptoJS.PBKDF2(passwordHash, salt, {
+        keySize: cryptoState.KEY.size / cryptoState.KEY.division,
+        iterations: cryptoState.ITERATIONS,
+        hasher: CryptoJS.algo.SHA256,
+    }).toString();
 }
 
-function enMP(password) {
-    // Шифровка мастер пароля
-    const hash = encrypt_Pbkdf2HmacSha256(password);
-    const master_password_key = hash.key;
-    const salt = hash.salt;
-    const msg = CryptoJS.lib.WordArray.random(CS.SALT.size / CS.SALT.division).toString();
+/**
+ * Шифрование мастер-пароля для хранения в БД
+ *
+ * @param {string} password - Исходный мастер-пароль
+ * @returns {Object} Результат шифрования
+ * @returns {string} result - Зашифрованное сообщение (хранится в БД)
+ * @returns {string} key - Мастер-ключ (используется для перешифровки конфеток)
+ */
+export function encryptMasterPassword(password) {
+    // Генерируем ключ и соль из пароля
+    const { key: masterKey, salt } = deriveKeyFromPassword(password);
 
-    const encrypted = encrypt(msg, master_password_key, salt);
+    // Генерируем случайное сообщение для проверки корректности расшифровки
+    const randomMessage = CryptoJS.lib.WordArray.random(cryptoState.SALT.size / cryptoState.SALT.division).toString();
+
+    // Шифруем сообщение с добавлением соли
+    const encrypted = encryptWithSettings(randomMessage, masterKey, salt);
 
     return {
-        "result": encrypted,
-        "key": master_password_key
-    }
+        result: encrypted, // зашифрованный мастер-пароль
+        key: masterKey, // мастер-ключ (используется на клиенте)
+    };
 }
 
-function deMP(transitmessage, password) {
-    // Дешифровка мастер пароля
-    const hexResult = base64ToHex(transitmessage);
+/**
+ * Дешифровка мастер-пароля для проверки введенного ключа
+ *
+ * @param {string} encryptedMasterPassword - Зашифрованный мастер-пароль из БД
+ * @param {string} userPassword - Введенный пользователем пароль
+ * @returns {string} Мастер-ключ (если пароль верный) или пустая строка
+ */
+export function decryptMasterPassword(encryptedMasterPassword, userPassword) {
+    // Преобразуем base64 в hex
+    const hexData = base64ToHex(encryptedMasterPassword);
 
-    const salt = CryptoJS.enc.Hex.parse(hexResult.substring(CS.DECRYPT_SUBSTRING.mp.start, CS.DECRYPT_SUBSTRING.mp.end));
-    const encrypted = hexToBase64(hexResult.substring(CS.DECRYPT_SUBSTRING.mp.end));
+    // Извлекаем соль из начала строки
+    const salt = CryptoJS.enc.Hex.parse(hexData.substring(cryptoState.DECRYPT_SUBSTRING.mp.start, cryptoState.DECRYPT_SUBSTRING.mp.end));
 
-    const key = encrypt_Pbkdf2HmacSha256(password, salt);
+    // Извлекаем зашифрованное сообщение (без соли)
+    const encrypted = hexToBase64(hexData.substring(cryptoState.DECRYPT_SUBSTRING.mp.end));
 
-    const decrypted = decrypt(encrypted, key);
+    // Пытаемся восстановить ключ из пароля и соли
+    const derivedKey = deriveKeyFromPassword(userPassword, salt);
 
-    if (decrypted != "") {
-        return key;
+    // Пытаемся расшифровать сообщение
+    const decrypted = decryptWithSettings(encrypted, derivedKey);
+
+    // Если расшифровка удалась — возвращаем ключ
+    if (decrypted !== "") {
+        return derivedKey;
     }
-    return decrypted;
+
+    return "";
 }
 
-function hexToBase64(str) {
-    // HEX конвертирование в BASE64
-    return btoa(String.fromCharCode.apply(null,
-        str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
+/**
+ * Преобразование HEX строки в BASE64
+ *
+ * @param {string} hexString - HEX строка (например, "48656c6c6f")
+ * @returns {string} BASE64 строка
+ */
+function hexToBase64(hexString) {
+    return btoa(
+        String.fromCharCode.apply(
+            null,
+            hexString
+                .replace(/\r|\n/g, "")
+                .replace(/([\da-fA-F]{2}) ?/g, "0x$1 ")
+                .replace(/ +$/, "")
+                .split(" "),
+        ),
+    );
 }
 
-function base64ToHex(str) {
-    // BASE64 конвертирование в HEX
-    for (var i = 0, bin = atob(str.replace(/[ \r\n]+$/, "")), hex = []; i < bin.length; ++i) {
-        let tmp = bin.charCodeAt(i).toString(16);
-        if (tmp.length === 1) tmp = "0" + tmp;
-        hex[hex.length] = tmp;
+/**
+ * Преобразование BASE64 строки в HEX
+ *
+ * @param {string} base64String - BASE64 строка
+ * @returns {string} HEX строка
+ */
+function base64ToHex(base64String) {
+    const binary = atob(base64String.replace(/[ \r\n]+$/, ""));
+    const hex = [];
+
+    for (let i = 0; i < binary.length; i++) {
+        let charCode = binary.charCodeAt(i).toString(16);
+        if (charCode.length === 1) charCode = "0" + charCode;
+        hex.push(charCode);
     }
+
     return hex.join("");
 }
 
-function encrypt(msg, key, salt_master_password = null) {
-    /* Шифрование строки */
-    const iv = CryptoJS.lib.WordArray.random(CS.IV.size / CS.IV.division);
-    const result = CryptoJS.AES.encrypt(msg, key, {
+/**
+ * Шифрование строки с использованием настроек cryptoState
+ *
+ * @param {string} message - Исходное сообщение
+ * @param {string} key - Ключ шифрования
+ * @param {Object|null} salt - Соль (если передана, добавляется в начало)
+ * @returns {string} Зашифрованная строка в base64
+ */
+export function encryptWithSettings(message, key, salt = null) {
+    // Генерируем случайный вектор инициализации
+    const iv = CryptoJS.lib.WordArray.random(cryptoState.IV.size / cryptoState.IV.division);
+
+    // Шифруем сообщение AES
+    const encrypted = CryptoJS.AES.encrypt(message, key, {
         iv: iv,
-        padding: CryptoJS.pad[CS.CRYPT_STR_AES.padding],
-        mode: CryptoJS.mode[CS.CRYPT_STR_AES.mode]
+        padding: CryptoJS.pad[cryptoState.CRYPT_STR_AES.padding],
+        mode: CryptoJS.mode[cryptoState.CRYPT_STR_AES.mode],
     }).toString();
 
-    if (salt_master_password == null) {
-        return hexToBase64(iv + base64ToHex(result));
+    // Формируем результат: соль + iv + зашифрованное сообщение
+    const ivHex = iv.toString();
+    const encryptedHex = base64ToHex(encrypted);
+
+    if (salt == null) {
+        return hexToBase64(ivHex + encryptedHex);
     } else {
-        return hexToBase64(salt_master_password + iv + base64ToHex(result));
+        return hexToBase64(salt + ivHex + encryptedHex);
     }
 }
 
-function decrypt(str, key) {
-    /* Дешифрование строки */
+/**
+ * Дешифрование строки с использованием настроек cryptoState
+ *
+ * @param {string} encryptedBase64 - Зашифрованная строка в base64
+ * @param {string} key - Ключ дешифрования
+ * @returns {string} Расшифрованное сообщение или пустая строка при ошибке
+ */
+export function decryptWithSettings(encryptedBase64, key) {
     try {
-        const hexResult = base64ToHex(str);
-        const iv = CryptoJS.enc.Hex.parse(hexResult.substring(CS.DECRYPT_SUBSTRING.str.start, CS.DECRYPT_SUBSTRING.str.end));
-        const encrypted = hexToBase64(hexResult.substring(CS.DECRYPT_SUBSTRING.str.end));
+        const hexData = base64ToHex(encryptedBase64);
 
-        return CryptoJS.AES.decrypt(encrypted, key, {
+        // Извлекаем вектор инициализации
+        const iv = CryptoJS.enc.Hex.parse(hexData.substring(cryptoState.DECRYPT_SUBSTRING.str.start, cryptoState.DECRYPT_SUBSTRING.str.end));
+
+        // Извлекаем зашифрованное сообщение
+        const encrypted = hexToBase64(hexData.substring(cryptoState.DECRYPT_SUBSTRING.str.end));
+
+        // Расшифровываем
+        const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
             iv: iv,
-            padding: CryptoJS.pad[CS.CRYPT_STR_AES.padding],
-            mode: CryptoJS.mode[CS.CRYPT_STR_AES.mode]
+            padding: CryptoJS.pad[cryptoState.CRYPT_STR_AES.padding],
+            mode: CryptoJS.mode[cryptoState.CRYPT_STR_AES.mode],
         }).toString(CryptoJS.enc.Utf8);
-    } catch (e) {
-        if (e.message == "Malformed UTF-8 data") {
-            // Если были искажены данные
+
+        return decrypted;
+    } catch (error) {
+        // Если данные повреждены
+        if (error.message === "Malformed UTF-8 data") {
             return "";
-        } else {
-            swal("Ошибка", "Дешифрование данных не удалось", "error");
-            throw e;
         }
+
+        // Другие ошибки
+        swal("Ошибка", "Дешифрование данных не удалось", "error");
+        throw error;
     }
 }
 
-export {setCryptoSettings, enMP, deMP, encrypt, decrypt};
+// Сохраняем старые названия для обратной совместимости
+export const enMP = encryptMasterPassword;
+export const deMP = decryptMasterPassword;
+export const encrypt = encryptWithSettings;
+export const decrypt = decryptWithSettings;

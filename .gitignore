@@ -9,3 +9,5 @@ env_314
 .flake8
 db.sqlite3
 z_logs
+node_modules
+package-lock.json

@@ -46,12 +46,12 @@ export function getMasterPassword(callbacks) {
             } else {
                 // Другие ошибки (500, 403 и т.д.) - показываем сообщение
                 swal("Ошибка", "Что-то пошло не так", "error");
-                callbacks?.error?.();
+                callbacks.error();
             }
         },
 
         // Всегда вызывается после success или error
-        complete: () => callbacks.complete?.(),
+        complete: () => callbacks.complete(),
     });
 }
 
@@ -72,7 +72,7 @@ export function authorize(key, cs, enMasterPassword, callbacks) {
     if (key == "") {
         $("#in-enter_master_password").focus(); // фокус на поле ввода
         $("#EnterKeyModal").modal("show"); // показываем модалку
-        callbacks?.error?.(); // вызываем колбэк ошибки
+        callbacks.error(); // вызываем колбэк ошибки
         return false;
     }
 
@@ -95,12 +95,12 @@ export function authorize(key, cs, enMasterPassword, callbacks) {
         // Ключ не подошел — очищаем поле и просим ввести снова
         $("#in-enter_master_password").val("").focus();
         $("#EnterKeyModal").modal("show");
-        callbacks?.error?.();
+        callbacks.error();
         return false;
     }
 
     // 4. Успех — передаем расшифрованный мастер-пароль
-    callbacks?.success?.(key);
+    callbacks.success(key);
     return true;
 }
 
@@ -126,12 +126,17 @@ export function authorize(key, cs, enMasterPassword, callbacks) {
  * @param {Function} context.callbacks.complete - Вызывается всегда после завершения (для скрытия прелоадера)
  */
 export function saveMasterPassword(formData, { masterPassword, enMasterPassword, callbacks }) {
+    // 0. Проверка наличия колбэков
+    if (!callbacks) {
+        throw new Error("Callbacks object is required for saveMasterPassword.");
+    }
+
     // 1. Валидация данных формы
     const error = getValidationError(formData, enMasterPassword);
     if (error) {
         const type = error.includes("Пароли") || error.includes("старый") || error.includes("итераций") ? "warning" : "info";
         swal(error, "", type);
-        callbacks?.complete?.();
+        callbacks.complete();
         return;
     }
 
@@ -161,9 +166,9 @@ export function saveMasterPassword(formData, { masterPassword, enMasterPassword,
         url: "save_master_password/",
         type: "POST",
         data: dataToSend,
-        success: () => callbacks?.success?.(),
+        success: () => callbacks.success(),
         error: () => swal("Ошибка", "Что-то пошло не так", "error"),
-        complete: () => callbacks?.complete?.(),
+        complete: () => callbacks.complete(),
     });
 }
 
@@ -250,3 +255,6 @@ function getReencryptedData(masterKey, oldMasterPassword) {
         passwords: JSON.stringify(reencrypt.passwords),
     };
 }
+
+// Эти функции экспортируются только в тесты
+export { getValidationError, randomIterations, getReencryptedData };

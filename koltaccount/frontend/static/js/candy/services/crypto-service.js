@@ -24,7 +24,16 @@ export function getMasterPassword(callbacks) {
          */
         success: function (result) {
             // Устанавливаем стандартные настройки как основу
-            updateCryptoSettings(JSON.parse(result.default_crypto_settings));
+            const settings = safeJSONParse(result.default_crypto_settings);
+
+            if (Object.keys(settings).length === 0) {
+                // TODO: Проверить как появляется это уведомление
+                swal("Ошибка", "Не удалось получить стандартные настройки шифрования, обновите страницу", "error");
+                callbacks.error();
+                return;
+            }
+
+            updateCryptoSettings(settings);
 
             // Передаем данные в колбэк
             callbacks.success({
@@ -41,8 +50,16 @@ export function getMasterPassword(callbacks) {
             // 404 - мастер-пароль еще не создан (первый вход)
             if (jqXHR.status === 404) {
                 // Устанавливаем стандартные настройки (без персональных)
-                updateCryptoSettings(JSON.parse(jqXHR.responseJSON.default_crypto_settings));
+                const settings = safeJSONParse(jqXHR.responseJSON?.default_crypto_settings);
+                if (Object.keys(settings).length === 0) {
+                    // TODO: Проверить как появляется это уведомление
+                    swal("Ошибка", "Не удалось получить стандартные настройки шифрования, обновите страницу", "error");
+                    callbacks.error();
+                    return;
+                }
+                updateCryptoSettings(settings);
                 // error колбэк не вызываем, так как 404 - это ожидаемая ситуация
+                // TODO: или добавить это callbacks.success({ password: null, crypto_settings: null }); // первый вход
             } else {
                 // Другие ошибки (500, 403 и т.д.) - показываем сообщение
                 swal("Ошибка", "Что-то пошло не так", "error");
@@ -68,6 +85,7 @@ export function getMasterPassword(callbacks) {
  * @returns {boolean} true - успешная авторизация, false - ошибка
  */
 export function authorize(key, cs, enMasterPassword, callbacks) {
+    // TODO: Отсутствуют тесты
     // 1. Проверка пустого ввода
     if (key == "") {
         $("#in-enter_master_password").focus(); // фокус на поле ввода
@@ -82,7 +100,14 @@ export function authorize(key, cs, enMasterPassword, callbacks) {
 
     if (decryptCs) {
         // 2a. Ключ верный — обновляем настройки шифрования
-        updateCryptoSettings(JSON.parse(decryptCs));
+        const settings = safeJSONParse(decryptCs);
+        if (Object.keys(settings).length === 0) {
+            // TODO: Проверить как появляется это уведомление
+            swal("Ошибка", "Не удалось получить стандартные настройки шифрования, обновите страницу", "error");
+            callbacks.error();
+            return;
+        }
+        updateCryptoSettings(settings);
         // 2b. Расшифровываем сам мастер-пароль (получаем ключ для конфеток)
         key = deMP(enMasterPassword, key);
     } else {
@@ -126,11 +151,6 @@ export function authorize(key, cs, enMasterPassword, callbacks) {
  * @param {Function} context.callbacks.complete - Вызывается всегда после завершения (для скрытия прелоадера)
  */
 export function saveMasterPassword(formData, { masterPassword, enMasterPassword, callbacks }) {
-    // 0. Проверка наличия колбэков
-    if (!callbacks) {
-        throw new Error("Callbacks object is required for saveMasterPassword.");
-    }
-
     // 1. Валидация данных формы
     const error = getValidationError(formData, enMasterPassword);
     if (error) {
@@ -244,6 +264,7 @@ function getReencryptedData(masterKey, oldMasterPassword) {
         // - логин и пароль сначала расшифровываются старым ключом, потом шифруются новым
         reencrypt.sites[id] = encrypt($tr.find(".td-site").text(), masterKey);
         reencrypt.descriptions[id] = encrypt($tr.find(".td-description").text(), masterKey);
+        // TODO: Если oldMasterPassword === "", то decrypt вернёт пустую строку, и encrypt зашифрует пустую строку — это может быть неочевидным багом.
         reencrypt.logins[id] = encrypt(decrypt($tr.find(".td-login").text(), oldMasterPassword), masterKey);
         reencrypt.passwords[id] = encrypt(decrypt($tr.find(".td-password").text(), oldMasterPassword), masterKey);
     });
@@ -254,6 +275,21 @@ function getReencryptedData(masterKey, oldMasterPassword) {
         logins: JSON.stringify(reencrypt.logins),
         passwords: JSON.stringify(reencrypt.passwords),
     };
+}
+
+/**
+ * Безопасный парсинг JSON
+ * @param {string} jsonString - JSON строка
+ * @param {*} fallback - Значение по умолчанию при ошибке
+ * @returns {*} Распарсенный объект или fallback
+ */
+function safeJSONParse(jsonString, fallback = {}) {
+    // TODO: Отсутствуют тесты
+    try {
+        return JSON.parse(jsonString);
+    } catch {
+        return fallback;
+    }
 }
 
 // Эти функции экспортируются только в тесты

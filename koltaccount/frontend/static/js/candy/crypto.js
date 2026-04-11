@@ -200,6 +200,10 @@ export function decryptWithSettings(encryptedBase64, key) {
         // Если данные повреждены
         if (error.message === "Malformed UTF-8 data") {
             return "";
+            // TODO: Сделать обработку
+            // console.error("return empty");
+            // swal("Ошибка", "Не верные данные или пароль", "error");
+            // throw error;
         }
 
         // Другие ошибки

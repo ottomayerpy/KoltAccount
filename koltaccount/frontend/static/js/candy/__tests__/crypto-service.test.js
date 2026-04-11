@@ -18,7 +18,7 @@ import { deMP, enMP, encrypt, updateCryptoSettings } from "../crypto.js";
 import { getReencryptedData, getValidationError, randomIterations, saveMasterPassword, getMasterPassword } from "../services/crypto-service.js";
 
 describe("saveMasterPassword", () => {
-    let ajaxSpy, swalSpy, callbacks;
+    let ajaxSpy, swalSpy, context;
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -30,11 +30,14 @@ describe("saveMasterPassword", () => {
         global.$ = $;
         global.$.ajax = ajaxSpy;
 
-        // ✅ Добавляем error
-        callbacks = {
-            success: vi.fn(),
-            error: vi.fn(), // ← добавить
-            complete: vi.fn(),
+        context = {
+            masterPassword: "old",
+            enMasterPassword: "enc",
+            callbacks: {
+                success: vi.fn(),
+                error: vi.fn(),
+                complete: vi.fn(),
+            },
         };
         document.body.innerHTML = "";
     });
@@ -42,57 +45,53 @@ describe("saveMasterPassword", () => {
     // ==================== ВАЛИДАЦИЯ ====================
     describe("валидация", () => {
         const validCrypto = { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] };
-        // ✅ callbacks уже определён выше, его не нужно переопределять
-        const context = { masterPassword: "old", enMasterPassword: "enc", callbacks };
 
         it("пустой старый пароль", () => {
-            console.log("context.callbacks:", context.callbacks); // теперь будет объект
             saveMasterPassword({ hasOldPass: true, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "1000", crypto: validCrypto }, context);
             expect(swalSpy).toHaveBeenCalledWith('Заполните поле "Старый пароль"', "", "info");
             expect(ajaxSpy).not.toHaveBeenCalled();
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
 
         it("пустой новый пароль", () => {
             saveMasterPassword({ hasOldPass: true, oldPassword: "old", newPassword: "", repeatPassword: "", iterations: "1000", crypto: validCrypto }, context);
             expect(swalSpy).toHaveBeenCalledWith('Заполните поле "Новый пароль"', "", "info");
             expect(ajaxSpy).not.toHaveBeenCalled();
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
 
         it("пустое подтверждение", () => {
             saveMasterPassword({ hasOldPass: true, oldPassword: "old", newPassword: "new123", repeatPassword: "", iterations: "1000", crypto: validCrypto }, context);
             expect(swalSpy).toHaveBeenCalledWith('Заполните поле "Подтвердите новый пароль"', "", "info");
             expect(ajaxSpy).not.toHaveBeenCalled();
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
 
         it("пароли не совпадают", () => {
             saveMasterPassword({ hasOldPass: true, oldPassword: "old", newPassword: "new123", repeatPassword: "different", iterations: "1000", crypto: validCrypto }, context);
             expect(swalSpy).toHaveBeenCalledWith("Пароли не совпадают", "", "warning");
             expect(ajaxSpy).not.toHaveBeenCalled();
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
 
         it("неверный старый пароль", () => {
             saveMasterPassword({ hasOldPass: true, oldPassword: "wrong", newPassword: "new123", repeatPassword: "new123", iterations: "1000", crypto: validCrypto }, context);
             expect(swalSpy).toHaveBeenCalledWith("Не правильный старый пароль", "", "warning");
             expect(ajaxSpy).not.toHaveBeenCalled();
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
 
         it("итерации вне диапазона", () => {
             saveMasterPassword({ hasOldPass: false, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "10000", crypto: validCrypto }, context);
             expect(swalSpy).toHaveBeenCalledWith("Не допустимый диапазон итераций", "", "warning");
             expect(ajaxSpy).not.toHaveBeenCalled();
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
     });
 
     // ==================== УСПЕШНОЕ СОХРАНЕНИЕ ====================
     describe("успешное сохранение", () => {
         const validCrypto = { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] };
-        const context = { masterPassword: "old", enMasterPassword: "enc", callbacks };
 
         it("создание нового мастер-пароля", () => {
             saveMasterPassword({ hasOldPass: false, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "5000", crypto: validCrypto }, context);
@@ -115,25 +114,24 @@ describe("saveMasterPassword", () => {
         it("success вызывается после успеха", () => {
             saveMasterPassword(
                 { hasOldPass: false, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "1000", crypto: { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] } },
-                { masterPassword: "old", enMasterPassword: "enc", callbacks },
+                context,
             );
             ajaxSpy.mock.calls[0][0].success();
-            expect(callbacks.success).toHaveBeenCalled();
+            expect(context.callbacks.success).toHaveBeenCalled();
         });
 
         it("complete вызывается всегда", () => {
             saveMasterPassword(
                 { hasOldPass: true, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "1000", crypto: { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] } },
-                { masterPassword: "old", enMasterPassword: "enc", callbacks },
+                context,
             );
-            expect(callbacks.complete).toHaveBeenCalled();
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
     });
 
     // ==================== ГРАНИЧНЫЕ СЛУЧАИ ====================
     describe("граничные случаи", () => {
         const validCrypto = { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] };
-        const context = { masterPassword: "old", enMasterPassword: "enc", callbacks };
 
         it("итерации = 57 (мин)", () => {
             saveMasterPassword({ hasOldPass: false, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "57", crypto: validCrypto }, context);
@@ -155,8 +153,6 @@ describe("saveMasterPassword", () => {
 
     // ==================== НАСТРОЙКИ ШИФРОВАНИЯ ====================
     describe("настройки шифрования", () => {
-        const context = { masterPassword: "old", enMasterPassword: "enc", callbacks };
-
         it("KEY = 128/8", () => {
             saveMasterPassword(
                 { hasOldPass: false, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "1000", crypto: { key: ["128", "8"], iv: ["128", "8"], salt: ["256", "8"] } },
@@ -178,7 +174,6 @@ describe("saveMasterPassword", () => {
     describe("перешифровка конфеток", () => {
         const uuid1 = "019d1e24-74b9-7456-9007-14575c99bcc1";
         const uuid2 = "019d1e24-74bc-7583-a601-ef85a1b022e6";
-        const context = { masterPassword: "old", enMasterPassword: "enc", callbacks };
 
         beforeEach(() => {
             document.body.innerHTML = `
@@ -237,10 +232,12 @@ describe("saveMasterPassword", () => {
         it("ошибка 500", () => {
             saveMasterPassword(
                 { hasOldPass: false, oldPassword: "", newPassword: "new123", repeatPassword: "new123", iterations: "1000", crypto: { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] } },
-                { masterPassword: "old", enMasterPassword: "enc", callbacks },
+                context,
             );
             ajaxSpy.mock.calls[0][0].error();
+            ajaxSpy.mock.calls[0][0].complete();
             expect(swalSpy).toHaveBeenCalledWith("Ошибка", "Что-то пошло не так", "error");
+            expect(context.callbacks.complete).toHaveBeenCalled();
         });
     });
 
@@ -257,9 +254,11 @@ describe("saveMasterPassword", () => {
                         iterations: "1000",
                         crypto: { key: ["256", "8"], iv: ["128", "8"], salt: ["256", "8"] },
                     },
-                    { masterPassword: "old", enMasterPassword: "enc" }, // ← callbacks = null
+                    { masterPassword: "old", enMasterPassword: "enc" },
                 );
-            }).toThrow(); // Ожидаем ошибку, так как callbacks.success не существует
+                const ajaxCall = ajaxSpy.mock.calls[0][0];
+                ajaxCall.success({ default_crypto_settings: "{}" });
+            }).toThrow();
         });
     });
 });
@@ -346,7 +345,6 @@ describe("getMasterPassword", () => {
         global.$ = $;
         global.$.ajax = ajaxSpy;
 
-        // Правильные колбэки
         callbacks = {
             success: vi.fn(),
             error: vi.fn(),
@@ -361,10 +359,21 @@ describe("getMasterPassword", () => {
         ajaxCall.success({
             password: "encrypted_password",
             crypto_settings: "encrypted_settings",
-            default_crypto_settings: '{"KEY":256}',
+            default_crypto_settings: JSON.stringify({
+                KEY: { size: "256", division: "8" },
+                IV: { size: "128", division: "8" },
+                SALT: { size: "256", division: "8" },
+                ITERATIONS: "1000",
+            }),
         });
+        ajaxCall.complete();
 
-        expect(updateCryptoSettings).toHaveBeenCalledWith({ KEY: 256 });
+        expect(updateCryptoSettings).toHaveBeenCalledWith({
+            KEY: { size: "256", division: "8" },
+            IV: { size: "128", division: "8" },
+            SALT: { size: "256", division: "8" },
+            ITERATIONS: "1000",
+        });
         expect(callbacks.success).toHaveBeenCalledWith({
             password: "encrypted_password",
             crypto_settings: "encrypted_settings",
@@ -378,10 +387,23 @@ describe("getMasterPassword", () => {
         const ajaxCall = ajaxSpy.mock.calls[0][0];
         ajaxCall.error({
             status: 404,
-            responseJSON: { default_crypto_settings: '{"KEY":256}' },
+            responseJSON: {
+                default_crypto_settings: JSON.stringify({
+                    KEY: { size: "256", division: "8" },
+                    IV: { size: "128", division: "8" },
+                    SALT: { size: "256", division: "8" },
+                    ITERATIONS: "1000",
+                }),
+            },
         });
+        ajaxCall.complete();
 
-        expect(updateCryptoSettings).toHaveBeenCalledWith({ KEY: 256 });
+        expect(updateCryptoSettings).toHaveBeenCalledWith({
+            KEY: { size: "256", division: "8" },
+            IV: { size: "128", division: "8" },
+            SALT: { size: "256", division: "8" },
+            ITERATIONS: "1000",
+        });
         expect(callbacks.error).not.toHaveBeenCalled();
         expect(callbacks.complete).toHaveBeenCalled();
     });
@@ -391,6 +413,7 @@ describe("getMasterPassword", () => {
 
         const ajaxCall = ajaxSpy.mock.calls[0][0];
         ajaxCall.error({ status: 500 });
+        ajaxCall.complete();
 
         expect(swalSpy).toHaveBeenCalledWith("Ошибка", "Что-то пошло не так", "error");
         expect(callbacks.error).toHaveBeenCalled();
@@ -399,9 +422,16 @@ describe("getMasterPassword", () => {
 
     it("без callbacks — выбрасывает ошибку", () => {
         expect(() => {
-            getMasterPassword(null); // ← без колбэков
+            getMasterPassword(null);
             const ajaxCall = ajaxSpy.mock.calls[0][0];
-            ajaxCall.success({ default_crypto_settings: "{}" });
-        }).toThrow(); // Ожидаем ошибку, так как callbacks.success не существует
+            ajaxCall.success({
+                default_crypto_settings: JSON.stringify({
+                    KEY: { size: "256", division: "8" },
+                    IV: { size: "128", division: "8" },
+                    SALT: { size: "256", division: "8" },
+                    ITERATIONS: "1000",
+                }),
+            });
+        }).toThrow();
     });
 });
